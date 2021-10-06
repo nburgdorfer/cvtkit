@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation
 
 # custom imports
+sys.path.append("../common_utilities")
 from utils import *
 
 # argument parsing

@@ -7,6 +7,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
 # custom imports
+sys.path.append("../common_utilities")
 from utils import *
 
 # argument parsing

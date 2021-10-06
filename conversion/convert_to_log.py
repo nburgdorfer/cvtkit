@@ -6,6 +6,7 @@ import argparse
 import os
 
 # custom imports
+sys.path.append("../common_utilities")
 from utils import *
 
 # argument parsing
