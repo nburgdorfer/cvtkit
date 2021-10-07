@@ -7,8 +7,11 @@ import numpy as np
 import cv2
 import skimage.transform as transform
 import sys
+import skimage
 from pyfmatrix_viewer import *
-
+print(cv2.__version__)
+print(np.__version__)
+print(skimage.__version__)
 
 def fundamentalFromKP(K,P1,P2) :
     R1 = P1[0:3,0:3]
