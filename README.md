@@ -7,6 +7,12 @@ A collection of some useful (or maybe just some cool) computer vision tools.
 * **opencv**:   4.5.3
 * **skimage**:  0.18.3
 
+## Alignment
+TODO...
+
+## Conversion
+TODO (for specific use-cases)...
+
 ## Visualization
 Here we discuss some examples of the visualization features provided in this toolkit.
 
