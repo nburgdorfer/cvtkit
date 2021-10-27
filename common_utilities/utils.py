@@ -2,7 +2,40 @@ import os
 import sys
 import numpy as np
 import cv2
+import re
 from scipy.linalg import null_space
+
+def load_pfm(pfm_file):
+    color = None
+    width = None
+    height = None
+    scale = None
+    data_type = None
+    header = pfm_file.readline().decode('iso8859_15').rstrip()
+
+    if header == 'PF':
+        color = True
+    elif header == 'Pf':
+        color = False
+    else:
+        raise Exception('Not a PFM file.')
+    dim_match = re.match(r'^(\d+)\s(\d+)\s$', pfm_file.readline().decode('iso8859_15'))
+    if dim_match:
+        width, height = map(int, dim_match.groups())
+    else:
+        raise Exception('Malformed PFM header.')
+    # scale = float(file.readline().rstrip())
+    scale = float((pfm_file.readline()).decode('iso8859_15').rstrip())
+    if scale < 0: # little-endian
+        data_type = '<f'
+    else:
+        data_type = '>f' # big-endian
+    data_string = pfm_file.read()
+    data = np.fromstring(data_string, data_type)
+    shape = (height, width, 3) if color else (height, width)
+    data = np.reshape(data, shape)
+    data = cv2.flip(data, 0)
+    return data
 
 def load_mvsnet_cams(data_path):
     cam_files = os.listdir(data_path)

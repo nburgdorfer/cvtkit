@@ -8,6 +8,10 @@ from typing import List
 
 from create_latex_figures import create_subfigures
 
+# custom imports
+sys.path.append("../common_utilities")
+from utils import *
+
 # argument parsing
 parse = argparse.ArgumentParser(description="Camera Plotting Tool.")
 
@@ -36,7 +40,7 @@ def load_files(bmask_path: str, gt_path: str, img_path: str):
     files.sort()
 
     for f in files:
-        if (f[:12] == "depth_visual"):
+        if (f[-9:] == "depth.pfm"):
             gt_files.append(os.path.join(gt_path,f))
 
     # grab image file names
@@ -48,20 +52,59 @@ def load_files(bmask_path: str, gt_path: str, img_path: str):
 
     return np.array(bmask_files), np.array(gt_files), np.array(img_files)
 
-def compute_error_masks(bmask_files: List[str], gt_depth_files: List[str], output_path: str = "./output/"):
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+def compute_error_masks(bmask_files: List[str], gt_depth_files: List[str], img_files: List[str], output_path: str = "./output/"):
+    bmask_output_path = os.path.join(output_path, "bmasks")
+    if not os.path.exists(bmask_output_path):
+        os.makedirs(bmask_output_path)
 
-    output_files = []
+    gt_output_path = os.path.join(output_path, "gt_depths")
+    if not os.path.exists(gt_output_path):
+        os.makedirs(gt_output_path)
 
-    for i, (bmask,gt_depth) in enumerate(zip(bmask_files, gt_depth_files)):
-        gt_img = cv2.imread(gt_depth)
-        gt_img = cv2.cvtColor(gt_img, cv2.COLOR_BGR2GRAY)
+    img_output_path = os.path.join(output_path, "images")
+    if not os.path.exists(img_output_path):
+        os.makedirs(img_output_path)
+
+    error_output_path = os.path.join(output_path, "error")
+    if not os.path.exists(error_output_path):
+        os.makedirs(error_output_path)
+
+    num_views = len(bmask_files)
+
+    bmask_output_files = []
+    gt_output_files = []
+    img_output_files = []
+    error_output_files = []
+    offset = 9
+
+    for v in range(num_views):
+        bmask = bmask_files[v]
+        gt_depth = gt_depth_files[v]
+        img = img_files[v]
+
+        # load gt depth maps
+        with open(gt_depth, 'rb') as gtd:
+            gt_img = load_pfm(gtd)
+        #gt_img = cv2.cvtColor(gt_img, cv2.COLOR_BGR2GRAY)
         rows,cols = gt_img.shape
 
+        m = np.max(gt_img)
+        g = (gt_img / m) * 255
+        gt_output_file = os.path.join(gt_output_path, "{:03d}_gt.png".format(v))
+        cv2.imwrite(gt_output_file, g)
+
+        # load bmasks
         bm_img = cv2.imread(bmask)
         bm_img = cv2.cvtColor(bm_img, cv2.COLOR_BGR2GRAY)
-        bm_img = cv2.resize(bm_img, dsize=(cols,rows))
+        bm_img = cv2.resize(bm_img[9:-9,18:-18], dsize=(cols,rows))
+        bmask_output_file = os.path.join(bmask_output_path, "{:03d}_bmask.png".format(v))
+        cv2.imwrite(bmask_output_file, bm_img)
+
+        # load images
+        image = cv2.imread(img)
+        image = cv2.resize(image[9:-9,18:-18], dsize=(cols,rows))
+        img_output_file = os.path.join(img_output_path, "{:03d}_img.png".format(v))
+        cv2.imwrite(img_output_file, image)
 
         # compute accuracy error
         bm = np.greater(bm_img,0.0).reshape(rows,cols,1)
@@ -71,8 +114,6 @@ def compute_error_masks(bmask_files: List[str], gt_depth_files: List[str], outpu
         red = np.tile(np.array([0,0,255]).reshape(1,1,3), (rows,cols,1))
         acc_error = red * ((bm*gt) * ones)
 
-        #cv2.imwrite("acc_error.png", acc_error)
-
         # compute completeness error
         bm = np.less_equal(bm_img,0.0).reshape(rows,cols,1)
         gt = np.greater(gt_img,0.0).reshape(rows,cols,1)
@@ -81,17 +122,18 @@ def compute_error_masks(bmask_files: List[str], gt_depth_files: List[str], outpu
         yellow = np.tile(np.array([0,255,255]).reshape(1,1,3), (rows,cols,1))
         comp_error = yellow * ((bm*gt) * ones)
 
-        #cv2.imwrite("comp_error.png", comp_error)
-
         # compile both into one figure
         error = acc_error + comp_error
 
-        output_file = os.path.join(output_path, "{:03d}_error.png".format(i))
-        cv2.imwrite(output_file, error)
+        error_output_file = os.path.join(error_output_path, "{:03d}_error.png".format(v))
+        cv2.imwrite(error_output_file, error)
 
-        output_files.append(output_file)
+        gt_output_files.append(gt_output_file)
+        bmask_output_files.append(bmask_output_file)
+        img_output_files.append(img_output_file)
+        error_output_files.append(error_output_file)
 
-    return np.array(output_files)
+    return np.array(bmask_output_files), np.array(gt_output_files), np.array(img_output_files), np.array(error_output_files)
 
 
 def build_latex_doc(data):
@@ -124,9 +166,9 @@ def build_latex_doc(data):
 def main():
     bmask_files, gt_depth_files, img_files = load_files(ARGS.bmask_data_path, ARGS.gt_data_path, ARGS.img_data_path)
 
-    error_mask_files = compute_error_masks(bmask_files, gt_depth_files)
+    bmask_output_files, gt_output_files, img_output_files, error_output_files = compute_error_masks(bmask_files, gt_depth_files, img_files)
 
-    data = np.vstack((error_mask_files, gt_depth_files, img_files))
+    data = np.vstack((error_output_files, gt_output_files, img_output_files))
 
     document = build_latex_doc(data)
 
