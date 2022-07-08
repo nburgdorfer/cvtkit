@@ -27,8 +27,6 @@ def fundamentalFromKP(K,P1,P2) :
 
     R = np.matmul(R2,np.transpose(R1))
     t= t2- np.matmul(R,t1)
-    #print(R)
-    #print(t)
     K1inv = np.linalg.inv(K)
     K2invT = np.transpose(K1inv)
     tx = np.array([[0, -t[2], t[1]], [t[2], 0, -t[0]], [-t[1], t[0], 0]])
