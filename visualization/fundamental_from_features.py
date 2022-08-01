@@ -72,7 +72,14 @@ def compute_essential_matrix(img1_filename, img2_filename, K):
     (pts1, pts2) = match_features(img1, img2)
 
     # Compute fundamental matrix
-    E, mask = cv2.findEssentialMat(pts1,pts2,K)
+    E, mask = cv2.findEssentialMat(pts1, pts2, K, method=cv2.RANSAC)
+
+    # decompose into rotation / translation
+    R1, R2, t = cv2.decomposeEssentialMat(E)
+    print(R1)
+    print(R2)
+    print(t)
+
     return E
 
 def compute_fundamental_matrix(img1_filename, img2_filename):
