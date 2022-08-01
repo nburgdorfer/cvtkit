@@ -96,7 +96,7 @@ if __name__ == "__main__":
     img1_path = sys.argv[1]
     img2_path = sys.argv[2]
     f_path = sys.argv[3]
-    scale = 0.25
+    scale = 1.0
     if len(sys.argv) > 4:
         scale = float(sys.argv[4])
 
