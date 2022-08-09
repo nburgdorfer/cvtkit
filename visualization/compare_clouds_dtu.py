@@ -10,11 +10,17 @@ import scipy.io as sio
 # argument parsing
 parse = argparse.ArgumentParser(description="Point Cloud Comparison Tool.")
 
+parse.add_argument("-m", "--method", default="fusion", type=str, help="Method name (e.x. colmap).")
 parse.add_argument("-r", "--src_ply", default="../src.ply", type=str, help="Path to source point cloud file.")
 parse.add_argument("-t", "--tgt_ply", default="../tgt.ply", type=str, help="Path to target point cloud file.")
+parse.add_argument("-d", "--data_path", default="../../mvs_data", type=str, help="Path to the DTU evaluation data.")
 parse.add_argument("-o", "--output_path", default="./evaluation", type=str, help="Output path where all metrics and results will be stored.")
+parse.add_argument("-l", "--light_setting", default="l3", type=str, help="DTU light setting.")
+parse.add_argument("-p", "--representation", default="Points", type=str, help="Data representation (Points/Surface).")
+parse.add_argument("-s", "--scene", default="1", type=str, help="Scene name or number (e.x. Ignatius, Truck, Barn ...or... 1, 4, 9).")
 parse.add_argument("-v", "--voxel_size", default=0.2, type=float, help="Voxel size used for consistent downsampling.")
 parse.add_argument("-x", "--max_dist", default=0.4, type=float, help="Max distance threshold for point matching.")
+parse.add_argument("-e", "--data_set", default="none", type=str, help="Data set if a dataset-specific point-cloud comparison is to be made.")
 
 ARGS = parse.parse_args()
 
@@ -76,17 +82,23 @@ def build_tgt_points_filter(ply, P):
 
     return filt
 
-def compare_point_clouds(src_ply, tgt_ply, max_dist):
+def compare_point_clouds(src_ply, tgt_ply, max_dist, src_filt, tgt_filt):
     # compute bi-directional distance between point clouds
     md = 20
 
     dists_src = np.asarray(src_ply.compute_point_cloud_distance(tgt_ply))
-    valid_dists = np.where(dists_src <= md)[0]
-    dists_src = dists_src[valid_dists]
+    valid_inds_src = set(np.where(src_filt == 1)[0])
+    valid_dists = set(np.where(dists_src <= md)[0])
+    valid_inds_src.intersection_update(valid_dists)
+    valid_inds_src = np.asarray(list(valid_inds_src))
+    dists_src = dists_src[valid_inds_src]
 
     dists_tgt = np.asarray(tgt_ply.compute_point_cloud_distance(src_ply))
-    valid_dists = np.where(dists_tgt <= md)[0]
-    dists_tgt = dists_tgt[valid_dists]
+    valid_inds_tgt = set(np.where(tgt_filt == 1)[0])
+    valid_dists = set(np.where(dists_tgt <= md)[0])
+    valid_inds_tgt.intersection_update(valid_dists)
+    valid_inds_tgt = np.asarray(list(valid_inds_tgt))
+    dists_tgt = dists_tgt[valid_inds_tgt]
 
     # compute accuracy and competeness
     acc = np.mean(dists_src)
@@ -102,18 +114,32 @@ def compare_point_clouds(src_ply, tgt_ply, max_dist):
     rec = len(np.where(dists_tgt <= max_dist)[0]) / len(dists_tgt)
 
     # color point cloud for precision
-    src_size = len(src_ply.points)
+    valid_src_ply = src_ply.select_by_index(valid_inds_src)
+    src_size = len(valid_src_ply.points)
     cmap = plt.get_cmap("hot_r")
     colors = cmap(np.minimum(dists_src, max_dist) / max_dist)[:, :3]
-    src_ply.colors = o3d.utility.Vector3dVector(colors)
+    valid_src_ply.colors = o3d.utility.Vector3dVector(colors)
+
+    # color invalid points precision
+    invalid_src_ply = src_ply.select_by_index(valid_inds_src, invert=True)
+    cmap = plt.get_cmap("winter")
+    colors = cmap(np.ones(len(invalid_src_ply.points)))[:, :3]
+    invalid_src_ply.colors = o3d.utility.Vector3dVector(colors)
 
     # color point cloud for recall
-    tgt_size = len(tgt_ply.points)
+    valid_tgt_ply = tgt_ply.select_by_index(valid_inds_tgt)
+    tgt_size = len(valid_tgt_ply.points)
     cmap = plt.get_cmap("hot_r")
     colors = cmap(np.minimum(dists_tgt, max_dist) / max_dist)[:, :3]
-    tgt_ply.colors = o3d.utility.Vector3dVector(colors)
+    valid_tgt_ply.colors = o3d.utility.Vector3dVector(colors)
 
-    return (src_ply, tgt_ply), (acc,comp), (prec, rec), (th_vals, prec_vals, rec_vals), (src_size, tgt_size)
+    # color invalid points recall
+    invalid_tgt_ply = tgt_ply.select_by_index(valid_inds_tgt, invert=True)
+    cmap = plt.get_cmap("winter")
+    colors = cmap(np.ones(len(invalid_tgt_ply.points)))[:, :3]
+    invalid_tgt_ply.colors = o3d.utility.Vector3dVector(colors)
+
+    return (valid_src_ply + invalid_src_ply, valid_tgt_ply + invalid_tgt_ply), (acc,comp), (prec, rec), (th_vals, prec_vals, rec_vals), (src_size, tgt_size)
 
 def save_ply(file_path, ply):
     o3d.io.write_point_cloud(file_path, ply)
@@ -135,13 +161,20 @@ def main():
     # set parameters
     src_path = ARGS.src_ply
     tgt_path = ARGS.tgt_ply
+    data_path = ARGS.data_path
+    method = ARGS.method
+    scan_num = ARGS.scene
     output_path = ARGS.output_path
     voxel_size = ARGS.voxel_size
     max_dist = ARGS.max_dist
+    data_set = ARGS.data_set
+
+    output_path = os.path.join(output_path, "{}_{}".format(method, str(scan_num).zfill(3)))
 
     # create output path if it does not exist
     if not os.path.exists(output_path):
         os.makedirs(output_path)
+
 
 
     ##### Load in point clouds #####
@@ -150,24 +183,51 @@ def main():
     tgt_ply = read_point_cloud(tgt_path, voxel_size)
 
 
+
+    ##### Create masks #####
+    # read in matlab bounding box, mask, and resolution
+    mask_filename = "ObsMask{}_10.mat".format(scan_num)
+    mask_path = os.path.join(data_path, "ObsMask", mask_filename)
+    data = sio.loadmat(mask_path)
+    bounds = np.asarray(data["BB"])
+    min_bound = bounds[0,:]
+    max_bound = bounds[1,:]
+    mask = np.asarray(data["ObsMask"])
+    res = int(data["Res"])
+
+    # read in matlab gt plane 
+    mask_filename = "Plane{}.mat".format(scan_num)
+    mask_path = os.path.join(ARGS.data_path, "ObsMask", mask_filename)
+    data = sio.loadmat(mask_path)
+    P = np.asarray(data["P"])
+
+    # build points filter based on input mask
+    src_filt = build_src_points_filter(src_ply, min_bound, res, mask)
+
+    # build points filter based on input mask
+    tgt_filt = build_tgt_points_filter(tgt_ply, P)
+
+
+
     ##### Compute metrics between point clouds #####
     print("Computing metrics between point clouds...")
     (precision_ply, recall_ply), (acc,comp), (prec, rec), (th_vals, prec_vals, rec_vals), (src_size, tgt_size) \
-            = compare_point_clouds(src_ply, tgt_ply, max_dist)
+            = compare_point_clouds(src_ply, tgt_ply, max_dist, src_filt, tgt_filt)
+
 
 
     ##### Save metrics #####
     print("Saving evaluation statistics...")
     # save precision point cloud
-    precision_path = os.path.join(output_path, "precision.ply")
+    precision_path = os.path.join(output_path, "precision_{}.ply".format(method))
     save_ply(precision_path, precision_ply)
 
     # save recall point cloud
-    recall_path = os.path.join(output_path, "recall.ply")
+    recall_path = os.path.join(output_path, "recall_{}.ply".format(method))
     save_ply(recall_path, recall_ply)
 
     # create plots for incremental threshold values
-    plot_filename = os.path.join(output_path, "metrics.png")
+    plot_filename = os.path.join(output_path, "metrics_{}.png".format(method))
     plt.plot(th_vals, prec_vals, th_vals, rec_vals)
     plt.title("Precision and Recall (t={}mm)".format(max_dist))
     plt.xlabel("threshold")
@@ -177,8 +237,9 @@ def main():
     plt.savefig(plot_filename)
 
     # write all metrics to the evaluation file
-    stats_file = os.path.join(output_path, "evaluation_metrics.txt")
+    stats_file = os.path.join(output_path, "evaluation_metrics_{}.txt".format(method))
     with open(stats_file, 'w') as f:
+        f.write("Method: {}\n".format(method))
         f.write("Voxel_size: {:0.3f}mm | Distance threshold: {:0.3f}mm\n".format(voxel_size, max_dist))
         f.write("Source point cloud size: {}\n".format(src_size))
         f.write("Target point cloud size: {}\n".format(tgt_size))
