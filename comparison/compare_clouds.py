@@ -15,6 +15,7 @@ parse.add_argument("-t", "--tgt_ply", default="../tgt.ply", type=str, help="Path
 parse.add_argument("-o", "--output_path", default="./evaluation", type=str, help="Output path where all metrics and results will be stored.")
 parse.add_argument("-v", "--voxel_size", default=0.2, type=float, help="Voxel size used for consistent downsampling.")
 parse.add_argument("-x", "--max_dist", default=0.4, type=float, help="Max distance threshold for point matching.")
+parse.add_argument("-k", "--mask_th", default=20, type=float, help="Masking threshold to remove outliers from comparison.")
 
 ARGS = parse.parse_args()
 
@@ -76,16 +77,14 @@ def build_tgt_points_filter(ply, P):
 
     return filt
 
-def compare_point_clouds(src_ply, tgt_ply, max_dist):
+def compare_point_clouds(src_ply, tgt_ply, mask_th, max_dist):
     # compute bi-directional distance between point clouds
-    md = 20
-
     dists_src = np.asarray(src_ply.compute_point_cloud_distance(tgt_ply))
-    valid_dists = np.where(dists_src <= md)[0]
+    valid_dists = np.where(dists_src <= mask_th)[0]
     dists_src = dists_src[valid_dists]
 
     dists_tgt = np.asarray(tgt_ply.compute_point_cloud_distance(src_ply))
-    valid_dists = np.where(dists_tgt <= md)[0]
+    valid_dists = np.where(dists_tgt <= mask_th)[0]
     dists_tgt = dists_tgt[valid_dists]
 
     # compute accuracy and competeness
@@ -94,12 +93,12 @@ def compare_point_clouds(src_ply, tgt_ply, max_dist):
 
     # measure incremental precision and recall values with thesholds from (0, 10*max_dist)
     th_vals = np.linspace(0, 3*max_dist, num=50)
-    prec_vals = [ (len(np.where(dists_src <= th)[0]) / len(dists_src)) for th in th_vals ]
-    rec_vals = [ (len(np.where(dists_tgt <= th)[0]) / len(dists_tgt)) for th in th_vals ]
+    prec_vals = [ (len(np.where(dists_src <= th)[0]) / (len(dists_src)+1e-5)) for th in th_vals ]
+    rec_vals = [ (len(np.where(dists_tgt <= th)[0]) / (len(dists_tgt)+1e-5)) for th in th_vals ]
 
     # compute precision and recall for given distance threshold
-    prec = len(np.where(dists_src <= max_dist)[0]) / len(dists_src)
-    rec = len(np.where(dists_tgt <= max_dist)[0]) / len(dists_tgt)
+    prec = len(np.where(dists_src <= max_dist)[0]) / (len(dists_src)+1e-5)
+    rec = len(np.where(dists_tgt <= max_dist)[0]) / (len(dists_tgt)+1e-5)
 
     # color point cloud for precision
     src_size = len(src_ply.points)
@@ -138,6 +137,7 @@ def main():
     output_path = ARGS.output_path
     voxel_size = ARGS.voxel_size
     max_dist = ARGS.max_dist
+    mask_th = ARGS.mask_th
 
     # create output path if it does not exist
     if not os.path.exists(output_path):
@@ -153,7 +153,7 @@ def main():
     ##### Compute metrics between point clouds #####
     print("Computing metrics between point clouds...")
     (precision_ply, recall_ply), (acc,comp), (prec, rec), (th_vals, prec_vals, rec_vals), (src_size, tgt_size) \
-            = compare_point_clouds(src_ply, tgt_ply, max_dist)
+            = compare_point_clouds(src_ply, tgt_ply, mask_th, max_dist)
 
 
     ##### Save metrics #####
