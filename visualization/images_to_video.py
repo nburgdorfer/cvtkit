@@ -12,7 +12,7 @@ images = [img for img in image_files if img.endswith(".png")]
 frame = cv2.imread(os.path.join(image_folder, images[0]))
 height, width, layers = frame.shape
 
-video = cv2.VideoWriter(video_name, 0, fps=8, frameSize=(width,height))
+video = cv2.VideoWriter(video_name, 0, fps=15, frameSize=(width,height))
 
 for image in images:
     video.write(cv2.imread(os.path.join(image_folder, image)))

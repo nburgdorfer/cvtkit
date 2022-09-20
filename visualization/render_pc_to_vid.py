@@ -7,6 +7,50 @@ import math
 import sys
 import shutil
 import os
+from tqdm import tqdm
+from scipy.spatial.transform import Rotation as rot
+
+def read_point_cloud(ply_path, size=0.1):
+    if(ply_path[-3:] != "ply"):
+        print("{} is not a '.ply' file.".format(ply_path))
+        sys.exit()
+
+    ply = o3d.io.read_point_cloud(ply_path)
+    #ply = ply.voxel_down_sample(voxel_size=size)
+
+    return ply
+
+def load_poses(pose_file):
+    poses = []
+    with open(pose_file,"r") as pf:
+        lines = pf.readlines()
+        
+        for line in lines:
+            l = np.asarray(line.strip().split(" "), dtype=float)
+            l = l[1:]
+            t = l[:3]
+            q = l[3:]
+
+            R = rot.from_quat(q).as_matrix()
+            R = R.transpose()
+            t = -R@t
+            P = np.zeros((4,4))
+            P[:3,:3] = R
+            P[:3,3] = t.transpose()
+            P[3,3] = 1
+
+            poses.append(P)
+
+    return np.asarray(poses)
+
+def load_intrinsics(intrinsics_file):
+    K = np.eye(3)
+    cv_file = cv2.FileStorage(intrinsics_file, cv2.FILE_STORAGE_READ)
+    left = cv_file.getNode("left")
+    K = left.getNode("K").mat()
+    cv_file.release()
+
+    return K
 
 def load_cam(cam_file):
     K = np.zeros((3,3))
@@ -63,62 +107,67 @@ def write_pfm(pfm_file, image, scale=1):
 
     pfm_file.close()
 
-def project_mesh(mesh, K, P, width, height):
-    render = o3d.visualization.rendering.OffscreenRenderer(width, height)
-    mat = o3d.visualization.rendering.MaterialRecord()
-    mat.shader = 'defaultUnlit'
-
-    render.scene.add_geometry("mesh", mesh, mat)
-    intrins = o3d.camera.PinholeCameraIntrinsic(width, height, K[0,0], K[1,1], K[0,2], K[1,2])
+def project_cloud(render, intrins, P):
     render.setup_camera(intrins, P)
+    image = np.asarray(render.render_to_image())
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    depth_map = np.asarray(render.render_to_depth_image(z_in_view_space=True))
-    depth_map = np.where(np.isinf(depth_map), 0, depth_map)
-
-    return depth_map
+    return image
 
 def main():
-    if (len(sys.argv) != 6):
-        print("Error: usage   python {} <img-width> <img-height> <camera-dir> <mesh-path> <output-path>.".format(sys.argv[0]))
+    if (len(sys.argv) != 7):
+        print("Error: usage   python {} <img-width> <img-height> <data-path> <point-cloud-path> <output-path> <video_name>.".format(sys.argv[0]))
         sys.exit()
-
 
     width = int(sys.argv[1])
     height = int(sys.argv[2])
-    cam_path = sys.argv[3]
-    mesh_path = sys.argv[4]
+    data_path = sys.argv[3]
+    pose_file = os.path.join(data_path, "poses.txt")
+    intrinsics_file = os.path.join(data_path, "intrinsics.yaml")
+    ply_path = sys.argv[4]
     output_path = sys.argv[5]
-    disp_path = os.path.join(output_path, "disp/")
+    vid_name = sys.argv[6]
+    img_path = os.path.join(output_path, "images/")
 
     if os.path.exists(output_path):
         shutil.rmtree(output_path)
     os.mkdir(output_path)
-    os.mkdir(disp_path)
+    os.mkdir(img_path)
 
     # load in mesh
-    mesh = o3d.io.read_triangle_mesh(mesh_path)
+    cloud = read_point_cloud(ply_path)
 
-    # project mesh onto all cameras
-    cam_files = os.listdir(cam_path)
-    cam_files.sort()
+    # project cloud onto all cameras
+    poses = load_poses(pose_file)
+    K = load_intrinsics(intrinsics_file)
 
-    for cf in cam_files:
-        if (cf[-7:] == "cam.txt"):
-            # load camera
-            cam_file = os.path.join(cam_path, cf)
-            K, P = load_cam(open(cam_file,'r')) 
+    vid_file = os.path.join(output_path, vid_name)
+    video = cv2.VideoWriter(vid_file, 0, fps=10, frameSize=((width,height)))
 
+    # set up the renderer
+    render = o3d.visualization.rendering.OffscreenRenderer(width, height)
+    mat = o3d.visualization.rendering.MaterialRecord()
+    mat.shader = 'defaultUnlit'
+    render.scene.add_geometry("cloud", cloud, mat)
+    render.scene.set_background(np.asarray([255,255,255,1])) #r,g,b,a
+    intrins = o3d.camera.PinholeCameraIntrinsic(width, height, K[0,0], K[1,1], K[0,2], K[1,2])
+
+    with tqdm(poses, unit="pose") as p:
+        for view_num, P in enumerate(p):
             # project to depth map
-            depth_map = project_mesh(mesh, K, P, width, height)
+            image = project_cloud(render, intrins, P)
 
             # store depth map as .pfm
-            view_num = int(cf[:8])
-            output_file = os.path.join(output_path, "{:08d}_depth.pfm".format(view_num))
-            write_pfm(output_file, depth_map)
+            output_file = os.path.join(img_path, "{:08d}.png".format(view_num))
+            cv2.imwrite(output_file, image)
 
-            m = np.max(depth_map)+1e-7
-            disp = os.path.join(disp_path, "{:08d}_depth_disp.png".format(view_num))
-            cv2.imwrite(disp, depth_map/m*255)
+            # write image to video
+            video.write(image)
+
+    # clean up video
+    cv2.destroyAllWindows()
+    video.release()
+
 
 if __name__=="__main__":
     main()
