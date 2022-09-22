@@ -20,12 +20,26 @@ def read_point_cloud(ply_path, size=0.1):
 
     return ply
 
-def load_poses(pose_file):
+def pose_rotation(P_old, theta):
+    R = np.eye(4)
+    R[0,0] = math.cos(theta)
+    R[0,2] = math.sin(theta)
+    R[2,0] = -(math.sin(theta))
+    R[2,2] = math.cos(theta)
+
+    new_P = R @ P_old
+
+    return new_P
+
+def load_poses(pose_file, interest_frames):
+    rot_interval = 30
+    max_rot_angle = math.pi / 3
+
     poses = []
     with open(pose_file,"r") as pf:
         lines = pf.readlines()
         
-        for line in lines:
+        for i,line in enumerate(lines):
             l = np.asarray(line.strip().split(" "), dtype=float)
             l = l[1:]
             t = l[:3]
@@ -40,6 +54,16 @@ def load_poses(pose_file):
             P[3,3] = 1
 
             poses.append(P)
+
+            if(i in interest_frames):
+                left = np.linspace(0.0, max_rot_angle, rot_interval)
+                right = np.linspace(max_rot_angle, -(max_rot_angle), rot_interval*2)
+                center = np.linspace(-(max_rot_angle), 0.0, rot_interval)
+                thetas = np.concatenate((left,right,center))
+
+                for theta in thetas:
+                    new_P = pose_rotation(P,theta)
+                    poses.append(new_P)
 
     return np.asarray(poses)
 
@@ -138,7 +162,8 @@ def main():
     cloud = read_point_cloud(ply_path)
 
     # project cloud onto all cameras
-    poses = load_poses(pose_file)
+    interest_frames = [700,772]
+    poses = load_poses(pose_file, interest_frames)
     K = load_intrinsics(intrinsics_file)
 
     vid_file = os.path.join(output_path, vid_name)
