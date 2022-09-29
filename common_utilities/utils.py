@@ -37,6 +37,63 @@ def load_pfm(pfm_file):
     data = cv2.flip(data, 0)
     return data
 
+def load_cam(cam_file, max_d, interval_scale=1):
+    """ read camera txt file """
+    cam = np.zeros((2, 4, 4))
+    words = cam_file.read().split()
+
+    # read extrinsic
+    for i in range(0, 4):
+        for j in range(0, 4):
+            extrinsic_index = 4 * i + j + 1
+            cam[0][i][j] = float(words[extrinsic_index])
+
+    # read intrinsic
+    for i in range(0, 3):
+        for j in range(0, 3):
+            intrinsic_index = 3 * i + j + 18
+            cam[1][i][j] = float(words[intrinsic_index])
+
+    if len(words) == 29:
+        cam[1][3][0] = float(words[27])
+        cam[1][3][1] = float(words[28]) * interval_scale
+        cam[1][3][2] = max_d
+        cam[1][3][3] = cam[1][3][0] + cam[1][3][1] * cam[1][3][2]
+    elif len(words) == 30:
+        cam[1][3][0] = float(words[27])
+        cam[1][3][1] = float(words[28]) * interval_scale
+        cam[1][3][2] = float(words[29])
+        cam[1][3][3] = cam[1][3][0] + cam[1][3][1] * cam[1][3][2]
+    elif len(words) == 31:
+        cam[1][3][0] = words[27]
+        cam[1][3][1] = float(words[28]) * interval_scale
+        cam[1][3][2] = float(words[29])
+        cam[1][3][3] = float(words[30])
+    else:
+        cam[1][3][0] = 0
+        cam[1][3][1] = 0
+        cam[1][3][2] = 0
+        cam[1][3][3] = 0
+
+    return cam
+
+def load_cams(data_path):
+    cam_files = os.listdir(data_path)
+    cam_files.sort()
+
+    cams = []
+    
+    for cf in cam_files:
+        if (cf[-7:] != "cam.txt"):
+            continue
+
+        cam_path = os.path.join(data_path,cf)
+        with open(cam_path,'r') as f:
+            cam = load_cam(f, 256)
+            cams.append(cam)
+
+    return cams
+
 def load_mvsnet_cams(data_path):
     cam_files = os.listdir(data_path)
     cam_files.sort()
