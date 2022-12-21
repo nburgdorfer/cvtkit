@@ -1,20 +1,13 @@
-# vision_toolkit
-A collection of some useful (or maybe just some cool) computer vision tools.
+# Vision Toolkit
+A collection of some useful (or maybe just interesting) computer vision tools.
 
 ## Version Information (for reference only)
 * **ubuntu**:   20.04
 * **numpy**:    1.19.5
 * **opencv**:   4.5.3
 * **skimage**:  0.18.3
+* **python**:  3.9
 
-## Alignment
-TODO...
-
-## Conversion
-TODO (for specific use-cases)...
-
-## Visualization
-Here we discuss some examples of the visualization features provided in this toolkit.
 
 ### Visualizing Epipolar Geometry
 The ```pyfmatrix_from_P_Viewer.py``` and ```pyfmatrix_viewer.py``` scripts can be used to view the projection of the epipolar line from a pixel in one image to a corresponding image. Example data is provided in the ```data/examples/``` directory:
