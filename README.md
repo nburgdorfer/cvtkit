@@ -1,13 +1,5 @@
-# Vision Toolkit
+# Computer Vision Toolkit (CVT)
 A collection of some useful (or maybe just interesting) computer vision tools.
-
-## Version Information (for reference only)
-* **ubuntu**:   20.04
-* **numpy**:    1.19.5
-* **opencv**:   4.5.3
-* **skimage**:  0.18.3
-* **python**:  3.9
-
 
 ### Visualizing Epipolar Geometry
 The ```pyfmatrix_from_P_Viewer.py``` and ```pyfmatrix_viewer.py``` scripts can be used to view the projection of the epipolar line from a pixel in one image to a corresponding image. Example data is provided in the ```data/examples/``` directory:
