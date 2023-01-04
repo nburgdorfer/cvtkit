@@ -1,0 +1,52 @@
+site_name: Computer Vision Toolkit Docs
+
+
+nav:
+    - Home:
+        - Overview: index.md
+    - Tutorials: tutorials.md
+    - How-To Guides: how_to_guides.md
+    - API Reference: 
+        - Common: 
+            - Camera: api/common_camera.md
+    - Explanation: explanation.md
+    - Development:
+        - Contributing: contrib.md
+        - Code of Conduct: conduct.md
+
+theme:
+    name: "material"
+    features:
+        - navigation.tabs
+        - navigation.tabs.sticky
+        - navigation.top
+    palette:
+      - media: "(prefers-color-scheme: light)"
+        scheme: default
+        primary: black
+        accent: teal
+        toggle:
+            icon: material/lightbulb-outline
+            name: Switch to dark mode
+
+      - media: "(prefers-color-scheme: dark)"
+        scheme: slate
+        primary: black
+        accent: teal
+        toggle:
+            icon: material/lightbulb
+            name: Switch to light mode
+
+markdown_extensions:
+    - admonition
+    - attr_list
+    - footnotes
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+
+repo_name: nbugdorfer/vision_toolkit
+repo_url: https://github.com/nburgdorfer/vision_toolkit
+
+plugins:
+    - mkdocstrings:

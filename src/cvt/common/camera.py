@@ -1,3 +1,19 @@
+# common/camera.py
+
+"""A suit of common camera utilities.
+
+This module include several functions for manipulating and extracting information
+from camera intrinsics and extrinsics, as well as converting between specific
+formats.
+
+This module contains the following functions:
+
+- `camera_center(cam)` - Computes the center of a camera in world coordinates.
+- `relative_transform(cams_1, cams_2)` - Computes the relative transformation between two sets of cameras.
+- `convert_to_log(cams, output_file, alignment)` - Converts from DTU camera format to log format.
+- `convert_from_log(log_file, output_path, old_cam_path)` - Converts from log camera format to DTU format.
+"""
+
 import os
 import sys
 import numpy as np
@@ -6,13 +22,30 @@ import re
 from scipy.linalg import null_space
 from scipy.spatial.transform import Rotation
 
-def camera_center(cam):
+def camera_center(cam: np.ndarray) -> np.ndarray:
+    """Computes the center of a camera in world coordinates.
+
+    Args:
+        cam: The extrinsics (4x4) matrix of a given camera.
+
+    Returns:
+        The camera center (3x1) in world coordinates.
+    """
     C = null_space(cam[:3,:4])
     C /= C[3,:]
 
     return C
 
-def compute_relative_transform(cams_1, cams_2, A):
+def relative_transform(cams_1: np.ndarray, cams_2: np.ndarray) -> np.ndarray:
+    """Computes the relative transformation between two sets of cameras.
+
+    Args:
+        cams_1: List of the first set of cameras.
+        cams_2: List of the second set of cameras.
+
+    Returns:
+        The relative transformation between the two trajectories.
+    """
     centers_1 = np.squeeze(np.array([ camera_center(c) for c in cams_1 ]), axis=2)
     centers_2 = np.squeeze(np.array([ camera_center(c) for c in cams_2 ]), axis=2)
 
@@ -49,9 +82,6 @@ def compute_relative_transform(cams_1, cams_2, A):
 
     ### add translation
     M[:3,3] = t[:3]
-
-    ### apply additional alignment
-    M = A@M
 
     return M
 
