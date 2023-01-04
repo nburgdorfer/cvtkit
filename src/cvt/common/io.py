@@ -167,10 +167,10 @@ def read_mvsnet_cams(data_path):
                     
             cams.append(cam)
 
-    return cams
+    return np.asarray(cams)
 
 def read_colmap_cams(data_path):
-    cam_file = os.path.join(data_path,"camera_poses.log")
+    cam_file = os.path.join(data_path,"camera_pose.log")
 
     cams = []
     

@@ -21,12 +21,10 @@ import os
 import numpy as np
 import cv2
 import argparse
-from mpl_toolkits import mplot3d
-import matplotlib.pyplot as plt
-from scipy.spatial.transform import Rotation
 
 # custom imports
 from cvt.common.io import *
+from cvt.common.camera import *
 
 # argument parsing
 parse = argparse.ArgumentParser(description="Camera System Alignment Tool.")
@@ -40,66 +38,21 @@ parse.add_argument("-o", "--output_file", default="./data/default_transform.txt"
 
 ARGS = parse.parse_args()
 
-def compute_alignment(cams_1, cams_2, A):
-    centers_1 = np.squeeze(np.array([ camera_center(c) for c in cams_1 ]), axis=2)
-    centers_2 = np.squeeze(np.array([ camera_center(c) for c in cams_2 ]), axis=2)
-
-    ### determine scale
-    # grab first camera pair
-    c1_0 = centers_1[0][:3]
-    c2_0 = centers_2[0][:3]
-
-    # grab one-hundreth camera pair
-    c1_1 = centers_1[99][:3]
-    c2_1 = centers_2[99][:3]
-
-    # calculate the baseline between both sets of cameras
-    baseline_1 = np.linalg.norm(c1_0 - c1_1)
-    baseline_2 = np.linalg.norm(c2_0 - c2_1)
-
-    # compute the scale based on the baseline ratio
-    scale = baseline_2/baseline_1
-    print("Scale: ", scale)
-
-    ### determine 1->2 Rotation 
-    b1 = np.array([c[:3] for c in centers_1])
-    b2 = np.array([c[:3] for c in centers_2])
-    R = Rotation.align_vectors(b2,b1)[0].as_matrix()
-    R = scale * R
-
-    ### create transformation matrix
-    M = np.eye(4)
-    M[:3,:3] = R
-
-    ### determine 1->2 Translation
-    num_cams = len(cams_1)
-    t = np.array([ c2-(M@c1) for c1,c2 in zip(centers_1,centers_2) ])
-    t = np.mean(t, axis=0)
-
-    ### add translation
-    M[:3,3] = t[:3]
-
-    ### apply additional alignment
-    M = A@M
-    print("Resulting Transformation:\n", M)
-
-    return M
-
 def main():
     # read in format 1 cameras
     if (ARGS.format_1 == "mvsnet"):
-        cams_1 = load_mvsnet_cams(ARGS.data_path_1)
+        cams_1 = read_mvsnet_cams(ARGS.data_path_1)
     elif(ARGS.format_1 == "colmap"):
-        cams_1 = load_colmap_cams(ARGS.data_path_1)
+        cams_1 = read_colmap_cams(ARGS.data_path_1)
     else:
         print("ERROR: unknown format type '{}'".format(form))
         sys.exit()
 
     # read in format 2 cameras
     if (ARGS.format_2 == "mvsnet"):
-        cams_2 = load_mvsnet_cams(ARGS.data_path_2)
+        cams_2 = read_mvsnet_cams(ARGS.data_path_2)
     elif(ARGS.format_2 == "colmap"):
-        cams_2 = load_colmap_cams(ARGS.data_path_2)
+        cams_2 = read_colmap_cams(ARGS.data_path_2)
     else:
         print("ERROR: unknown format type '{}'".format(form))
         sys.exit()

@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import re
 from scipy.linalg import null_space
+from scipy.spatial.transform import Rotation
 
 def camera_center(cam):
     C = null_space(cam[:3,:4])
@@ -30,7 +31,6 @@ def compute_relative_transform(cams_1, cams_2, A):
 
     # compute the scale based on the baseline ratio
     scale = baseline_2/baseline_1
-    print("Scale: ", scale)
 
     ### determine 1->2 Rotation 
     b1 = np.array([c[:3] for c in centers_1])
@@ -52,7 +52,6 @@ def compute_relative_transform(cams_1, cams_2, A):
 
     ### apply additional alignment
     M = A@M
-    print("Resulting Transformation:\n", M)
 
     return M
 
