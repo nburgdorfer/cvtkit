@@ -1,13 +1,36 @@
+# geometry/ g2d.py
+
+"""Module including routines based in 2D geometry.
+
+This 2D geometry module contains functions that
+
+This module contains the following functions:
+
+- `match_features(query_img, train_img, max_features)` - .
+"""
+
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import open3d as o3d
 import os
 import sys
+from typing import Tuple
 
 from common.io import *
 
-def match_features(query_img, train_img, max_features=500):
+def match_features(query_img: np.ndarray, train_img: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
+    """Computer matching ORB features between a pair of images.
+
+    Args:
+        query_img: The first of a pair of images to compute and match features.
+        train_img: The second of a pair of images to compute and match features.
+        max_features: The maximum number of features to retain.
+
+    Returns:
+        pts1: The set of matched point coordinates for the first image.
+        pts2: The set of matched point coordinates for the second image.
+    """
     query_img_bw = cv2.cvtColor(query_img,cv2.COLOR_BGR2GRAY)
     train_img_bw = cv2.cvtColor(train_img, cv2.COLOR_BGR2GRAY)
       

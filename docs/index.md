@@ -14,6 +14,20 @@ Quickly find what you're looking for depending on
 your use case by looking at the different pages.
 
 ## Project Overview
+Here we show a brief overview of the CVT library, listing the sub-packages and the modules they include.
 
+### Common
 ::: cvt.common
+
+### Datasets
+::: cvt.datasets
+
+### Geometry
+::: cvt.geometry
+
+### Metrics
+::: cvt.metrics
+
+### Visualization
+::: cvt.visualization
 

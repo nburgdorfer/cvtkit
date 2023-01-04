@@ -1,3 +1,14 @@
+# visualization/__init__.py
+
+"""Sub-package including functions used for visualization.
+
+This sub-package includes the following modules:
+
+- `latex`: Latex visaul creation functions.
+- `util`: General visualization utilities.
+- `video`: Video-based visualization functions.
+"""
+
 import os
 import sys
 
@@ -9,6 +20,6 @@ RENDERING_ROOT=os.path.abspath(os.path.join(SRC_ROOT, "cpp/rendering/build/"))
 sys.path.append(PYTHON_ROOT)
 sys.path.append(RENDERING_ROOT)
 
-from .latex_util import *
+from .latex import *
 from .util import *
 from .video import *

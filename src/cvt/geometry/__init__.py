@@ -1,3 +1,13 @@
+# geometry/__init__.py
+
+"""Sub-package including functions relating to 2D and 3D geometry.
+
+This sub-package includes the following modules:
+
+- `g2d`: 2D geometric functions.
+- `g3d`: 3D geometric functions.
+"""
+
 import os
 import sys
 
@@ -10,5 +20,5 @@ sys.path.append(PYTHON_ROOT)
 sys.path.append(RENDERING_ROOT)
 
 
-from .geometry_2d import *
-from .geometry_3d import *
+from .g2d import *
+from .g3d import *

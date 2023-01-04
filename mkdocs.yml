@@ -9,6 +9,23 @@ nav:
     - API Reference: 
         - Common: 
             - Camera: api/common_camera.md
+            - Input/Output: api/common_io.md
+            - Utility: api/common_util.md
+        - Datasets:
+            - DTU: api/datasets_dtu.md
+            - Tanks \& Temples: api/datasets_tanks.md
+            - BlendedMVS: api/datasets_blended.md
+        - Geometry:
+            - 2D Geometry: api/geometry_g2d.md
+            - 3D Geometry: api/geometry_g3d.md
+        - Metrics:
+            - 2D Metrics: api/metrics_m2d.md
+            - 3D Metrics: api/metrics_m3d.md
+            - Utilities: api/metrics_util.md
+        - Visualization:
+            - Latex: api/visualization_latex.md
+            - Utilities: api/visualization_util.md
+            - Video: api/visualization_video.md
     - Explanation: explanation.md
     - Development:
         - Contributing: contrib.md

@@ -1,8 +1,8 @@
 # common/camera.py
 
-"""A suit of common camera utilities.
+"""A suite of common camera utilities.
 
-This module include several functions for manipulating and extracting information
+This module includes several functions for manipulating and extracting information
 from camera intrinsics and extrinsics, as well as converting between specific
 formats.
 
@@ -26,10 +26,10 @@ def camera_center(cam: np.ndarray) -> np.ndarray:
     """Computes the center of a camera in world coordinates.
 
     Args:
-        cam: The extrinsics (4x4) matrix of a given camera.
+        cam: The extrinsics matrix (4x4) of a given camera.
 
     Returns:
-        The camera center (3x1) in world coordinates.
+        The camera center vector (3x1) in world coordinates.
     """
     C = null_space(cam[:3,:4])
     C /= C[3,:]
@@ -40,11 +40,11 @@ def relative_transform(cams_1: np.ndarray, cams_2: np.ndarray) -> np.ndarray:
     """Computes the relative transformation between two sets of cameras.
 
     Args:
-        cams_1: List of the first set of cameras.
-        cams_2: List of the second set of cameras.
+        cams_1: Array of the first set of cameras (Nx4x4).
+        cams_2: Array of the second set of cameras (Nx4x4).
 
     Returns:
-        The relative transformation between the two trajectories.
+        The relative transformation matrix (4x4) between the two trajectories.
     """
     centers_1 = np.squeeze(np.array([ camera_center(c) for c in cams_1 ]), axis=2)
     centers_2 = np.squeeze(np.array([ camera_center(c) for c in cams_2 ]), axis=2)
@@ -86,15 +86,17 @@ def relative_transform(cams_1: np.ndarray, cams_2: np.ndarray) -> np.ndarray:
     return M
 
 
-def convert_to_log(cams, output_file, alignment):
+def sfm_to_trajectory(cams: np.ndarray, log_file: str) -> None:
+    """Convert a set of cameras from SFM format to Trajectory File format.
+
+    Args:
+        cams: Array of camera extrinsics (Nx4x4) to be converted.
+        log_file: Output path to the *.log file that is to be created.
+    """
     num_cams = len(cams)
 
-    # write cameras into .log file
     with open(output_file, 'w') as f:
         for i,cam in enumerate(cams):
-            # apply alignment transformation
-            cam = alignment @ cam
-
             # write camera to output_file
             f.write("{} {} 0\n".format(str(i),str(i)))
             for row in cam:
@@ -104,8 +106,14 @@ def convert_to_log(cams, output_file, alignment):
         
     return
 
-def convert_from_log(log_file, output_path, old_cam_path):
-    # write cameras into .log file
+def trajectory_to_sfm(log_file: str, camera_path: str, intrinsics: np.ndarray) -> None:
+    """Convert a set of cameras from Trajectory File format to SFM format.
+
+    Args:
+        log_file: Input *.log file that stores the trajectory information.
+        camera_path: Output path where the SFM camera files will be written.
+        intrinsics: Array of intrinsics matrices (Nx3x3) for each camera.
+    """
     with open(log_file, 'r') as f:
         lines = f.readlines()
         num_lines = len(lines)
@@ -122,92 +130,10 @@ def convert_from_log(log_file, output_path, old_cam_path):
             cam[0,:,:] = np.linalg.inv(cam[0,:,:])
 
             cam_file = "{:08d}_cam.txt".format(view_num)
-            old_cam  = load_cam(os.path.join(old_cam_path,cam_file), 256)
-            new_cam_path = os.path.join(output_path, cam_file)
+            cam_path = os.path.join(camera_path, cam_file)
 
-            cam[1,:,:] = old_cam[1,:,:]
+            cam[1,:,:] = intrinsics[view_num]
 
-            write_cam(new_cam_path, cam)
+            write_cam(cam_path, cam)
             i = i+5
     return
-
-
-
-def build_pyr_point_cloud(pyr_pts, filename):
-    num_pts = len(pyr_pts)
-    element_vertex = 6*num_pts
-    element_edge = 10*num_pts
-
-    with open(filename, 'w') as fh:
-        # write header meta-data
-        fh.write('ply\n')
-        fh.write('format ascii 1.0\n')
-        fh.write('comment Right-Handed System\n')
-        fh.write('element vertex {}\n'.format(element_vertex))
-        fh.write('property float x\n')
-        fh.write('property float y\n')
-        fh.write('property float z\n')
-        fh.write('property uchar red\n')
-        fh.write('property uchar green\n')
-        fh.write('property uchar blue\n')
-        fh.write('element edge {}\n'.format(element_edge))
-        fh.write('property int vertex1\n')
-        fh.write('property int vertex2\n')
-        fh.write('property uchar red\n')
-        fh.write('property uchar green\n')
-        fh.write('property uchar blue\n')
-        fh.write('end_header\n')
-
-        # write vertex data to file
-        for pt in pyr_pts:
-            fh.write('{:.10f}'.format( pt[0][0][0] ) + ' ' + '{:.10f}'.format( pt[0][1][0] ) + ' ' + '{:.10f}'.format( pt[0][2][0] ) + ' 255 128 0\n')
-            fh.write('{:.10f}'.format( pt[1][0][0] ) + ' ' + '{:.10f}'.format( pt[1][1][0] ) + ' ' + '{:.10f}'.format( pt[1][2][0] ) + ' 255 128 0\n')
-            fh.write('{:.10f}'.format( pt[2][0][0] ) + ' ' + '{:.10f}'.format( pt[2][1][0] ) + ' ' + '{:.10f}'.format( pt[2][2][0] ) + ' 255 128 0\n')
-            fh.write('{:.10f}'.format( pt[3][0][0] ) + ' ' + '{:.10f}'.format( pt[3][1][0] ) + ' ' + '{:.10f}'.format( pt[3][2][0] ) + ' 255 128 0\n')
-            fh.write('{:.10f}'.format( pt[4][0][0] ) + ' ' + '{:.10f}'.format( pt[4][1][0] ) + ' ' + '{:.10f}'.format( pt[4][2][0] ) + ' 255 128 0\n')
-            fh.write('{:.10f}'.format( pt[5][0][0] ) + ' ' + '{:.10f}'.format( pt[5][1][0] ) + ' ' + '{:.10f}'.format( pt[5][2][0] ) + ' 255 128 0\n')
-
-        # write edge data to file
-        for i in range(num_pts):
-            edge_ind = i*6
-            fh.write('{} {} 255 0 0\n'.format(edge_ind, edge_ind+1))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind, edge_ind+2))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind, edge_ind+3))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind, edge_ind+4))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind+1, edge_ind+2))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind+2, edge_ind+3))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind+3, edge_ind+4))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind+4, edge_ind+1))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind+1, edge_ind+5))
-            fh.write('{} {} 255 0 0\n'.format(edge_ind+5, edge_ind+2))
-    return
-
-def build_cam_pyr(cam_scale, K):
-    focallen   = K[0][0]
-    cam_w      = 2 * K[0][2]
-    cam_h      = 2 * K[1][2]
-    cam_center = np.array([0.0,          0.0,          0.0,      1.0])
-    cam_ul     = np.array([cam_w * -0.5, cam_h * -0.5, focallen, 1.0])
-    cam_ur     = np.array([cam_w *  0.5, cam_h * -0.5, focallen, 1.0])
-    cam_dr     = np.array([cam_w *  0.5, cam_h *  0.5, focallen, 1.0])
-    cam_dl     = np.array([cam_w * -0.5, cam_h *  0.5, focallen, 1.0])
-    cam_top    = np.array([0.0,          cam_h * -0.7, focallen, 1.0])
-    cam_center *= cam_scale
-    cam_ul     *= cam_scale
-    cam_ur     *= cam_scale
-    cam_dr     *= cam_scale
-    cam_dl     *= cam_scale
-    cam_top    *= cam_scale
-    cam_center[3] = 1.0
-    cam_ul[3]     = 1.0
-    cam_ur[3]     = 1.0
-    cam_dr[3]     = 1.0
-    cam_dl[3]     = 1.0
-    cam_top[3]    = 1.0
-    cam_center = cam_center.reshape((4, 1))
-    cam_ul     = cam_ul.reshape((4, 1))
-    cam_ur     = cam_ur.reshape((4, 1))
-    cam_dr     = cam_dr.reshape((4, 1))
-    cam_dl     = cam_dl.reshape((4, 1))
-    cam_top    = cam_top.reshape((4, 1))
-    return [cam_center, cam_ul, cam_ur, cam_dr, cam_dl, cam_top]
