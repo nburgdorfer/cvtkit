@@ -9,24 +9,24 @@
       
       
       
-        <link rel="prev" href="../api/visualization_video/">
+        <link rel="prev" href="../geometry_g2d/">
       
       
-        <link rel="next" href="../contrib/">
+        <link rel="next" href="../metrics_m2d/">
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.1">
     
     
       
-        <title>Explanation - Computer Vision Toolkit Docs</title>
+        <title>3D Geometry - Computer Vision Toolkit Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.3bd4f189.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.3bd4f189.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
       
       
 
@@ -42,9 +42,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,6 +72,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#cvt.geometry.g3d" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -84,7 +89,7 @@
 
 <header class="md-header md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Computer Vision Toolkit Docs" class="md-header__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
+    <a href="../.." title="Computer Vision Toolkit Docs" class="md-header__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -103,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Explanation
+              3D Geometry
             
           </span>
         </div>
@@ -162,7 +167,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         Home
       </a>
     </li>
@@ -175,7 +180,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../tutorials/" class="md-tabs__link">
+    <a href="../../tutorials/" class="md-tabs__link">
       Tutorials
     </a>
   </li>
@@ -187,7 +192,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../how_to_guides/" class="md-tabs__link">
+    <a href="../../how_to_guides/" class="md-tabs__link">
       How-To Guides
     </a>
   </li>
@@ -195,6 +200,8 @@
       
         
   
+  
+    
   
 
 
@@ -207,7 +214,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../api/common_camera/" class="md-tabs__link">
+      <a href="../common_camera/" class="md-tabs__link md-tabs__link--active">
         API Reference
       </a>
     </li>
@@ -219,12 +226,10 @@
         
   
   
-    
-  
 
 
   <li class="md-tabs__item">
-    <a href="./" class="md-tabs__link md-tabs__link--active">
+    <a href="../../explanation/" class="md-tabs__link">
       Explanation
     </a>
   </li>
@@ -239,7 +244,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../contrib/" class="md-tabs__link">
+      <a href="../../contrib/" class="md-tabs__link">
         Development
       </a>
     </li>
@@ -273,7 +278,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Computer Vision Toolkit Docs" class="md-nav__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
+    <a href="../.." title="Computer Vision Toolkit Docs" class="md-nav__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -330,7 +335,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -352,7 +357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorials/" class="md-nav__link">
+      <a href="../../tutorials/" class="md-nav__link">
         Tutorials
       </a>
     </li>
@@ -367,7 +372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how_to_guides/" class="md-nav__link">
+      <a href="../../how_to_guides/" class="md-nav__link">
         How-To Guides
       </a>
     </li>
@@ -380,12 +385,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
       
       
       
@@ -434,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/common_camera/" class="md-nav__link">
+      <a href="../common_camera/" class="md-nav__link">
         Camera
       </a>
     </li>
@@ -448,7 +455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/common_io/" class="md-nav__link">
+      <a href="../common_io/" class="md-nav__link">
         Input/Output
       </a>
     </li>
@@ -462,7 +469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/common_util/" class="md-nav__link">
+      <a href="../common_util/" class="md-nav__link">
         Utility
       </a>
     </li>
@@ -509,7 +516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/datasets_dtu/" class="md-nav__link">
+      <a href="../datasets_dtu/" class="md-nav__link">
         DTU
       </a>
     </li>
@@ -523,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/datasets_tanks/" class="md-nav__link">
+      <a href="../datasets_tanks/" class="md-nav__link">
         Tanks \& Temples
       </a>
     </li>
@@ -537,7 +544,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/datasets_blended/" class="md-nav__link">
+      <a href="../datasets_blended/" class="md-nav__link">
         BlendedMVS
       </a>
     </li>
@@ -556,12 +563,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" checked>
       
       
       
@@ -584,7 +593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/geometry_g2d/" class="md-nav__link">
+      <a href="../geometry_g2d/" class="md-nav__link">
         2D Geometry
       </a>
     </li>
@@ -596,11 +605,48 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../api/geometry_g3d/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          3D Geometry
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         3D Geometry
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.geometry.g3d" class="md-nav__link">
+    cvt.geometry.g3d
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -645,7 +691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/metrics_m2d/" class="md-nav__link">
+      <a href="../metrics_m2d/" class="md-nav__link">
         2D Metrics
       </a>
     </li>
@@ -659,7 +705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/metrics_m3d/" class="md-nav__link">
+      <a href="../metrics_m3d/" class="md-nav__link">
         3D Metrics
       </a>
     </li>
@@ -673,7 +719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/metrics_util/" class="md-nav__link">
+      <a href="../metrics_util/" class="md-nav__link">
         Utilities
       </a>
     </li>
@@ -720,7 +766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/visualization_latex/" class="md-nav__link">
+      <a href="../visualization_latex/" class="md-nav__link">
         Latex
       </a>
     </li>
@@ -734,7 +780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/visualization_util/" class="md-nav__link">
+      <a href="../visualization_util/" class="md-nav__link">
         Utilities
       </a>
     </li>
@@ -748,7 +794,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/visualization_video/" class="md-nav__link">
+      <a href="../visualization_video/" class="md-nav__link">
         Video
       </a>
     </li>
@@ -775,19 +821,11 @@
 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../explanation/" class="md-nav__link">
         Explanation
       </a>
-      
     </li>
   
 
@@ -826,7 +864,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contrib/" class="md-nav__link">
+      <a href="../../contrib/" class="md-nav__link">
         Contributing
       </a>
     </li>
@@ -840,7 +878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../conduct/" class="md-nav__link">
+      <a href="../../conduct/" class="md-nav__link">
         Code of Conduct
       </a>
     </li>
@@ -872,6 +910,21 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.geometry.g3d" class="md-nav__link">
+    cvt.geometry.g3d
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -889,7 +942,33 @@
 
 
 
+  <h1>3D Geometry</h1>
 
+<div class="doc doc-object doc-module">
+
+
+<a id="cvt.geometry.g3d"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -932,10 +1011,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
     
   </body>
