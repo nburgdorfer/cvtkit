@@ -1,12 +1,19 @@
-# geometry/ g2d.py
+# geometry/g2d.py
 
 """Module including routines based in 2D geometry.
 
-This 2D geometry module contains functions that
-
 This module contains the following functions:
 
-- `match_features(query_img, train_img, max_features)` - .
+- `essential_from_features(src_image_file, tgt_image_file, K)` - Computes the essential matrix between two images using image features.
+- `fundamental_from_KP(K, P_src, P_tgt)` - Computes the fundamental matrix between two images using camera parameters.
+- `fundamental_from_features(src_image_file, tgt_image_file)` - Computes the fundamental matrix between two images using image features.
+- `geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)` - Computes the geometric consistency mask between a source and target depth map.
+- `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
+- `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
+- `point_cloud_from_depth(depth, cam, color)` - Creates a point cloud from a single depth map.
+- `render_point_cloud(cloud, cam, width, height)` - Renders a point cloud into a 2D image plane.
+- `reproject(src_depth, src_cam, tgt_depth, tgt_cam)` - Computes the re-projection depth values and pixel indices between two depth maps.
+- `visibility_mask(src_depth, src_cam, depth_files, cam_files, src_ind=-1, pixel_th=0.1)` - Computes a visibility mask between a provided source depth map and list of target depth maps.
 """
 
 import numpy as np
@@ -15,102 +22,130 @@ import matplotlib.pyplot as plt
 import open3d as o3d
 import os
 import sys
-from typing import Tuple
+from typing import Tuple, List
 
 from common.io import *
 
-def match_features(query_img: np.ndarray, train_img: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
+def match_features(src_image: np.ndarray, tgt_image: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
     """Computer matching ORB features between a pair of images.
 
     Args:
-        query_img: The first of a pair of images to compute and match features.
-        train_img: The second of a pair of images to compute and match features.
+        src_image: The source image to compute and match features.
+        tgt_image: The target image to compute and match features.
         max_features: The maximum number of features to retain.
 
     Returns:
-        pts1: The set of matched point coordinates for the first image.
-        pts2: The set of matched point coordinates for the second image.
+        src_points: The set of matched point coordinates for the source image.
+        tgt_points: The set of matched point coordinates for the target image.
     """
-    query_img_bw = cv2.cvtColor(query_img,cv2.COLOR_BGR2GRAY)
-    train_img_bw = cv2.cvtColor(train_img, cv2.COLOR_BGR2GRAY)
+    src_image = cv2.cvtColor(src_image,cv2.COLOR_BGR2GRAY)
+    tgt_image = cv2.cvtColor(tgt_image, cv2.COLOR_BGR2GRAY)
       
     orb = cv2.ORB_create(max_features)
       
-    queryKeypoints, queryDescriptors = orb.detectAndCompute(query_img_bw,None)
-    trainKeypoints, trainDescriptors = orb.detectAndCompute(train_img_bw,None)
+    src_keypoints, src_descriptors = orb.detectAndCompute(src_image,None)
+    tgt_keypoints, tgt_descriptors = orb.detectAndCompute(tgt_image,None)
 
     matcher = cv2.BFMatcher(crossCheck=True)
-    matches = list(matcher.match(queryDescriptors,trainDescriptors) )
+    matches = list(matcher.match(src_descriptors, tgt_descriptors) )
     matches.sort(key = lambda x:x.distance)
 
-    pts1 = []
-    pts2 = []
+    src_points = []
+    tgt_points = []
     for i in range(8):
         m = matches[i]
 
-        pts2.append(trainKeypoints[m.trainIdx].pt)
-        pts1.append(queryKeypoints[m.queryIdx].pt)
-    pts1  = np.asarray(pts1)
-    pts2 = np.asarray(pts2)
+        src_points.append(src_keypoints[m.queryIdx].pt)
+        tgt_points.append(tgt_keypoints[m.trainIdx].pt)
+    src_points  = np.asarray(src_points)
+    tgt_points = np.asarray(tgt_points)
 
-    return (pts1, pts2)
+    return (src_points, tgt_points)
 
-def compute_homography(img1_filename, img2_filename):
-    img1 = cv2.imread(img1_filename)
-    img2 = cv2.imread(img2_filename)
+def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
+    """Computes a homography transformation between two images using image features.
 
-    (height, width, _) = img1.shape
+    Parameters:
+        src_image_file: Input file for the source image.
+        tgt_image_file: Input file for the target image.
 
-    (pts1, pts2) = match_features(img1, img2)
+    Returns:
+        The homography matrix to warp the target image to the source image.
+    """
+    src_image = cv2.imread(src_image_file)
+    tgt_image = cv2.imread(tgt_image_file)
+
+    (height, width, _) = src_image.shape
+
+    (src_points, tgt_points) = match_features(src_image, tgt_image)
 
     # Compute fundamental matrix
-    H, mask = cv2.findHomography(pts2, pts1, method=cv2.RANSAC)
-
-    #warped_img = np.zeros((height,width))
-    #warped_img = cv2.warpPerspective(src=img2, M=H, dsize=(width,height))
-    #cv2.imwrite("data/warped.png", warped_img)
+    H, mask = cv2.findHomography(tgt_points, src_points, method=cv2.RANSAC)
 
     return H
 
-def compute_essential_matrix(img1_filename, img2_filename, K):
-    img1 = cv2.imread(img1_filename)
-    img2 = cv2.imread(img2_filename)
+def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
+    """Computes the essential matrix between two images using image features.
+
+    Parameters:
+        src_image_file: Input file for the source image.
+        tgt_image_file: Input file for the target image.
+        K: Intrinsics matrix of the two cameras (assumed to be constant between views).
+
+    Returns:
+        The essential matrix betweent the two image views.
+    """
+    src_image = cv2.imread(src_image_file)
+    tgt_image = cv2.imread(tgt_image_file)
 
     # compute matching features
-    (pts1, pts2) = match_features(img1, img2)
+    (src_points, tgt_points) = match_features(src_image, tgt_image)
 
     # Compute fundamental matrix
-    E, mask = cv2.findEssentialMat(pts1, pts2, K, method=cv2.RANSAC)
-
-    # decompose into rotation / translation
-    R1, R2, t = cv2.decomposeEssentialMat(E)
-    print(R1)
-    print(R2)
-    print(t)
+    E, mask = cv2.findEssentialMat(src_points, tgt_points, K, method=cv2.RANSAC)
 
     return E
 
-def fundamental_from_features(img1_filename, img2_filename):
-    img1 = cv2.imread(img1_filename)
-    img2 = cv2.imread(img2_filename)
+def fundamental_from_features(src_image_file: str, tgt_image_file: str) -> np.ndarray:
+    """Computes the fundamental matrix between two images using image features.
+
+    Parameters:
+        src_image_file: Input file for the source image.
+        tgt_image_file: Input file for the target image.
+
+    Returns:
+        The fundamental matrix betweent the two image views.
+    """
+    src_image = cv2.imread(src_image_file)
+    tgt_image = cv2.imread(tgt_image_file)
 
     # compute matching features
-    (pts1, pts2) = match_features(img1, img2)
+    (src_points, tgt_points) = match_features(src_image, tgt_image)
     
     # Compute fundamental matrix
-    F, mask = cv2.findFundamentalMat(pts1,pts2,cv2.FM_8POINT)
+    F, mask = cv2.findFundamentalMat(src_points,tgt_points,cv2.FM_8POINT)
+
     return F
 
-def fundamentalFromKP(K,P1,P2) :
-    R1 = P1[0:3,0:3]
-    t1 = P1[0:3,3]
-    R2 = P2[0:3,0:3]
-    t2 = P2[0:3,3]
+def fundamental_from_KP(K: np.ndarray, P_src: np.ndarray, P_tgt: np.ndarray) -> np.ndarray:
+    """Computes the fundamental matrix between two images using camera parameters.
+
+    Parameters:
+        K: Intrinsics matrix of the two cameras (assumed to be constant between views).
+        P_src: Extrinsics matrix for the source view.
+        P_tgt: Extrinsics matrix for the target view.
+
+    Returns:
+        The fundamental matrix betweent the two cameras.
+    """
+    R1 = P_src[0:3,0:3]
+    t1 = P_src[0:3,3]
+    R2 = P_tgt[0:3,0:3]
+    t2 = P_tgt[0:3,3]
 
     t1aug = np.array([t1[0], t1[1], t1[2], 1])
-    epi2 = np.matmul(P2,t1aug)
+    epi2 = np.matmul(P_tgt,t1aug)
     epi2 = np.matmul(K,epi2[0:3])
-    print('epipole 2: {} {}'.format(epi2[0]/epi2[2],epi2[1]/epi2[2]))
 
     R = np.matmul(R2,np.transpose(R1))
     t= t2- np.matmul(R,t1)
@@ -119,70 +154,122 @@ def fundamentalFromKP(K,P1,P2) :
     tx = np.array([[0, -t[2], t[1]], [t[2], 0, -t[0]], [-t[1], t[0], 0]])
     F = np.matmul(K2invT,np.matmul(tx,np.matmul(R,K1inv)))
     F = F/np.amax(F)
+
     return F
 
 
+def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray) -> Tuple[ np.ndarray,
+                                                                                                                np.ndarray,
+                                                                                                                np.ndarray,
+                                                                                                                np.ndarray,
+                                                                                                                np.ndarray]:
+    """Computes the re-projection depth values and pixel indices between two depth maps.
 
-def reproject_with_depth(ref_depth, ref_cam, src_depth, src_cam):
-    height, width = ref_depth.shape
+    This function takes as input two depth maps: 'src_depth' and 'tgt_depth'. The source 
+    depth map is first projected into the target camera plane using the source depth
+    values and the camera parameters for both views. Using the projected pixel
+    coordinates in the target view, the target depths are then re-projected back into
+    the source camera plane (again with the camera parameters for both views). The
+    information prouced from this process is often used to compute errors in 
+    re-projection between two depth maps, or similar operations.
+
+    Parameters:
+        src_depth: Source depth map to be projected.
+        src_cam: Camera parameters for the source depth map viewpoint.
+        tgt_depth: Target depth map used for re-projection.
+        tgt_cam: Camera parameters for the target depth map viewpoint.
+
+    Returns:
+        depth_reprojected: The re-projected depth values for the source depth map.
+        x_reprojected: The re-projection x-coordinates for the source view.
+        y_reprojected: The re-projected y-coordinates for the source view.
+        x_tgt: The projected x-coordinates for the target view.
+        y_tgt: The projected y-coordinates for the target view.
+    """
+    height, width = src_depth.shape
 
     # back-project ref depths to 3D
-    x_ref, y_ref = np.meshgrid(np.arange(0, width), np.arange(0, height))
-    x_ref, y_ref = x_ref.reshape([-1]), y_ref.reshape([-1])
-    xyz_ref = np.matmul(np.linalg.inv(ref_cam[1,:3,:3]),
-                        np.vstack((x_ref, y_ref, np.ones_like(x_ref))) * ref_depth.reshape([-1]))
+    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
+    x_src, y_src = x_src.reshape([-1]), y_src.reshape([-1])
+    xyz_src = np.matmul(np.linalg.inv(src_cam[1,:3,:3]),
+                        np.vstack((x_src, y_src, np.ones_like(x_src))) * src_depth.reshape([-1]))
 
     # transform 3D points from ref to src coords
-    xyz_src = np.matmul(np.matmul(src_cam[0], np.linalg.inv(ref_cam[0])),
-                        np.vstack((xyz_ref, np.ones_like(x_ref))))[:3]
+    xyz_tgt = np.matmul(np.matmul(tgt_cam[0], np.linalg.inv(src_cam[0])),
+                        np.vstack((xyz_src, np.ones_like(x_src))))[:3]
 
     # project src 3D points into pixel coords
-    K_xyz_src = np.matmul(src_cam[1,:3,:3], xyz_src)
-    xy_src = K_xyz_src[:2] / K_xyz_src[2:3]
-    x_src = xy_src[0].reshape([height, width]).astype(np.float32)
-    y_src = xy_src[1].reshape([height, width]).astype(np.float32)
+    K_xyz_tgt = np.matmul(tgt_cam[1,:3,:3], xyz_tgt)
+    xy_tgt = K_xyz_tgt[:2] / K_xyz_tgt[2:3]
+    x_tgt = xy_tgt[0].reshape([height, width]).astype(np.float32)
+    y_tgt = xy_tgt[1].reshape([height, width]).astype(np.float32)
 
     # sample the depth values from the src map at each pixel coord
-    sampled_depth_src = cv2.remap(src_depth, x_src, y_src, interpolation=cv2.INTER_LINEAR)
+    sampled_depth_tgt = cv2.remap(tgt_depth, x_tgt, y_tgt, interpolation=cv2.INTER_LINEAR)
 
     # back-project src depths to 3D
-    xyz_src = np.matmul(np.linalg.inv(src_cam[1,:3,:3]),
-                        np.vstack((xy_src, np.ones_like(x_ref))) * sampled_depth_src.reshape([-1]))
+    xyz_tgt = np.matmul(np.linalg.inv(tgt_cam[1,:3,:3]),
+                        np.vstack((xy_tgt, np.ones_like(x_src))) * sampled_depth_tgt.reshape([-1]))
 
     # transform 3D points from src to ref coords
-    xyz_reprojected = np.matmul(np.matmul(ref_cam[0], np.linalg.inv(src_cam[0])),
-                                np.vstack((xyz_src, np.ones_like(x_ref))))[:3]
+    xyz_reprojected = np.matmul(np.matmul(src_cam[0], np.linalg.inv(tgt_cam[0])),
+                                np.vstack((xyz_tgt, np.ones_like(x_src))))[:3]
 
     # extract reprojected depth values
     depth_reprojected = xyz_reprojected[2].reshape([height, width]).astype(np.float32)
 
     # project ref 3D points into pixel coords
-    K_xyz_reprojected = np.matmul(ref_cam[1,:3,:3], xyz_reprojected)
+    K_xyz_reprojected = np.matmul(src_cam[1,:3,:3], xyz_reprojected)
     xy_reprojected = K_xyz_reprojected[:2] / (K_xyz_reprojected[2:3] + 1e-7)
     x_reprojected = xy_reprojected[0].reshape([height, width]).astype(np.float32)
     y_reprojected = xy_reprojected[1].reshape([height, width]).astype(np.float32)
 
-    return depth_reprojected, x_reprojected, y_reprojected, x_src, y_src
+    return depth_reprojected, x_reprojected, y_reprojected, x_tgt, y_tgt
 
 
-def check_geometric_consistency(ref_depth, ref_cam, src_depth, src_cam, pix_th):
-    height, width = ref_depth.shape
-    x_ref, y_ref = np.meshgrid(np.arange(0, width), np.arange(0, height))
+def geometric_consistency_mask(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray, pixel_th: float) -> np.ndarray:
+    """Computes the geometric consistency mask between a source and target depth map.
 
-    depth_reprojected, x2d_reprojected, y2d_reprojected, x2d_src, y2d_src = reproject_with_depth(ref_depth, ref_cam, src_depth, src_cam)
+    Parameters:
+        src_depth: Depth map for the source view.
+        src_cam: Camera parameters for the source depth map viewpoint.
+        tgt_depth: Depth map for the target view.
+        tgt_cam: Camera parameters for the target depth map viewpoint.
+        pixel_th: Pixel re-projection threshold to determine matching depth estimates.
 
-    dist = np.sqrt((x2d_reprojected - x_ref) ** 2 + (y2d_reprojected - y_ref) ** 2)
-    mask = np.where(dist < pix_th, 1, 0)
+    Returns:
+        The binary consistency mask encoding depth consensus between source and target depth maps.
+    """
+    height, width = src_depth.shape
+    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
+
+    depth_reprojected, x2d_reprojected, y2d_reprojected, x2d_tgt, y2d_tgt = reproject(src_depth, src_cam, tgt_depth, tgt_cam)
+
+    dist = np.sqrt((x2d_reprojected - x_src) ** 2 + (y2d_reprojected - y_src) ** 2)
+    mask = np.where(dist < pixel_th, 1, 0)
 
     return mask
 
 
-def visibility(ref_depth, ref_cam, depth_files, cam_files, ref_ind, pix_th=0.1):
-    height, width = ref_depth.shape
-    vis_map = np.not_equal(ref_depth, 0.0).astype(np.double)
+def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: List[str], cam_files: List[str], src_ind: int = -1, pixel_th: float = 0.1) -> np.ndarray:
+    """Computes a visibility mask between a provided source depth map and list of target depth maps.
+
+    Parameters:
+        src_depth: Depth map for the source view.
+        src_cam: Camera parameters for the source depth map viewpoint.
+        depth_files: List of target depth maps.
+        cam_files: List of corresponding target camera parameters for each targte depth map viewpoint.
+        src_ind: Index into 'depth_files' corresponding to the source depth map (if included in the list).
+        pixel_th: Pixel re-projection threshold to determine matching depth estimates.
+
+    Returns:
+        The visibility mask for the source view.
+    """
+    height, width = src_depth.shape
+    vis_map = np.not_equal(src_depth, 0.0).astype(np.double)
 
     for i in range(len(depth_files)):
-        if (i==ref_ind):
+        if (i==src_ind):
             continue
 
         # get files
@@ -190,35 +277,54 @@ def visibility(ref_depth, ref_cam, depth_files, cam_files, ref_ind, pix_th=0.1):
         scf = cam_files[i]
 
         # load data
-        src_depth = read_pfm(sdf)
-        src_cam = read_cam(open(scf,'r'))
+        tgt_depth = read_pfm(sdf)
+        tgt_cam = read_cam(open(scf,'r'))
 
-        mask = check_geometric_consistency(ref_depth, ref_cam, src_depth, src_cam, pix_th)
+        mask = geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)
         vis_map += mask
 
     return vis_map.astype(np.float32)
 
-def project_ply(ply, dists, cam, width, height):
+def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: int, height: int) -> np.ndarray:
+    """Renders a point cloud into a 2D image plane.
 
-    cmap = plt.get_cmap("hot_r")
-    colors = cmap(dists)[:, :3]
-    ply.colors = o3d.utility.Vector3dVector(colors)
+    Parameters:
+        cloud: Point cloud to be rendered.
+        cam: Camera parameters for the image plane.
+        width: Desired width of the rendered image.
+        height: Desired height of the rendered image.
+
+    Returns:
+        The rendered image for the point cloud at the specified camera viewpoint.
+    """
+    #   cmap = plt.get_cmap("hot_r")
+    #   colors = cmap(dists)[:, :3]
+    #   ply.colors = o3d.utility.Vector3dVector(colors)
 
     # set up the renderer
     render = o3d.visualization.rendering.OffscreenRenderer(width, height)
     mat = o3d.visualization.rendering.MaterialRecord()
     mat.shader = 'defaultUnlit'
-    render.scene.add_geometry("cloud", ply, mat)
+    render.scene.add_geometry("cloud", cloud, mat)
     render.scene.set_background(np.asarray([0,0,0,1])) #r,g,b,a
     intrins = o3d.camera.PinholeCameraIntrinsic(width, height, cam[1,0,0], cam[1,1,1], cam[1,0,2], cam[1,1,2])
     render.setup_camera(intrins, cam[0])
+
+    # render image
     image = np.asarray(render.render_to_image())
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    return image    
+    return image
 
-def build_cloud(depth, cam, view_vec):
-    ply = o3d.geometry.PointCloud()
+def point_cloud_from_depth(depth: np.ndarray, cam: np.ndarray, color: np.ndarray) -> o3d.geometry.PointCloud:
+    """Creates a point cloud from a single depth map.
+
+    Parameters:
+        depth: Depth map to project to 3D.
+        cam: Camera parameters for the given depth map viewpoint.
+        color: Color [R,G,B] used for all points in the generated point cloud.
+    """
+    cloud = o3d.geometry.PointCloud()
 
     # extract camera params
     height, width = depth.shape
@@ -232,9 +338,11 @@ def build_cloud(depth, cam, view_vec):
     # convert deth to o3d.geometry.Image
     depth_map = o3d.geometry.Image(depth)
 
-    ply = ply.create_from_depth_image(depth_map, intrins, extrins, depth_scale=1.0, depth_trunc=1000)
-    view_colors = o3d.utility.Vector3dVector(np.full((len(ply.points), 3), view_vec))
+    # project depth map to 3D
+    cloud = cloud.create_from_depth_image(depth_map, intrins, extrins, depth_scale=1.0, depth_trunc=1000)
 
-    ply.colors = view_colors
+    # color point cloud
+    colors = o3d.utility.Vector3dVector(np.full((len(ply.points), 3), color))
+    cloud.colors = colors
     
-    return ply
+    return cloud

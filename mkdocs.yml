@@ -4,8 +4,7 @@ site_name: Computer Vision Toolkit Docs
 nav:
     - Home:
         - Overview: index.md
-    - Tutorials: tutorials.md
-    - How-To Guides: how_to_guides.md
+    - Tutorials: tutorials/tutorials.md
     - API Reference: 
         - Common: 
             - Camera: api/common_camera.md
@@ -26,10 +25,11 @@ nav:
             - Latex: api/visualization_latex.md
             - Utilities: api/visualization_util.md
             - Video: api/visualization_video.md
-    - Explanation: explanation.md
+    - Resources:
+        - File Formats: resources/file_formats.md
     - Development:
-        - Contributing: contrib.md
-        - Code of Conduct: conduct.md
+        - Contributing: development/contrib.md
+        - Code of Conduct: development/conduct.md
 
 theme:
     name: "material"
@@ -41,14 +41,14 @@ theme:
       - media: "(prefers-color-scheme: light)"
         scheme: default
         primary: black
-        accent: teal
+        accent: deep purple
         toggle:
             icon: material/lightbulb-outline
             name: Switch to dark mode
 
       - media: "(prefers-color-scheme: dark)"
         scheme: slate
-        primary: black
+        primary: orange
         accent: teal
         toggle:
             icon: material/lightbulb
@@ -56,6 +56,8 @@ theme:
 
 markdown_extensions:
     - admonition
+    - pymdownx.details
+    - pymdownx.superfences
     - attr_list
     - footnotes
     - pymdownx.emoji:
