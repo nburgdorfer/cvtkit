@@ -9,24 +9,24 @@
       
       
       
-        <link rel="prev" href="../../api/visualization_video/">
+        <link rel="prev" href="../api/visualization_video/">
       
       
-        <link rel="next" href="../../development/contrib/">
+        <link rel="next" href="../contrib/">
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.1">
     
     
       
-        <title>File Formats - Computer Vision Toolkit Docs</title>
+        <title>Explanation - Computer Vision Toolkit Docs</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.3bd4f189.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.3bd4f189.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
       
       
 
@@ -42,9 +42,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -61,7 +61,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="teal">
   
     
     
@@ -71,11 +71,6 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#sfm-format" class="md-skip">
-          Skip to content
-        </a>
       
     </div>
     <div data-md-component="announce">
@@ -89,7 +84,7 @@
 
 <header class="md-header md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Computer Vision Toolkit Docs" class="md-header__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
+    <a href=".." title="Computer Vision Toolkit Docs" class="md-header__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -108,7 +103,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              File Formats
+              Explanation
             
           </span>
         </div>
@@ -118,7 +113,7 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
@@ -126,7 +121,7 @@
           
         
           
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
@@ -167,7 +162,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         Home
       </a>
     </li>
@@ -179,15 +174,23 @@
   
 
 
+  <li class="md-tabs__item">
+    <a href="../tutorials/" class="md-tabs__link">
+      Tutorials
+    </a>
+  </li>
+
+      
+        
   
   
-  
-    <li class="md-tabs__item">
-      <a href="../../tutorials/ph/" class="md-tabs__link">
-        Tutorials
-      </a>
-    </li>
-  
+
+
+  <li class="md-tabs__item">
+    <a href="../how_to_guides/" class="md-tabs__link">
+      How-To Guides
+    </a>
+  </li>
 
       
         
@@ -198,11 +201,18 @@
   
   
   
+    
+
+  
+  
+  
     <li class="md-tabs__item">
-      <a href="../../api/overview/" class="md-tabs__link">
+      <a href="../api/common_camera/" class="md-tabs__link">
         API Reference
       </a>
     </li>
+  
+
   
 
       
@@ -213,15 +223,11 @@
   
 
 
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="./" class="md-tabs__link md-tabs__link--active">
-        Resources
-      </a>
-    </li>
-  
+  <li class="md-tabs__item">
+    <a href="./" class="md-tabs__link md-tabs__link--active">
+      Explanation
+    </a>
+  </li>
 
       
         
@@ -233,7 +239,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../development/contrib/" class="md-tabs__link">
+      <a href="../contrib/" class="md-tabs__link">
         Development
       </a>
     </li>
@@ -267,7 +273,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Computer Vision Toolkit Docs" class="md-nav__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
+    <a href=".." title="Computer Vision Toolkit Docs" class="md-nav__button md-logo" aria-label="Computer Vision Toolkit Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -324,7 +330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -345,43 +351,25 @@
   
   
   
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Tutorials
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Tutorials
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../../tutorials/ph/" class="md-nav__link">
-        Placeholder
+      <a href="../tutorials/" class="md-nav__link">
+        Tutorials
       </a>
     </li>
   
 
-            
-          
-        </ul>
-      </nav>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to_guides/" class="md-nav__link">
+        How-To Guides
+      </a>
     </li>
   
 
@@ -397,18 +385,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3">
+        <label class="md-nav__link" for="__nav_4">
           API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
+        <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -419,36 +407,22 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../api/overview/" class="md-nav__link">
-        Overview
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_2">
+        <label class="md-nav__link" for="__nav_4_1">
           Common
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Common" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_2">
+        <label class="md-nav__title" for="__nav_4_1">
           <span class="md-nav__icon md-icon"></span>
           Common
         </label>
@@ -460,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/common_camera/" class="md-nav__link">
+      <a href="../api/common_camera/" class="md-nav__link">
         Camera
       </a>
     </li>
@@ -474,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/common_io/" class="md-nav__link">
+      <a href="../api/common_io/" class="md-nav__link">
         Input/Output
       </a>
     </li>
@@ -488,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/common_util/" class="md-nav__link">
+      <a href="../api/common_util/" class="md-nav__link">
         Utility
       </a>
     </li>
@@ -512,18 +486,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_3">
+        <label class="md-nav__link" for="__nav_4_2">
           Datasets
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Datasets" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_3">
+        <label class="md-nav__title" for="__nav_4_2">
           <span class="md-nav__icon md-icon"></span>
           Datasets
         </label>
@@ -535,21 +509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/datasets_blended/" class="md-nav__link">
-        BlendedMVS
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/datasets_dtu/" class="md-nav__link">
+      <a href="../api/datasets_dtu/" class="md-nav__link">
         DTU
       </a>
     </li>
@@ -563,8 +523,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/datasets_tanks/" class="md-nav__link">
-        Tanks & Temples
+      <a href="../api/datasets_tanks/" class="md-nav__link">
+        Tanks \& Temples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/datasets_blended/" class="md-nav__link">
+        BlendedMVS
       </a>
     </li>
   
@@ -587,18 +561,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_4">
+        <label class="md-nav__link" for="__nav_4_3">
           Geometry
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Geometry" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_4">
+        <label class="md-nav__title" for="__nav_4_3">
           <span class="md-nav__icon md-icon"></span>
           Geometry
         </label>
@@ -610,7 +584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/geometry_g2d/" class="md-nav__link">
+      <a href="../api/geometry_g2d/" class="md-nav__link">
         2D Geometry
       </a>
     </li>
@@ -624,7 +598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/geometry_g3d/" class="md-nav__link">
+      <a href="../api/geometry_g3d/" class="md-nav__link">
         3D Geometry
       </a>
     </li>
@@ -648,18 +622,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_5">
+        <label class="md-nav__link" for="__nav_4_4">
           Metrics
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Metrics" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_5">
+        <label class="md-nav__title" for="__nav_4_4">
           <span class="md-nav__icon md-icon"></span>
           Metrics
         </label>
@@ -671,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/metrics_m2d/" class="md-nav__link">
+      <a href="../api/metrics_m2d/" class="md-nav__link">
         2D Metrics
       </a>
     </li>
@@ -685,7 +659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/metrics_m3d/" class="md-nav__link">
+      <a href="../api/metrics_m3d/" class="md-nav__link">
         3D Metrics
       </a>
     </li>
@@ -699,7 +673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/metrics_util/" class="md-nav__link">
+      <a href="../api/metrics_util/" class="md-nav__link">
         Utilities
       </a>
     </li>
@@ -723,18 +697,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_6" type="checkbox" id="__nav_3_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_5" type="checkbox" id="__nav_4_5" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_6">
+        <label class="md-nav__link" for="__nav_4_5">
           Visualization
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Visualization" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_6">
+        <label class="md-nav__title" for="__nav_4_5">
           <span class="md-nav__icon md-icon"></span>
           Visualization
         </label>
@@ -746,7 +720,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/visualization_latex/" class="md-nav__link">
+      <a href="../api/visualization_latex/" class="md-nav__link">
         Latex
       </a>
     </li>
@@ -760,7 +734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/visualization_util/" class="md-nav__link">
+      <a href="../api/visualization_util/" class="md-nav__link">
         Utilities
       </a>
     </li>
@@ -774,7 +748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/visualization_video/" class="md-nav__link">
+      <a href="../api/visualization_video/" class="md-nav__link">
         Video
       </a>
     </li>
@@ -804,94 +778,16 @@
     
   
   
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_4">
-          Resources
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Resources" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          Resources
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-    
-  
-  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          File Formats
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
-        File Formats
+        Explanation
       </a>
       
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#sfm-format" class="md-nav__link">
-    SFM Format
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#trajectory-format" class="md-nav__link">
-    Trajectory Format
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tum-format" class="md-nav__link">
-    TUM Format
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
     </li>
   
 
@@ -907,18 +803,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_5">
+        <label class="md-nav__link" for="__nav_6">
           Development
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Development" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
+        <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
           Development
         </label>
@@ -930,7 +826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/contrib/" class="md-nav__link">
+      <a href="../contrib/" class="md-nav__link">
         Contributing
       </a>
     </li>
@@ -944,7 +840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/conduct/" class="md-nav__link">
+      <a href="../conduct/" class="md-nav__link">
         Code of Conduct
       </a>
     </li>
@@ -976,35 +872,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#sfm-format" class="md-nav__link">
-    SFM Format
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#trajectory-format" class="md-nav__link">
-    Trajectory Format
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tum-format" class="md-nav__link">
-    TUM Format
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1022,59 +889,7 @@
 
 
 
-  <h1>File Formats</h1>
 
-<h2 id="sfm-format">SFM Format</h2>
-<p>Example SFM format:</p>
-<div class="highlight"><pre><span></span><code>extrinsic
--0.4332199935824228 0.05678137655798463 0.8994978112460337 0.8975084093387529
--0.0555536503748584 0.9944335710445661 -0.08953024466702354 0.09073232878105676
--0.8995744711193197 -0.08875667893915339 -0.4276540925252544 3.1717746699941105
-0.0 0.0 0.0 1.0
-
-intrinsic
-1165.1 0.0 963.452
-0.0 1165.1 542.902
-0.0 0.0 1.0
-
-0.533329 0.0102302 773 8.44131
-</code></pre></div>
-<h2 id="trajectory-format">Trajectory Format</h2>
-<p>Example Trajectory file format:</p>
-<div class="highlight"><pre><span></span><code>0 0 0
--0.433219993583 -0.055553650375 -0.899574471120 3.247106620677
-0.056781376558 0.994433571044 -0.088756678939 0.140327149378
-0.899497811246 -0.089530244667 -0.427654092525 0.557238856010
-0.000000000000 0.000000000000 0.000000000000 1.000000000000
-1 1 0
--0.432927226457 -0.056956541833 -0.899627683509 3.291183881964
-0.054634231604 0.994509230320 -0.089255204581 0.136356148787
-0.899771702894 -0.087791475384 -0.427438345870 0.475549297910
-0.000000000000 0.000000000000 0.000000000000 1.000000000000
-2 2 0
--0.432847477093 -0.058245558942 -0.899583523881 3.332211762027
-0.052799004204 0.994559314195 -0.089799976072 0.119969350207
-0.899919622372 -0.086366807345 -0.427417182457 0.381756072066
-0.000000000000 0.000000000000 0.000000000000 1.000000000000
-3 3 0
--0.423404234831 -0.061905698756 -0.903823289360 3.379003554425
-0.051697017685 0.994385853821 -0.092326551343 0.106995500501
-0.904464632968 -0.085816421401 -0.417826841560 0.307622028343
-0.000000000000 0.000000000000 0.000000000000 1.000000000000
-4 4 0
--0.315807507619 -0.062452600599 -0.946765700060 3.394068659283
-0.060518496140 0.994473828675 -0.085786454087 0.096966273382
-0.946891297751 -0.084388842618 -0.310282763758 0.195542431511
-0.000000000000 0.000000000000 0.000000000000 1.000000000000
-</code></pre></div>
-<h2 id="tum-format">TUM Format</h2>
-<p>Example TUM file format:</p>
-<div class="highlight"><pre><span></span><code>1638570918.135257600 -3.7404498719498784 -3.232892655469532 -10.485061317190397 0.06159193480090802 -0.5502384743530865 0.15039133385679618 0.8190399877965924
-1638570918.202363648 -3.747561383147196 -3.239507855915432 -10.490671033106173 0.06858839582490339 -0.5514711568065497 0.15224029023970737 0.8173115007121471
-1638570918.269449728 -3.7550507374819353 -3.2460345342353194 -10.49637831592637 0.0740344432538533 -0.552807588651482 0.15355203553387883 0.8156864860501418
-1638570918.334554112 -3.7623245338105713 -3.251981364435861 -10.50249844928394 0.07826534598010323 -0.5543939444531548 0.15454593785431406 0.8140254560301032
-1638570918.401603584 -3.7697999666399844 -3.25807718587348 -10.508614496841439 0.08225845974277564 -0.55634677447988 0.15533270982639494 0.8121474998943042
-</code></pre></div>
 
 
 
@@ -1117,10 +932,10 @@ intrinsic
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      <script src="../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
     
   </body>
