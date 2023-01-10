@@ -1,4 +1,4 @@
-# common/util.py
+# cvt/util.py
 
 """A suite of common utility functions.
 

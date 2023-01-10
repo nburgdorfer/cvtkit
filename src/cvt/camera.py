@@ -1,4 +1,4 @@
-# common/camera.py
+# cvt/camera.py
 
 """A suite of common camera utilities.
 
@@ -10,8 +10,9 @@ This module contains the following functions:
 
 - `camera_center(cam)` - Computes the center of a camera in world coordinates.
 - `relative_transform(cams_1, cams_2)` - Computes the relative transformation between two sets of cameras.
-- `convert_to_log(cams, output_file, alignment)` - Converts from DTU camera format to log format.
-- `convert_from_log(log_file, output_path, old_cam_path)` - Converts from log camera format to DTU format.
+- `sfm_to_trajectory(cams, log_file)` - Convert a set of cameras from SFM format to Trajectory File format.
+- `trajectory_to_sfm(log_file, camera_path, intrinsics)` - Convert a set of cameras from Trajectory File format to SFM format.
+- `y_axis_rotation(P, theta)` - Applies a rotation to the given camera extrinsics matrix along the y-axis.
 """
 
 import os
@@ -137,3 +138,24 @@ def trajectory_to_sfm(log_file: str, camera_path: str, intrinsics: np.ndarray) -
             write_cam(cam_path, cam)
             i = i+5
     return
+
+def y_axis_rotation(P: np.ndarray, theta: float) -> np.ndarray:
+    """Applies a rotation to the given camera extrinsics matrix along the y-axis.
+
+    Parameters:
+        P: Initial extrinsics camera matrix.
+        theta: Angle (in radians) to rotate the camera.
+
+    Returns:
+        The rotated extrinsics matrix for the camera.
+    """
+    R = np.eye(4)
+    R[0,0] = math.cos(theta)
+    R[0,2] = math.sin(theta)
+    R[2,0] = -(math.sin(theta))
+    R[2,2] = math.cos(theta)
+
+    P_rot = R @ P
+
+    return P_rot
+

@@ -1,8 +1,24 @@
+# cvt/visualization/video.py
+"""Module including routines for creating videos.
+
+This module includes the following functions:
+
+- `video_from_images(image_files, video_file, frame_rate)` - Creates a video from a set of images.
+- `video_from_images2(image1_files, image2_files, video_file, frame_rate, orientation)` - Creates a video from two sets of images, stitching the images together each frame.
+"""
 import cv2
 import os
 import sys
+from typing import List
 
-def video_from_images(image_files, video_file, frame_rate=15):
+def video_from_images(image_files: List[str], video_file: str, frame_rate: int = 15) -> None:
+    """Creates a video from a set of images.
+
+    Parameters:
+        image_files: List of image files to be stitched into a video.
+        video_file: Output video file to be created.
+        frame_rate: Desired frame rate of the video.
+    """
     frame = cv2.imread(image_files[0])
     height, width, layers = frame.shape
 
@@ -16,7 +32,16 @@ def video_from_images(image_files, video_file, frame_rate=15):
 
     return
 
-def video_from_images2(image1_files, image2_files, video_file, frame_rate=15, orientation="horizontal"):
+def video_from_images2(image1_files: List[str], image2_files: List[str], video_file: str, frame_rate: int = 15, orientation: str = "horizontal") -> None:
+    """Creates a video from two sets of images, stitching the images together each frame.
+
+    Parameters:
+        image1_files: List of first image files to be stitched.
+        image2_files: List of second image files to be stitched.
+        video_file: Output video file to be created.
+        frame_rate: Desired frame rate of the video.
+        orientation: Desired stitch orientation (horizontal or verticle).
+    """
     frame1 = cv2.imread(image1_files[0])
     height1, width1, layers1 = frame1.shape
 

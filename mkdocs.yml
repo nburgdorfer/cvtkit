@@ -6,21 +6,15 @@ nav:
         - Overview: index.md
     - Tutorials: tutorials/tutorials.md
     - API Reference: 
-        - Common: 
-            - Camera: api/common_camera.md
-            - Input/Output: api/common_io.md
-            - Utility: api/common_util.md
+        - Camera: api/camera.md
+        - IO: api/io.md
+        - Utility: api/util.md
         - Datasets:
+            #- BlendedMVS: api/datasets_blended.md
             - DTU: api/datasets_dtu.md
-            - Tanks \& Temples: api/datasets_tanks.md
-            - BlendedMVS: api/datasets_blended.md
-        - Geometry:
-            - 2D Geometry: api/geometry_g2d.md
-            - 3D Geometry: api/geometry_g3d.md
-        - Metrics:
-            - 2D Metrics: api/metrics_m2d.md
-            - 3D Metrics: api/metrics_m3d.md
-            - Utilities: api/metrics_util.md
+            #- Tanks \& Temples: api/datasets_tanks.md
+        - Geometry: api/geometry.md 
+        - Metrics: api/metrics.md
         - Visualization:
             - Latex: api/visualization_latex.md
             - Utilities: api/visualization_util.md

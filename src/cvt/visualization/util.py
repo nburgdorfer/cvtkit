@@ -1,11 +1,25 @@
+# cvt/visualization/util.py
+"""Module including general utilities for visualization.
+
+This module includes the following functions:
+
+
+"""
 import open3d as o3d
 import numpy as np
-from common.io import *
 import cv2
 import scipy.ndimage as ndimage
 import skimage.transform as transform
 
-def display_inlier_outlier(cloud, ind):
+from io import *
+
+def display_inlier_outlier(cloud: o3d.geometry.PointCloud, indices: np.ndarray) -> None:
+    """Displays a point cloud with outlier points colored red.
+
+    Parameters:
+        cloud: Point cloud to be displayed.
+        indices: Indices indicating the inlier points.
+    """
     inlier_cloud = cloud.select_by_index(ind)
     outlier_cloud = cloud.select_by_index(ind, invert=True)
 
@@ -16,6 +30,8 @@ def display_inlier_outlier(cloud, ind):
                                       front=[0.4257, -0.2125, -0.8795],
                                       lookat=[2.6172, 2.0475, 1.532],
                                       up=[-0.0694, -0.9768, 0.2024])
+
+    return
 
 def plot_cameras(cams, num_cams, scale, A, output_file):
     # grab the requested number of cameras and apply the alignment
@@ -80,20 +96,13 @@ def draw_line(img, line):
 
 
 def scale_img(img, scale):
-    # This function takes an integer image in range of 0-255
-    # and returns a float64 image in range of 0-1
-    img_scaled = transform.resize(img,
-                    [img.shape[0] * scale, img.shape[1] * scale], 
-                    mode="constant")
-    # Cast it to float32 to appease OpenCV later on
+    img_scaled = transform.resize(img, [img.shape[0]*scale, img.shape[1]*scale], mode="constant")
     return img_scaled.astype(np.float32)
-
 
 def scale_f_mat(mat, scale):
     mat[:, 2] *= scale
     mat[2, :] *= scale
     return mat
-
 
 def fmat_demo(img1l, img2l, fl, scale=1.0):
     global img1, img2, f_matrix
@@ -106,7 +115,6 @@ def fmat_demo(img1l, img2l, fl, scale=1.0):
 
     print("Img1: " + str(img1.shape))
     print("Img2: " + str(img2.shape))
-    #print(f)
 
     cv2.namedWindow("img1")
     cv2.namedWindow("img2")

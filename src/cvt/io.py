@@ -1,4 +1,4 @@
-# common/io.py
+# cvt/io.py
 
 """A suite of common input/output functions.
 

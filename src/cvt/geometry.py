@@ -1,6 +1,6 @@
-# geometry/g2d.py
+# cvt/geometry.py
 
-"""Module including routines based in 2D geometry.
+"""Module including geometric routines.
 
 This module contains the following functions:
 
@@ -11,6 +11,7 @@ This module contains the following functions:
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `point_cloud_from_depth(depth, cam, color)` - Creates a point cloud from a single depth map.
+- `render_custom_values(points, values, width, height, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
 - `render_point_cloud(cloud, cam, width, height)` - Renders a point cloud into a 2D image plane.
 - `reproject(src_depth, src_cam, tgt_depth, tgt_cam)` - Computes the re-projection depth values and pixel indices between two depth maps.
 - `visibility_mask(src_depth, src_cam, depth_files, cam_files, src_ind=-1, pixel_th=0.1)` - Computes a visibility mask between a provided source depth map and list of target depth maps.
@@ -24,7 +25,8 @@ import os
 import sys
 from typing import Tuple, List
 
-from common.io import *
+import render_points as rp
+from io import *
 
 def match_features(src_image: np.ndarray, tgt_image: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
     """Computer matching ORB features between a pair of images.
@@ -346,3 +348,24 @@ def point_cloud_from_depth(depth: np.ndarray, cam: np.ndarray, color: np.ndarray
     cloud.colors = colors
     
     return cloud
+
+def render_custom_values(points: np.ndarray, values: np.ndarray, width: int, height: int, cam: np.ndarray) -> np.ndarray:
+    """Renders a point cloud into a 2D camera plane using custom values for each pixel.
+
+    Parameters:
+        points: List of 3D points to be rendered.
+        values: List of values to be written in the rendered image.
+        width: Desired width of the rendered image.
+        height: Desired height of the rendered image.
+        cam: Camera parameters for the image viewpoint.
+
+    Returns:
+        The rendered image for the list of points using the sepcified corresponding values.
+    """
+    points = points.tolist()
+    values = list(values.astype(float))
+    cam = cam.flatten().tolist()
+
+    rendered_img = rp.render(list(image_shape), points, values, cam)
+
+    return rendered_img
