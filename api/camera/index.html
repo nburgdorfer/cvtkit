@@ -12,7 +12,7 @@
         <link rel="prev" href="../../tutorials/tutorials/">
       
       
-        <link rel="next" href="../common_io/">
+        <link rel="next" href="../io/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.1">
@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cvt.common.camera" class="md-skip">
+        <a href="#cvt.camera" class="md-skip">
           Skip to content
         </a>
       
@@ -196,18 +196,11 @@
   
   
   
-    
-
-  
-  
-  
     <li class="md-tabs__item">
       <a href="./" class="md-tabs__link md-tabs__link--active">
         API Reference
       </a>
     </li>
-  
-
   
 
       
@@ -393,34 +386,6 @@
     
   
   
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_1">
-          Common
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Common" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_1">
-          <span class="md-nav__icon md-icon"></span>
-          Common
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-    
-  
-  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
@@ -450,36 +415,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera" class="md-nav__link">
-    cvt.common.camera
+  <a href="#cvt.camera" class="md-nav__link">
+    cvt.camera
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.camera_center" class="md-nav__link">
+  <a href="#cvt.camera.camera_center" class="md-nav__link">
     camera_center()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.relative_transform" class="md-nav__link">
+  <a href="#cvt.camera.relative_transform" class="md-nav__link">
     relative_transform()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.sfm_to_trajectory" class="md-nav__link">
+  <a href="#cvt.camera.sfm_to_trajectory" class="md-nav__link">
     sfm_to_trajectory()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.trajectory_to_sfm" class="md-nav__link">
+  <a href="#cvt.camera.trajectory_to_sfm" class="md-nav__link">
     trajectory_to_sfm()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.y_axis_rotation" class="md-nav__link">
+    y_axis_rotation()
   </a>
   
 </li>
@@ -499,8 +471,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../common_io/" class="md-nav__link">
-        Input/Output
+      <a href="../io/" class="md-nav__link">
+        IO
       </a>
     </li>
   
@@ -513,152 +485,9 @@
   
   
     <li class="md-nav__item">
-      <a href="../common_util/" class="md-nav__link">
+      <a href="../util/" class="md-nav__link">
         Utility
       </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_2">
-          Datasets
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Datasets" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_2">
-          <span class="md-nav__icon md-icon"></span>
-          Datasets
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../datasets_dtu/" class="md-nav__link">
-        DTU
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../datasets_tanks/" class="md-nav__link">
-        Tanks \& Temples
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../datasets_blended/" class="md-nav__link">
-        BlendedMVS
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_3">
-          Geometry
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Geometry" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_3">
-          <span class="md-nav__icon md-icon"></span>
-          Geometry
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../geometry_g2d/" class="md-nav__link">
-        2D Geometry
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../geometry_g3d/" class="md-nav__link">
-        3D Geometry
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
     </li>
   
 
@@ -679,14 +508,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_4">
-          Metrics
+          Datasets
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Metrics" data-md-level="2">
+      <nav class="md-nav" aria-label="Datasets" data-md-level="2">
         <label class="md-nav__title" for="__nav_3_4">
           <span class="md-nav__icon md-icon"></span>
-          Metrics
+          Datasets
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -696,36 +525,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../metrics_m2d/" class="md-nav__link">
-        2D Metrics
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../metrics_m3d/" class="md-nav__link">
-        3D Metrics
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../metrics_util/" class="md-nav__link">
-        Utilities
+      <a href="../datasets_dtu/" class="md-nav__link">
+        DTU
       </a>
     </li>
   
@@ -744,22 +545,50 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../geometry/" class="md-nav__link">
+        Geometry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_7" type="checkbox" id="__nav_3_7" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_5">
+        <label class="md-nav__link" for="__nav_3_7">
           Visualization
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Visualization" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_5">
+        <label class="md-nav__title" for="__nav_3_7">
           <span class="md-nav__icon md-icon"></span>
           Visualization
         </label>
@@ -955,36 +784,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera" class="md-nav__link">
-    cvt.common.camera
+  <a href="#cvt.camera" class="md-nav__link">
+    cvt.camera
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.camera_center" class="md-nav__link">
+  <a href="#cvt.camera.camera_center" class="md-nav__link">
     camera_center()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.relative_transform" class="md-nav__link">
+  <a href="#cvt.camera.relative_transform" class="md-nav__link">
     relative_transform()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.sfm_to_trajectory" class="md-nav__link">
+  <a href="#cvt.camera.sfm_to_trajectory" class="md-nav__link">
     sfm_to_trajectory()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.common.camera.trajectory_to_sfm" class="md-nav__link">
+  <a href="#cvt.camera.trajectory_to_sfm" class="md-nav__link">
     trajectory_to_sfm()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.y_axis_rotation" class="md-nav__link">
+    y_axis_rotation()
   </a>
   
 </li>
@@ -1017,7 +853,7 @@
 <div class="doc doc-object doc-module">
 
 
-<a id="cvt.common.camera"></a>
+<a id="cvt.camera"></a>
   <div class="doc doc-contents first">
   
       <p>A suite of common camera utilities.</p>
@@ -1028,8 +864,9 @@ formats.</p>
 <ul>
 <li><code>camera_center(cam)</code> - Computes the center of a camera in world coordinates.</li>
 <li><code>relative_transform(cams_1, cams_2)</code> - Computes the relative transformation between two sets of cameras.</li>
-<li><code>convert_to_log(cams, output_file, alignment)</code> - Converts from DTU camera format to log format.</li>
-<li><code>convert_from_log(log_file, output_path, old_cam_path)</code> - Converts from log camera format to DTU format.</li>
+<li><code>sfm_to_trajectory(cams, log_file)</code> - Convert a set of cameras from SFM format to Trajectory File format.</li>
+<li><code>trajectory_to_sfm(log_file, camera_path, intrinsics)</code> - Convert a set of cameras from Trajectory File format to SFM format.</li>
+<li><code>y_axis_rotation(P, theta)</code> - Applies a rotation to the given camera extrinsics matrix along the y-axis.</li>
 </ul>
 
   
@@ -1048,7 +885,7 @@ formats.</p>
 
 
 
-<h2 id="cvt.common.camera.camera_center" class="doc doc-heading">
+<h2 id="cvt.camera.camera_center" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">camera_center</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span></code>
 
 </h2>
@@ -1101,9 +938,8 @@ formats.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/common/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
-<span class="normal">26</span>
+        <summary>Source code in <code>cvt/camera.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
@@ -1114,7 +950,8 @@ formats.</p>
 <span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
-<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">camera_center</span><span class="p">(</span><span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">camera_center</span><span class="p">(</span><span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the center of a camera in world coordinates.</span>
 
 <span class="sd">    Args:</span>
@@ -1137,7 +974,7 @@ formats.</p>
 
 
 
-<h2 id="cvt.common.camera.relative_transform" class="doc doc-heading">
+<h2 id="cvt.camera.relative_transform" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">relative_transform</span><span class="p">(</span><span class="n">cams_1</span><span class="p">,</span> <span class="n">cams_2</span><span class="p">)</span></code>
 
 </h2>
@@ -1200,9 +1037,8 @@ formats.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/common/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
+        <summary>Source code in <code>cvt/camera.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -1248,7 +1084,8 @@ formats.</p>
 <span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">relative_transform</span><span class="p">(</span><span class="n">cams_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cams_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">relative_transform</span><span class="p">(</span><span class="n">cams_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cams_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the relative transformation between two sets of cameras.</span>
 
 <span class="sd">    Args:</span>
@@ -1306,7 +1143,7 @@ formats.</p>
 
 
 
-<h2 id="cvt.common.camera.sfm_to_trajectory" class="doc doc-heading">
+<h2 id="cvt.camera.sfm_to_trajectory" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">,</span> <span class="n">log_file</span><span class="p">)</span></code>
 
 </h2>
@@ -1351,9 +1188,8 @@ formats.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/common/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 89</span>
-<span class="normal"> 90</span>
+        <summary>Source code in <code>cvt/camera.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
@@ -1370,7 +1206,8 @@ formats.</p>
 <span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span>
-<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">107</span>
+<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a set of cameras from SFM format to Trajectory File format.</span>
 
 <span class="sd">    Args:</span>
@@ -1399,7 +1236,7 @@ formats.</p>
 
 
 
-<h2 id="cvt.common.camera.trajectory_to_sfm" class="doc doc-heading">
+<h2 id="cvt.camera.trajectory_to_sfm" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span></code>
 
 </h2>
@@ -1454,9 +1291,8 @@ formats.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/common/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
-<span class="normal">110</span>
+        <summary>Source code in <code>cvt/camera.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
@@ -1485,7 +1321,8 @@ formats.</p>
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a set of cameras from Trajectory File format to SFM format.</span>
 
 <span class="sd">    Args:</span>
@@ -1516,6 +1353,117 @@ formats.</p>
             <span class="n">write_cam</span><span class="p">(</span><span class="n">cam_path</span><span class="p">,</span> <span class="n">cam</span><span class="p">)</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">5</span>
     <span class="k">return</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cvt.camera.y_axis_rotation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">y_axis_rotation</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Applies a rotation to the given camera extrinsics matrix along the y-axis.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>P</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
+          </td>
+          <td><p>Initial extrinsics camera matrix.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>theta</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>Angle (in radians) to rotate the camera.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
+          </td>
+          <td><p>The rotated extrinsics matrix for the camera.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cvt/camera.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">y_axis_rotation</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a rotation to the given camera extrinsics matrix along the y-axis.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        P: Initial extrinsics camera matrix.</span>
+<span class="sd">        theta: Angle (in radians) to rotate the camera.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The rotated extrinsics matrix for the camera.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="n">P_rot</span> <span class="o">=</span> <span class="n">R</span> <span class="o">@</span> <span class="n">P</span>
+
+    <span class="k">return</span> <span class="n">P_rot</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
