@@ -8,7 +8,8 @@ from tqdm import tqdm
 import shutil
 import argparse
 
-from cvt.common import *
+from cvt.camera import *
+from cvt.io import *
 from cvt.geometry import *
 from cvt.metrics import *
 
