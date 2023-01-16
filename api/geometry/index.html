@@ -178,11 +178,15 @@
   
 
 
-  <li class="md-tabs__item">
-    <a href="../../tutorials/tutorials/" class="md-tabs__link">
-      Tutorials
-    </a>
-  </li>
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tutorials/gen_vis_maps/" class="md-tabs__link">
+        Tutorials
+      </a>
+    </li>
+  
 
       
         
@@ -339,10 +343,99 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../tutorials/tutorials/" class="md-nav__link">
-        Tutorials
+      <a href="../../tutorials/gen_vis_maps/" class="md-nav__link">
+        Generate Visibility Maps
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/mesh_to_gif/" class="md-nav__link">
+        Mesh To GIF
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/mesh_to_vid/" class="md-nav__link">
+        Mesh To Video
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/cloud_to_gif/" class="md-nav__link">
+        Point Cloud To GIF
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/cloud_to_vid/" class="md-nav__link">
+        Point Cloud To Video
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -958,7 +1051,7 @@
 <li><code>homography(src_image_file, tgt_image_file)</code> - Computes a homography transformation between two images using image features.</li>
 <li><code>match_features(src_image, tgt_image, max_features)</code> - Computer matching ORB features between a pair of images.</li>
 <li><code>point_cloud_from_depth(depth, cam, color)</code> - Creates a point cloud from a single depth map.</li>
-<li><code>project_renderer(renderer, K, P)</code> - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.</li>
+<li><code>project_renderer(renderer, K, P, width, height)</code> - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.</li>
 <li><code>render_custom_values(points, values, width, height, cam)</code> - Renders a point cloud into a 2D camera plane using custom values for each pixel.</li>
 <li><code>render_point_cloud(cloud, cam, width, height)</code> - Renders a point cloud into a 2D image plane.</li>
 <li><code>reproject(src_depth, src_cam, tgt_depth, tgt_cam)</code> - Computes the re-projection depth values and pixel indices between two depth maps.</li>
@@ -1837,9 +1930,7 @@
 
       <details class="quote">
         <summary>Source code in <code>cvt/geometry.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
-<span class="normal">344</span>
-<span class="normal">345</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
@@ -1866,7 +1957,9 @@
 <span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span>
-<span class="normal">372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">point_cloud_from_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">point_cloud_from_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a point cloud from a single depth map.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1907,7 +2000,7 @@
 
 
 <h2 id="cvt.geometry.project_renderer" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">project_renderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">project_renderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1957,6 +2050,26 @@
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>width</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>Desired image width.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>height</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>Desired image height.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -1999,23 +2112,27 @@
 <span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
-<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">project_renderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">:</span> <span class="n">o3d</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">rendering</span><span class="o">.</span><span class="n">OffscreenRenderer</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">project_renderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">:</span> <span class="n">o3d</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">rendering</span><span class="o">.</span><span class="n">OffscreenRenderer</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.</span>
 
 <span class="sd">    Parameters:</span>
 <span class="sd">        renderer: Geometric scene to be projected.</span>
 <span class="sd">        K: Camera intrinsic parameters.</span>
 <span class="sd">        P: Camera extrinsic parameters.</span>
+<span class="sd">        width: Desired image width.</span>
+<span class="sd">        height: Desired image height.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The rendered image for the scene at the specified camera viewpoint.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># set up the renderer</span>
-    <span class="n">intrins</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraIntrinsic</span><span class="p">(</span><span class="n">ARGS</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-    <span class="n">render</span><span class="o">.</span><span class="n">setup_camera</span><span class="p">(</span><span class="n">intrins</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+    <span class="n">intrins</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraIntrinsic</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">renderer</span><span class="o">.</span><span class="n">setup_camera</span><span class="p">(</span><span class="n">intrins</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
 
     <span class="c1"># render image</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">render</span><span class="o">.</span><span class="n">render_to_image</span><span class="p">())</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">renderer</span><span class="o">.</span><span class="n">render_to_image</span><span class="p">())</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">image</span>
@@ -2123,9 +2240,7 @@
 
       <details class="quote">
         <summary>Source code in <code>cvt/geometry.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">374</span>
-<span class="normal">375</span>
-<span class="normal">376</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">376</span>
 <span class="normal">377</span>
 <span class="normal">378</span>
 <span class="normal">379</span>
@@ -2142,7 +2257,9 @@
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span>
-<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_custom_values</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_custom_values</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders a point cloud into a 2D camera plane using custom values for each pixel.</span>
 
 <span class="sd">    Parameters:</span>
