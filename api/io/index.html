@@ -455,6 +455,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cvt.io.read_mesh" class="md-nav__link">
+    read_mesh()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cvt.io.read_pfm" class="md-nav__link">
     read_pfm()
   </a>
@@ -485,6 +492,13 @@
         <li class="md-nav__item">
   <a href="#cvt.io.write_matrix" class="md-nav__link">
     write_matrix()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.io.write_mesh" class="md-nav__link">
+    write_mesh()
   </a>
   
 </li>
@@ -838,6 +852,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cvt.io.read_mesh" class="md-nav__link">
+    read_mesh()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cvt.io.read_pfm" class="md-nav__link">
     read_pfm()
   </a>
@@ -868,6 +889,13 @@
         <li class="md-nav__item">
   <a href="#cvt.io.write_matrix" class="md-nav__link">
     write_matrix()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.io.write_mesh" class="md-nav__link">
+    write_mesh()
   </a>
   
 </li>
@@ -918,11 +946,13 @@ different types of data useful for computer vision applications.</p>
 <li><code>read_cams_sfm(camera_path, extension)</code> - Reads an entire directory of camera files in SFM format.</li>
 <li><code>read_cams_trajectory(log_file)</code> - Reads camera file in Trajectory File format.</li>
 <li><code>read_matrix(mat_file)</code> - Reads a single matrix of float values from a file.</li>
+<li><code>read_mesh(mesh_file)</code> - Reads a mesh from a file.</li>
 <li><code>read_pfm(pfm_file)</code> - Reads a file in *.pfm format.</li>
-<li><code>read_point_cloud(point_cloud_file)</code> - Reads a point cloud from a *.ply file.</li>
+<li><code>read_point_cloud(point_cloud_file)</code> - Reads a point cloud from a file.</li>
 <li><code>read_single_cam_sfm(cam_file, depth_planes)</code> - Reads a single camera file in SFM format.</li>
 <li><code>read_stereo_intrinsics_yaml(intrinsics_file)</code> - Reads intrinsics information for a stereo camera pair from a *.yaml file.</li>
 <li><code>write_matrix(M, mat_file)</code> - Writes a single matrix to a file.</li>
+<li><code>write_mesh(mesh_file, mesh)</code> - Writes a mesh to a file.</li>
 <li><code>write_pfm(pfm_file, data_map, scale)</code> - Writes a data map to a file in *.pfm format.</li>
 </ul>
 
@@ -1006,9 +1036,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
@@ -1030,7 +1058,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
-<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_sfm</span><span class="p">(</span><span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cam.txt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_sfm</span><span class="p">(</span><span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cam.txt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads an entire directory of camera files in SFM format.</span>
 
 <span class="sd">    Args:</span>
@@ -1119,9 +1149,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
@@ -1144,7 +1172,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">209</span>
 <span class="normal">210</span>
 <span class="normal">211</span>
-<span class="normal">212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_trajectory</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_trajectory</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads camera file in Trajectory File format.</span>
 
 <span class="sd">    Args:</span>
@@ -1234,9 +1264,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">297</span>
 <span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
@@ -1253,7 +1281,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
-<span class="normal">314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_matrix</span><span class="p">(</span><span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_matrix</span><span class="p">(</span><span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a single matrix of float values from a file.</span>
 
 <span class="sd">    Args:</span>
@@ -1273,6 +1303,89 @@ different types of data useful for computer vision applications.</p>
         <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">M</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cvt.io.read_mesh" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">read_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Reads a mesh from a file.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>mesh_file</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Input mesh file.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="open3d">o3d</span>.<span title="open3d.geometry">geometry</span>.<span title="o3d.geometry.TriangleMesh">TriangleMesh</span></code>
+          </td>
+          <td><p>The mesh stored in the given file.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cvt/io.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TriangleMesh</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a mesh from a file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mesh_file: Input mesh file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The mesh stored in the given file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_triangle_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -1337,9 +1450,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
@@ -1376,7 +1487,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a file in *.pfm format.</span>
 
 <span class="sd">    Args:</span>
@@ -1434,7 +1547,7 @@ different types of data useful for computer vision applications.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Reads a point cloud from a *.ply file.</p>
+      <p>Reads a point cloud from a file.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -1480,9 +1593,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">329</span>
-<span class="normal">330</span>
-<span class="normal">331</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">331</span>
 <span class="normal">332</span>
 <span class="normal">333</span>
 <span class="normal">334</span>
@@ -1491,9 +1602,8 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">337</span>
 <span class="normal">338</span>
 <span class="normal">339</span>
-<span class="normal">340</span>
-<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a point cloud from a *.ply file.</span>
+<span class="normal">340</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a point cloud from a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        point_cloud_file: Input point cloud file.</span>
@@ -1501,10 +1611,7 @@ different types of data useful for computer vision applications.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        The point cloud stored in the given file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">ply_path</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;ply&quot;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: file </span><span class="si">{}</span><span class="s2"> is not a &#39;.ply&#39; file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ply_path</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_point_cloud</span><span class="p">(</span><span class="n">ply_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ply&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -1579,9 +1686,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
 <span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
@@ -1626,7 +1731,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_single_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">depth_planes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_single_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">depth_planes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a single camera file in SFM format.</span>
 
 <span class="sd">    Args:</span>
@@ -1768,9 +1875,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
 <span class="normal">257</span>
@@ -1809,7 +1914,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
-<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_stereo_intrinsics_yaml</span><span class="p">(</span><span class="n">intrinsics_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_stereo_intrinsics_yaml</span><span class="p">(</span><span class="n">intrinsics_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
@@ -1907,9 +2014,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">318</span>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span>
@@ -1918,7 +2023,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a single matrix to a file.</span>
 
 <span class="sd">    Args:</span>
@@ -1930,6 +2037,77 @@ different types of data useful for computer vision applications.</p>
             <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cvt.io.write_mesh" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Writes a mesh to a file.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>mesh_file</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Output mesh file.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>mesh</code></td>
+          <td>
+                <code><span title="open3d">o3d</span>.<span title="open3d.geometry">geometry</span>.<span title="o3d.geometry.TriangleMesh">TriangleMesh</span></code>
+          </td>
+          <td><p>Mesh to be stored.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cvt/io.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TriangleMesh</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a mesh to a file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mesh_file: Output mesh file.</span>
+<span class="sd">        mesh: Mesh to be stored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">write_triangle_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -1996,9 +2174,7 @@ different types of data useful for computer vision applications.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 73</span>
 <span class="normal"> 74</span>
 <span class="normal"> 75</span>
 <span class="normal"> 76</span>
@@ -2034,7 +2210,9 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
-<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a data map to a file in *.pfm format.</span>
 
 <span class="sd">    Args:</span>
