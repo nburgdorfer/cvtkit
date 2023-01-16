@@ -10,11 +10,13 @@ This module contains the following functions:
 - `read_cams_sfm(camera_path, extension)` - Reads an entire directory of camera files in SFM format.
 - `read_cams_trajectory(log_file)` - Reads camera file in Trajectory File format.
 - `read_matrix(mat_file)` - Reads a single matrix of float values from a file.
+- `read_mesh(mesh_file)` - Reads a mesh from a file.
 - `read_pfm(pfm_file)` - Reads a file in *.pfm format.
-- `read_point_cloud(point_cloud_file)` - Reads a point cloud from a *.ply file.
+- `read_point_cloud(point_cloud_file)` - Reads a point cloud from a file.
 - `read_single_cam_sfm(cam_file, depth_planes)` - Reads a single camera file in SFM format.
 - `read_stereo_intrinsics_yaml(intrinsics_file)` - Reads intrinsics information for a stereo camera pair from a *.yaml file.
 - `write_matrix(M, mat_file)` - Writes a single matrix to a file.
+- `write_mesh(mesh_file, mesh)` - Writes a mesh to a file.
 - `write_pfm(pfm_file, data_map, scale)` - Writes a data map to a file in *.pfm format.
 """
 
@@ -168,7 +170,7 @@ def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
     Returns:
         Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).
     """
-    cam_files = os.listdir(data_path)
+    cam_files = os.listdir(camera_path)
     cam_files.sort()
 
     cams = []
@@ -177,12 +179,12 @@ def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
         if (cf[-7:] != extension):
             continue
 
-        cam_path = os.path.join(data_path,cf)
+        cam_path = os.path.join(camera_path,cf)
         with open(cam_path,'r') as f:
-            cam = read_single_cam_SFM(f, 256)
+            cam = read_single_cam_sfm(f, 256)
             cams.append(cam)
 
-    return cams
+    return np.asarray(cams)
 
 def read_cams_trajectory(log_file: str) -> np.ndarray:
     """Reads camera file in Trajectory File format.
@@ -327,7 +329,7 @@ def write_matrix(M: np.ndarray, mat_file: str) -> None:
             f.write("\n")
 
 def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
-    """Reads a point cloud from a *.ply file.
+    """Reads a point cloud from a file.
 
     Args:
         point_cloud_file: Input point cloud file.
@@ -335,9 +337,25 @@ def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
     Returns:
         The point cloud stored in the given file.
     """
-    if(ply_path[-3:] != "ply"):
-        print("Error: file {} is not a '.ply' file.".format(ply_path))
-
-    return o3d.io.read_point_cloud(ply_path, format="ply")
+    return o3d.io.read_point_cloud(point_cloud_file)
 
 
+def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
+    """Reads a mesh from a file.
+
+    Args:
+        mesh_file: Input mesh file.
+
+    Returns:
+        The mesh stored in the given file.
+    """
+    return o3d.io.read_triangle_mesh(mesh_file)
+
+def write_mesh(mesh_file: str, mesh: o3d.geometry.TriangleMesh) -> None:
+    """Writes a mesh to a file.
+
+    Args:
+        mesh_file: Output mesh file.
+        mesh: Mesh to be stored.
+    """
+    return o3d.io.write_triangle_mesh(mesh_file, mesh)

@@ -1,10 +1,15 @@
-site_name: Computer Vision Toolkit Docs
+site_name: Computer Vision Toolkit
 
 
 nav:
     - Home:
-        - Overview: index.md
-    - Tutorials: tutorials/tutorials.md
+        - Computer Vision Toolkit: index.md
+    - Tutorials:
+        - Generate Visibility Maps: tutorials/gen_vis_maps.md
+        - Mesh To GIF: tutorials/mesh_to_gif.md
+        - Mesh To Video: tutorials/mesh_to_vid.md
+        - Point Cloud To GIF: tutorials/cloud_to_gif.md
+        - Point Cloud To Video: tutorials/cloud_to_vid.md
     - API Reference: 
         - Camera: api/camera.md
         - IO: api/io.md
@@ -31,6 +36,8 @@ theme:
         - navigation.tabs
         - navigation.tabs.sticky
         - navigation.top
+    logo: assets/logo.png
+    favicon: assets/logo.png
     palette:
       - media: "(prefers-color-scheme: light)"
         scheme: default

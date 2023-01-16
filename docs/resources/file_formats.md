@@ -1,7 +1,7 @@
 ## SFM Format
 Below is an example of camera parameters encoded in *SFM Format*.
 
-The first line is a tag that identifies the following information is the extrinsics matrix of the camera. Rows of each matrix in this format are encoded on separate lines, with a space between each matrix element.
+The first line is a tag that identifies the following information is the homogeneous transformation (or extrinsics) matrix of the camera. Rows of each matrix in this format are encoded on separate lines, with a space between each matrix element.
 
 Following the extrinsics matrix is a blank line, followed by the intrinsics tag. The intrinsics matrix follows the same format as the extrinsics matrix above.
 
@@ -32,13 +32,21 @@ It is also supported to use different subsets of these elements. The possible su
 	min_depth_bound plane_interval depth_planes
 	```
 
--	```
-	min_depth_bound plane_interval depth_planes max_depth_bound
-	```
-
 with the additional elements either being inferred or using default values.
 
+Datasets utilizing the above format:
+- DTU
+- Tanks & Temples
+- BlendedMVS
+
 ## Trajectory Format
+Below is an example of camera parameters encoded into a *Trajectory (.log) File Format*.
+
+Every five lines is a camera entry, with no blank lines spearating the entries.
+
+The first line of every entry encodes metadata, usually including usefull information, such as the view (or frame) number. This line is a three-number metedata tag, with the view number typically encoded in the third slot. The **Tanks & Temples** dataset, however, encodes the view number in the first (and second) metadata slot(s). Since this library mainly works with Trajectory format files from this dataset, we will use this dataset-specific encoding.
+
+The following four lines encode the homogeneous transformation (or extrinsics) matrix.
 
 ```
 0 0 0
@@ -63,10 +71,33 @@ with the additional elements either being inferred or using default values.
 0.000 0.000 0.000 1.000
 ```
 
+The advantage of using the Trajectory file format is that only a single file is needed to encode the camera trajectories, aiding in dataset organization. The camera intrinsics, however, will need to be inferred or provided separately.
+
+Datasets utilizing the above format:
+- DTU
+- Tanks & Temples
+- BlendedMVS
+
 ## TUM Format
+Below is an example of camera parameters encoded in *TUM Format*.
+
+Each line represents a single camera entry, encoded as follows:
+
+- `timestamp tx ty tz qx qy qz qw`
+
+The first element in every line is the timestamp corresponding to the time-of-capture for the camera entry.
+
+The next three elements encode the position of the camera optical center.
+
+The last four elements encode the orientation of the camera optical axis in unit quaternion form.
+
 
 ```
 1638570918.135257600 -2.927 -3.658 -10.617 0.014 -0.584 0.142 0.798
 1638570918.202363648 -2.934 -3.665 -10.622 0.021 -0.585 0.144 0.794
 1638570918.269449728 -2.942 -3.671 -10.628 0.027 -0.586 0.146 0.795
 ```
+
+Much like Trajectory format, the advantage of using the TUM file format is that only a single file is needed to encode the camera trajectories. The camera intrinsics must again be inferred or provided separately.
+
+TUM format is typically used for real-time applications, SLAM-based algorithms, ROS-collected datasets, etc.

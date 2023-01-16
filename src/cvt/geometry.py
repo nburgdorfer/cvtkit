@@ -11,6 +11,7 @@ This module contains the following functions:
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `point_cloud_from_depth(depth, cam, color)` - Creates a point cloud from a single depth map.
+- `project_renderer(renderer, K, P, width, height)` - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
 - `render_custom_values(points, values, width, height, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
 - `render_point_cloud(cloud, cam, width, height)` - Renders a point cloud into a 2D image plane.
 - `reproject(src_depth, src_cam, tgt_depth, tgt_cam)` - Computes the re-projection depth values and pixel indices between two depth maps.
@@ -314,6 +315,29 @@ def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: i
 
     # render image
     image = np.asarray(render.render_to_image())
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    return image
+
+def project_renderer(renderer: o3d.visualization.rendering.OffscreenRenderer, K: np.ndarray, P: np.ndarray, width: float, height: float) -> np.ndarray:
+    """Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
+
+    Parameters:
+        renderer: Geometric scene to be projected.
+        K: Camera intrinsic parameters.
+        P: Camera extrinsic parameters.
+        width: Desired image width.
+        height: Desired image height.
+
+    Returns:
+        The rendered image for the scene at the specified camera viewpoint.
+    """
+    # set up the renderer
+    intrins = o3d.camera.PinholeCameraIntrinsic(width, height, K[0,0], K[1,1], K[0,2], K[1,2])
+    renderer.setup_camera(intrins, P)
+
+    # render image
+    image = np.asarray(renderer.render_to_image())
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     return image

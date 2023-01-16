@@ -5,7 +5,7 @@ import sys
 import skimage
 
 from cvt.visualization.util import *
-
+from cvt.geometry import *
 
 def main():
     if len(sys.argv) < 6:
@@ -21,11 +21,16 @@ def main():
     P1_path = sys.argv[4]
     P2_path = sys.argv[5]
     scale = 0.5
+
     if len(sys.argv) > 6:
         scale = float(sys.argv[6])
 
     img1 = cv2.imread(img1_path)
     img2 = cv2.imread(img2_path)
+
+    img1 = cv2.cvtColor(img1, cv2.COLOR_RGB2BGR)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_RGB2BGR)
+
     K =  np.loadtxt(K_path)
     K = np.reshape(K,(3,3))
     P1 = np.loadtxt(P1_path)
@@ -33,7 +38,7 @@ def main():
     P2 = np.loadtxt(P2_path)
     P2 = np.reshape(P2,(3,4))
 
-    f = fundamentalFromKP(K,P1,P2)
+    f = fundamental_from_KP(K,P1,P2)
 
     fmat_demo(img1, img2, f, scale)
 
