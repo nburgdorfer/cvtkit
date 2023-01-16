@@ -1070,7 +1070,7 @@ different types of data useful for computer vision applications.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cam_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+    <span class="n">cam_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">camera_path</span><span class="p">)</span>
     <span class="n">cam_files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 
     <span class="n">cams</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1079,12 +1079,12 @@ different types of data useful for computer vision applications.</p>
         <span class="k">if</span> <span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">extension</span><span class="p">):</span>
             <span class="k">continue</span>
 
-        <span class="n">cam_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="n">cf</span><span class="p">)</span>
+        <span class="n">cam_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">camera_path</span><span class="p">,</span><span class="n">cf</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cam_path</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">cam</span> <span class="o">=</span> <span class="n">read_single_cam_SFM</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="n">cam</span> <span class="o">=</span> <span class="n">read_single_cam_sfm</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
             <span class="n">cams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">cams</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cams</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
