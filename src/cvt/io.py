@@ -122,7 +122,10 @@ def read_single_cam_sfm(cam_file: str, depth_planes: int = 256) -> np.ndarray:
         Camera extrinsics, intrinsics, and view metadata (2x4x4).
     """
     cam = np.zeros((2, 4, 4))
-    words = cam_file.read().split()
+
+    with open(cam_file, 'r') as cam_file:
+        words = cam_file.read().split()
+
     words_len = len(words)
 
     # read extrinsic
