@@ -12,6 +12,8 @@ import scipy.io as sio
 import numpy as np
 import open3d as o3d
 
+from util import *
+
 def build_est_points_filter(est_ply: o3d.geometry.PointCloud, data_path: str, scan_num: int) -> np.ndarray:
     """Builds a filter for an estimated point cloud.
 
@@ -43,7 +45,7 @@ def build_est_points_filter(est_ply: o3d.geometry.PointCloud, data_path: str, sc
 
     qv = points
     qv = (points - min_bound) / res
-    qv = true_round(qv).astype(int)
+    qv = np.rint(qv).astype(int)
 
     # get all valid points
     in_bounds = np.asarray(np.where( ((qv[0,:]>=0) & (qv[0,:] < mask_shape[0]) & (qv[1,:]>=0) & (qv[1,:] < mask_shape[1]) & (qv[2,:]>=0) & (qv[2,:] < mask_shape[2])))).squeeze(0)

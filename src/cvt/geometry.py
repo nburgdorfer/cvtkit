@@ -12,7 +12,7 @@ This module contains the following functions:
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `point_cloud_from_depth(depth, cam, color)` - Creates a point cloud from a single depth map.
 - `project_renderer(renderer, K, P, width, height)` - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
-- `render_custom_values(points, values, width, height, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
+- `render_custom_values(points, values, image_shape, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
 - `render_point_cloud(cloud, cam, width, height)` - Renders a point cloud into a 2D image plane.
 - `reproject(src_depth, src_cam, tgt_depth, tgt_cam)` - Computes the re-projection depth values and pixel indices between two depth maps.
 - `visibility_mask(src_depth, src_cam, depth_files, cam_files, src_ind=-1, pixel_th=0.1)` - Computes a visibility mask between a provided source depth map and list of target depth maps.
@@ -27,7 +27,7 @@ import sys
 from typing import Tuple, List
 
 import render_points as rp
-from io import *
+from cvt.io import *
 
 def match_features(src_image: np.ndarray, tgt_image: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
     """Computer matching ORB features between a pair of images.
@@ -281,7 +281,7 @@ def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: Lis
 
         # load data
         tgt_depth = read_pfm(sdf)
-        tgt_cam = read_cam(open(scf,'r'))
+        tgt_cam = read_single_cam_sfm(scf,'r')
 
         mask = geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)
         vis_map += mask
@@ -368,19 +368,18 @@ def point_cloud_from_depth(depth: np.ndarray, cam: np.ndarray, color: np.ndarray
     cloud = cloud.create_from_depth_image(depth_map, intrins, extrins, depth_scale=1.0, depth_trunc=1000)
 
     # color point cloud
-    colors = o3d.utility.Vector3dVector(np.full((len(ply.points), 3), color))
+    colors = o3d.utility.Vector3dVector(np.full((len(cloud.points), 3), color))
     cloud.colors = colors
     
     return cloud
 
-def render_custom_values(points: np.ndarray, values: np.ndarray, width: int, height: int, cam: np.ndarray) -> np.ndarray:
+def render_custom_values(points: np.ndarray, values: np.ndarray, image_shape: Tuple[int,int], cam: np.ndarray) -> np.ndarray:
     """Renders a point cloud into a 2D camera plane using custom values for each pixel.
 
     Parameters:
         points: List of 3D points to be rendered.
         values: List of values to be written in the rendered image.
-        width: Desired width of the rendered image.
-        height: Desired height of the rendered image.
+        image_shape: Desired shape (height,width) of the rendered image.
         cam: Camera parameters for the image viewpoint.
 
     Returns:

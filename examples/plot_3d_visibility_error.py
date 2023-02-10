@@ -9,15 +9,12 @@ import shutil
 import argparse
 
 # custom imports
-FILE_ROOT=os.path.abspath(os.path.dirname(__file__))
-PYTHON_ROOT=os.path.abspath(os.path.dirname(FILE_ROOT))
-SRC_ROOT=os.path.abspath(os.path.dirname(PYTHON_ROOT))
-
-sys.path.append(PYTHON_ROOT)
-
-from common import *
-from geometry import *
-from metrics import *
+from cvt.io import *
+from cvt.camera import *
+from cvt.util import *
+from cvt.geometry import *
+from cvt.metrics import *
+from cvt.datasets.dtu import *
 
 # argument parsing
 parse = argparse.ArgumentParser(description="3D Chamfer Distance vs. Ground-Truth Visbility per pixel.")
@@ -33,13 +30,14 @@ ARGS = parse.parse_args()
 def main():
     # hard coded for now...
     s = 1
-    network="gbinet"
+    network="mvsnet"
+    #network="gbinet"
     scan = "scan{:03d}".format(s)
     gt_depth_dir = "/media/nate/Data/Fusion/dtu/{}/GT_Depths/{}/".format(network, scan)
-    input_depth_dir = "/media/nate/Data/Results/V-FUSE/dtu/Output_{}/{}/input_depths/".format(network, scan)
-    fused_depth_dir = "/media/nate/Data/Results/V-FUSE/dtu/Output_{}/{}/depths/".format(network, scan)
-    camera_dir = "/media/nate/Data/Results/V-FUSE/dtu/Output_{}/{}/cams/".format(network, scan)
-    output_dir = "/media/nate/Data/Results/V-FUSE/dtu/Output_{}/stats/{}/".format(network, scan)
+    input_depth_dir = "/media/nate/Drive1/Results/V-FUSE/dtu/Output_{}/{}/input_depths/".format(network, scan)
+    fused_depth_dir = "/media/nate/Drive1/Results/V-FUSE/dtu/Output_{}/{}/depths/".format(network, scan)
+    camera_dir = "/media/nate/Drive1/Results/V-FUSE/dtu/Output_{}/{}/cams/".format(network, scan)
+    output_dir = "/media/nate/Drive1/Results/V-FUSE/dtu/Output_{}/stats/{}/".format(network, scan)
     eval_data_dir = "/media/nate/Data/Evaluation/dtu/mvs_data/"
 
     # extract arguments
@@ -81,14 +79,14 @@ def main():
             cf = cam_files[view_num]
             input_depth = read_pfm(idf)
             fused_depth = read_pfm(fdf)
-            cam = read_cam(open(cf,'r'))
+            cam = read_single_cam_sfm(cf)
 
             # build per-view ply (points encoded with view number)
             view_vecs[view_num] = np.asarray([(view_num/total_views), 0, 1-(view_num/total_views)])
-            input_view_ply = build_cloud(input_depth, cam, view_vecs[view_num])
+            input_view_ply = point_cloud_from_depth(input_depth, cam, view_vecs[view_num])
             input_ply += input_view_ply
 
-            fused_view_ply = build_cloud(fused_depth, cam, view_vecs[view_num])
+            fused_view_ply = point_cloud_from_depth(fused_depth, cam, view_vecs[view_num])
             fused_ply += fused_view_ply
     
     print("building points filters...")
@@ -109,12 +107,12 @@ def main():
     
     # compare point clouds
     print("Computing accuracy...")
-    input_acc_ply, input_acc_dists, input_acc_colors = accuracy_eval(input_ply, gt_ply, 20, 0.4, 0.0, input_filt, gt_filt)
-    fused_acc_ply, fused_acc_dists, fused_acc_colors = accuracy_eval(fused_ply, gt_ply, 20, 0.4, 0.0, fused_filt, gt_filt)
+    input_acc_ply, input_acc_dists, input_acc_colors = accuracy_eval(input_ply, gt_ply, 20, input_filt, gt_filt)
+    fused_acc_ply, fused_acc_dists, fused_acc_colors = accuracy_eval(fused_ply, gt_ply, 20, fused_filt, gt_filt)
 
     print("Computing completeness...")
-    input_comp_points, input_comp_dists, input_comp_colors = completeness_eval(input_ply, gt_ply, 20, 0.4, 0.0, input_filt, gt_filt)
-    fused_comp_points, fused_comp_dists, fused_comp_colors = completeness_eval(fused_ply, gt_ply, 20, 0.4, 0.0, fused_filt, gt_filt)
+    input_comp_points, input_comp_dists, input_comp_colors = completeness_eval(input_ply, gt_ply, 20, input_filt, gt_filt)
+    fused_comp_points, fused_comp_dists, fused_comp_colors = completeness_eval(fused_ply, gt_ply, 20, fused_filt, gt_filt)
 
 
     # compute visibility statistics
@@ -135,17 +133,17 @@ def main():
             gt_depth = read_pfm(gdf)
             input_depth = read_pfm(idf)
             fused_depth = read_pfm(fdf)
-            cam = read_cam(open(cf,'r'))
+            cam = read_single_cam_sfm(cf)
 
             # get projected view acc and comp
             input_view_inds = np.where(np.all(input_acc_colors == view_vecs[view_num], axis=1))[0]
-            input_acc_map = project_2d( \
+            input_acc_map = render_custom_values( \
                                 np.asarray(input_acc_ply.select_by_index(input_view_inds).points), \
                                 input_acc_dists[input_view_inds], \
                                 input_depth.shape, \
                                 cam)
             input_view_inds = np.where(np.all(input_comp_colors == view_vecs[view_num], axis=1))[0]
-            input_comp_map = project_2d( \
+            input_comp_map = render_custom_values( \
                                 np.squeeze(input_comp_points[input_view_inds], axis=1), \
                                 input_comp_dists[input_view_inds], \
                                 input_depth.shape, \
@@ -153,20 +151,20 @@ def main():
 
             # get projected view acc and comp
             fused_view_inds = np.where(np.all(fused_acc_colors == view_vecs[view_num], axis=1))[0]
-            fused_acc_map = project_2d( \
+            fused_acc_map = render_custom_values( \
                                 np.asarray(fused_acc_ply.select_by_index(fused_view_inds).points), \
                                 fused_acc_dists[fused_view_inds], \
                                 fused_depth.shape, \
                                 cam)
             fused_view_inds = np.where(np.all(fused_comp_colors == view_vecs[view_num], axis=1))[0]
-            fused_comp_map = project_2d( \
+            fused_comp_map = render_custom_values( \
                                 np.squeeze(fused_comp_points[fused_view_inds], axis=1), \
                                 fused_comp_dists[fused_view_inds], \
                                 fused_depth.shape, \
                                 cam)
 
             # compute visibility scores
-            gt_vis_map = visibility(gt_depth, cam, gt_depth_files, cam_files, view_num)
+            gt_vis_map = visibility_mask(gt_depth, cam, gt_depth_files, cam_files, view_num)
 
             # flatten matrices and remove any point that does not correspond to a gt depth
             iam = input_acc_map.flatten()

@@ -105,11 +105,9 @@ def completeness_eval(
     tree = KDTree(np.asarray(est_ply.points), leaf_size=40)
     (dists, inds) = tree.query(np.asarray(gt_ply.points), k=1)
 
-
     # extract valid indices
     valid_inds = set(np.where(gt_filt == 1)[0])
-    valid_dists = set(np.where(dists <= mask_gt)[0])
-    valid_inds.intersection_update(valid_dists)
+    valid_inds.intersection_update(set(np.where(dists <= mask_th)[0]))
     valid_inds = np.asarray(list(valid_inds))
 
     dists = dists[valid_inds]
