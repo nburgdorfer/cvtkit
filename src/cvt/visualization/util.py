@@ -215,3 +215,17 @@ def build_cam_pyr(cam_scale, K):
     return [cam_center, cam_ul, cam_ur, cam_dr, cam_dl, cam_top]
 
 
+def display_map(filename: str, disp_map: np.ndarray, mx: float, mn: float) -> None:
+    """Writes an input map to a normalized image.
+
+    Parameters:
+        filename: Name of the file to store the input map.
+        disp_map: Map to be stored as an image file.
+        mx: maximum value used for pixel intensity normalization.
+        mn: minimum value used for pixel intensity normalization.
+    """
+    disp_map = ((disp_map-mn)/(mx-mn))*255
+    cv2.imwrite(filename, disp_map)
+
+
+

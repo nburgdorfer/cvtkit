@@ -11,6 +11,7 @@ This module contains the following functions:
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `point_cloud_from_depth(depth, cam, color)` - Creates a point cloud from a single depth map.
+- `project_depth_map(depth, cam, mask)` - Projects a depth map into a list of 3D points.
 - `project_renderer(renderer, K, P, width, height)` - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
 - `render_custom_values(points, values, image_shape, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
 - `render_point_cloud(cloud, cam, width, height)` - Renders a point cloud into a 2D image plane.
@@ -24,9 +25,10 @@ import matplotlib.pyplot as plt
 import open3d as o3d
 import os
 import sys
-from typing import Tuple, List
+from typing import Tuple, List, Optional
+import torch
 
-import render_points as rp
+import rendering as rd
 from cvt.io import *
 
 def match_features(src_image: np.ndarray, tgt_image: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
@@ -389,6 +391,187 @@ def render_custom_values(points: np.ndarray, values: np.ndarray, image_shape: Tu
     values = list(values.astype(float))
     cam = cam.flatten().tolist()
 
-    rendered_img = rp.render(list(image_shape), points, values, cam)
+    rendered_img = rd.render(list(image_shape), points, values, cam)
 
     return rendered_img
+
+
+def project_depth_map(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """Projects a depth map into a list of 3D points
+
+    Parameters:
+        depth: Input depth map to project.
+        cam: Camera parameters for input depth map.
+
+    Returns:
+        A float Tensor of 3D points corresponding to the projected depth values.
+    """
+    if (depth.shape[1] == 1):
+        depth = depth.squeeze(1)
+
+    batch_size, height, width = depth.shape
+    cam_shape = cam.shape
+
+    # get camera extrinsics and intrinsics
+    P = cam[:,0,:,:]
+    K = cam[:,1,:,:]
+    K[:,3,:] = torch.tensor([0,0,0,1])
+
+    # construct back-projection from invers matrices
+    # separate into rotation and translation components
+    bwd_projection = torch.matmul(torch.inverse(P), torch.inverse(K)).to(torch.float32)
+    bwd_rotation = bwd_projection[:,:3,:3]
+    bwd_translation = bwd_projection[:,:3,3:4]
+
+    # build 2D homogeneous coordinates tensor: [B, 3, H*W]
+    with torch.no_grad():
+        row_span = torch.arange(0, height, dtype=torch.float32).cuda()
+        col_span = torch.arange(0, width, dtype=torch.float32).cuda()
+        r,c = torch.meshgrid(row_span, col_span, indexing="ij")
+        r,c = r.contiguous(), c.contiguous()
+        r,c = r.reshape(height*width), c.reshape(height*width)
+        coords = torch.stack((c,r,torch.ones_like(c)))
+        coords = torch.unsqueeze(coords, dim=0).repeat(batch_size, 1, 1)
+
+    # compute 3D coordinates using the depth map: [B, H*W, 3]
+    world_coords = torch.matmul(bwd_rotation, coords)
+    depth = depth.reshape(batch_size, 1, -1)
+    world_coords = world_coords * depth
+    world_coords = world_coords + bwd_translation
+
+    #TODO: make sure index select is differentiable
+    #       (there is a backward function but need to find the code..)
+    if (mask != None):
+        world_coords = torch.index_select(world_coords, dim=2, index=non_zero_inds)
+        world_coords = torch.movedim(world_coords, 1, 2)
+
+    # reshape 3D coordinates back into 2D map: [B, H, W, 3]
+    #   coords_map = world_coords.reshape(batch_size, height, width, 3)
+
+    return world_coords
+
+
+def warp_to_tgt(tgt_depth: torch.Tensor, tgt_conf: torch.Tensor, ref_cam: torch.Tensor, tgt_cam: torch.Tensor, depth_planes: torch.Tensor, depth_vol: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Performs a homography warping
+    Parameters:
+        tgt_depth: 
+        tgt_conf: 
+        ref_cam:
+        tgt_cam:
+        depth_planes:
+        depth_vol:
+    
+    Returns:
+        depth_diff:
+        warped_conf:
+    """
+    batch_size, views, height, width = tgt_depth.shape
+    # grab intrinsics and extrinsics from reference view
+    P_ref = ref_cam[:,0,:,:]
+    K_ref = ref_cam[:,1,:,:]
+    K_ref[:,3,:] = torch.tensor([0,0,0,1])
+
+    # get intrinsics and extrinsics from target view
+    P_tgt = tgt_cam[:,0,:,:]
+    K_tgt = tgt_cam[:,1,:,:]
+    K_tgt[:,3,:] = torch.tensor([0,0,0,1])
+
+    R_tgt = P_tgt[:,:3,:3]
+    t_tgt = P_tgt[:,:3,3:4]
+    C_tgt = torch.matmul(-R_tgt.transpose(1,2), t_tgt)
+    z_tgt = R_tgt[:,2:3,:3].reshape(batch_size,1,1,1,1,3).repeat(1,depth_planes, height,width,1,1)
+    
+    with torch.no_grad():
+        # shape camera center vector
+        C_tgt = C_tgt.reshape(batch_size,1,1,1,3).repeat(1, depth_planes, height, width, 1)
+
+        bwd_proj = torch.matmul(torch.inverse(P_ref), torch.inverse(K_ref)).to(torch.float32)
+        fwd_proj = torch.matmul(K_tgt, P_tgt).to(torch.float32)
+
+        bwd_rot = bwd_proj[:,:3,:3]
+        bwd_trans = bwd_proj[:,:3,3:4]
+
+        proj = torch.matmul(fwd_proj, bwd_proj)
+        rot = proj[:,:3,:3]
+        trans = proj[:,:3,3:4]
+
+        y, x = torch.meshgrid([torch.arange(0, height,dtype=torch.float32,device=tgt_depth.device),
+                                     torch.arange(0, width, dtype=torch.float32, device=tgt_depth.device)], indexing='ij')
+        y, x = y.contiguous(), x.contiguous()
+        y, x = y.reshape(height*width), x.reshape(height*width)
+        homog = torch.stack((x,y,torch.ones_like(x)))
+        homog = torch.unsqueeze(homog, 0).repeat(batch_size,1,1)
+
+        # get world coords
+        world_coords = torch.matmul(bwd_rot, homog)
+        world_coords = world_coords.unsqueeze(2).repeat(1,1,depth_planes,1)
+        depth_vol = depth_vol.reshape(batch_size,1,depth_planes,-1)
+        world_coords = world_coords * depth_vol
+        world_coords = world_coords + bwd_trans.reshape(batch_size,3,1,1)
+        world_coords = torch.movedim(world_coords, 1, 3)
+        world_coords = world_coords.reshape(batch_size, depth_planes, height, width,3)
+
+        # get pixel projection
+        rot_coords = torch.matmul(rot, homog)
+        rot_coords = rot_coords.unsqueeze(2).repeat(1,1,depth_planes,1)
+        proj_3d = rot_coords * depth_vol
+        proj_3d = proj_3d + trans.reshape(batch_size,3,1,1)
+        proj_2d = proj_3d[:,:2,:,:] / proj_3d[:,2:3,:,:]
+
+        proj_x = proj_2d[:,0,:,:] / ((width-1)/2) - 1
+        proj_y = proj_2d[:,1,:,:] / ((height-1)/2) - 1
+        proj_2d = torch.stack((proj_x, proj_y), dim=3)
+        grid = proj_2d
+
+
+    proj_depth = torch.sub(world_coords, C_tgt).unsqueeze(-1)
+    proj_depth = torch.matmul(z_tgt, proj_depth).reshape(batch_size,depth_planes,height,width)
+
+    warped_depth = F.grid_sample(tgt_depth, grid.reshape(batch_size, depth_planes*height, width, 2), mode='bilinear', padding_mode="zeros", align_corners=False)
+    warped_depth = warped_depth.reshape(batch_size, depth_planes, height, width)
+
+    warped_conf = F.grid_sample(tgt_conf, grid.reshape(batch_size, depth_planes*height, width, 2), mode='bilinear', padding_mode="zeros", align_corners=False)
+    warped_conf = warped_conf.reshape(batch_size, depth_planes, height, width)
+
+    depth_diff = torch.sub(proj_depth, warped_depth)
+
+    return depth_diff, warped_conf
+
+
+
+
+def render_into_ref(depths: np.ndarray, confs: np.ndarray, cams: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Renders all target depth and confidence maps into the reference view (assumed to be at index 0).
+
+    Parameters:
+        depths:
+        confs:
+        cams:
+
+    Returns:
+        rendered_depths:
+        rendered_confs:
+    """
+    shape = depths.shape
+    views = shape[0]
+    rcam = cams[0].flatten().tolist()
+
+    rendered_depths = [depths[0]]
+    rendered_confs = [confs[0]]
+
+    for v in range(1,views):
+        tcam = cams[v].flatten().tolist()
+        depth_map = depths[v].flatten().tolist()
+        conf_map = confs[v].flatten().tolist()
+
+        rendered_map = np.array(rtv.render_to_ref(list([shape[1],shape[2]]),depth_map,conf_map,rcam,tcam))
+        rendered_depth = rendered_map[:(shape[1]*shape[2])].reshape((shape[1],shape[2]))
+        rendered_conf = rendered_map[(shape[1]*shape[2]):].reshape((shape[1],shape[2]))
+
+        rendered_depths.append(rendered_depth)
+        rendered_confs.append(rendered_conf)
+
+    rendered_depths = np.asarray(rendered_depths)
+    rendered_confs = np.asarray(rendered_confs)
+
+    return rendered_depths, rendered_confs

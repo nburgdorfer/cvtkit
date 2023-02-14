@@ -132,3 +132,133 @@ def filter_outlier_points(est_ply: o3d.geometry.PointCloud, gt_ply: o3d.geometry
     dists_est = np.asarray(est_ply.compute_point_cloud_distance(gt_ply))
     valid_dists = np.where(dists_est <= outlier_th)[0]
     return est_ply.select_by_index(valid_dists)
+
+
+
+#   def roc_curve(in_depth, out_depth, in_conf, out_conf, gt_depth, path, stats_file, view_num, scene, device):
+#       if (scene == "Barn"):
+#           th = 0.01
+#       elif(scene == "Caterpillar"):
+#           th = 0.005
+#       elif(scene == "Church"):
+#           th = 0.025
+#       elif(scene == "Courthouse"):
+#           th = 0.025
+#       elif (scene =="Ignatius"):
+#           th = 0.003
+#       elif(scene == "Meetingroom"):
+#           th = 0.01
+#       elif(scene == "Truck"):
+#           th = 0.005
+#       elif(scene == "none"): # DTU
+#           th = 2
+#       else:
+#           th = 0.02
+#   
+#       height, width = in_depth.shape
+#   
+#       valid_map = torch.ne(gt_depth, 0.0).to(torch.float32).to(device)
+#       valid_count = torch.sum(valid_map)+1e-7
+#   
+#       # flatten to 1D tensor
+#       in_depth = torch.flatten(in_depth)
+#       in_conf = torch.flatten(in_conf)
+#       out_depth = torch.flatten(out_depth)
+#       out_conf = torch.flatten(out_conf)
+#       gt_depth = torch.flatten(gt_depth)
+#   
+#       ##### INPUT #####
+#       # sort all tensors by confidence value
+#       (in_conf,indices) = in_conf.sort(descending=True)
+#       in_depth = torch.gather(in_depth, dim=0, index=indices)
+#       in_gt_depth = torch.gather(gt_depth, dim=0, index=indices)
+#       # pull only gt values
+#       in_gt_indices = torch.nonzero(in_gt_depth).flatten()
+#       in_depth = torch.index_select(in_depth, dim=0, index=in_gt_indices)
+#       in_gt_depth = torch.index_select(in_gt_depth, dim=0, index=in_gt_indices)
+#   
+#       # sort orcale curves by error
+#       in_oracle = torch.abs(in_depth-in_gt_depth)
+#       (in_oracle,indices) = in_oracle.sort(descending=False)
+#       in_oracle_gt = torch.gather(in_gt_depth, dim=0, index=indices)
+#       # pull only gt values
+#       in_oracle_indices = torch.nonzero(in_oracle_gt).flatten()
+#       in_oracle = torch.index_select(in_oracle, dim=0, index=in_oracle_indices)
+#   
+#       ##### OUTPUT #####
+#       # sort all tensors by confidence value
+#       (out_conf,indices) = out_conf.sort(descending=True)
+#       out_depth = torch.gather(out_depth, dim=0, index=indices)
+#       out_gt_depth = torch.gather(gt_depth, dim=0, index=indices)
+#       # pull only gt values
+#       out_gt_indices = torch.nonzero(out_gt_depth).flatten()
+#       out_depth = torch.index_select(out_depth, dim=0, index=out_gt_indices)
+#       out_gt_depth = torch.index_select(out_gt_depth, dim=0, index=out_gt_indices)
+#   
+#       out_oracle = torch.abs(out_depth-out_gt_depth)
+#       (out_oracle,indices) = out_oracle.sort(descending=False)
+#       out_oracle_gt = torch.gather(out_gt_depth, dim=0, index=indices)
+#       # pull only gt values
+#       out_oracle_indices = torch.nonzero(out_oracle_gt).flatten()
+#       out_oracle = torch.index_select(out_oracle, dim=0, index=out_oracle_indices)
+#   
+#       # build density vector
+#       num_gt_points = in_gt_depth.shape[0]
+#       perc = np.array(list(range(5,105,5)))
+#       density = np.array((perc/100) * (num_gt_points), dtype=np.int32)
+#   
+#       in_prec = np.zeros(density.shape)
+#       in_prec_oracle = np.zeros(density.shape)
+#       out_prec = np.zeros(density.shape)
+#       out_prec_oracle = np.zeros(density.shape)
+#   
+#       in_rec = np.zeros(density.shape)
+#       in_rec_oracle = np.zeros(density.shape)
+#       out_rec = np.zeros(density.shape)
+#       out_rec_oracle = np.zeros(density.shape)
+#   
+#       for i,k in enumerate(density):
+#           # compute input absolute error chunk
+#           iae = torch.abs(in_gt_depth[0:k] - in_depth[0:k])
+#           num_inliers = torch.sum(torch.le(iae, th).to(torch.float32).to(device))
+#   
+#           in_prec[i] = num_inliers / k
+#           in_rec[i] = num_inliers / valid_count
+#   
+#           # compute input oracle chunk
+#           in_prec_oracle[i] = torch.sum(torch.le(in_oracle[0:k], th).to(torch.float32).to(device)) / k
+#           in_rec_oracle[i] = torch.sum(torch.le(in_oracle[0:k], th).to(torch.float32).to(device)) / valid_count
+#   
+#           # compute output absolute error chunk
+#           oae = torch.abs(out_gt_depth[0:k] - out_depth[0:k])
+#           num_inliers = torch.sum(torch.le(oae, th).to(torch.float32).to(device))
+#           out_prec[i] = num_inliers / k
+#           out_rec[i] = num_inliers / valid_count
+#   
+#           # compute output oracle chunk
+#           out_prec_oracle[i] = torch.sum(torch.le(out_oracle[0:k], th).to(torch.float32).to(device)) / k
+#           out_rec_oracle[i] = torch.sum(torch.le(out_oracle[0:k], th).to(torch.float32).to(device)) / valid_count
+#   
+#       in_prec_str = ",".join([ "{:0.5f}".format(r) for r in in_prec ])
+#       out_prec_str = ",".join([ "{:0.5f}".format(r) for r in out_prec ])
+#       in_prec_oracle_str = ",".join([ "{:0.5f}".format(r) for r in in_prec_oracle ])
+#       out_prec_oracle_str = ",".join([ "{:0.5f}".format(r) for r in out_prec_oracle ])
+#   
+#       in_rec_str = ",".join([ "{:0.5f}".format(r) for r in in_rec ])
+#       out_rec_str = ",".join([ "{:0.5f}".format(r) for r in out_rec ])
+#       in_rec_oracle_str = ",".join([ "{:0.5f}".format(r) for r in in_rec_oracle ])
+#       out_rec_oracle_str = ",".join([ "{:0.5f}".format(r) for r in out_rec_oracle ])
+#   
+#       # store data
+#       with open(stats_file,'a') as f:
+#           f.write("{}\n".format(in_prec_str))
+#           f.write("{}\n".format(out_prec_str))
+#           f.write("{}\n".format(in_prec_oracle_str))
+#           f.write("{}\n".format(out_prec_oracle_str))
+#   
+#           f.write("{}\n".format(in_rec_str))
+#           f.write("{}\n".format(out_rec_str))
+#           f.write("{}\n".format(in_rec_oracle_str))
+#           f.write("{}\n".format(out_rec_oracle_str))
+#   
+#       return
