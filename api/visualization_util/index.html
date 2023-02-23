@@ -692,6 +692,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#cvt.visualization.util.display_map" class="md-nav__link">
+    display_map()
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -886,6 +893,13 @@
         <li class="md-nav__item">
   <a href="#cvt.visualization.util.display_inlier_outlier" class="md-nav__link">
     display_inlier_outlier()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.visualization.util.display_map" class="md-nav__link">
+    display_map()
   </a>
   
 </li>
@@ -1237,6 +1251,103 @@
                                       <span class="n">up</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.0694</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9768</span><span class="p">,</span> <span class="mf">0.2024</span><span class="p">])</span>
 
     <span class="k">return</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cvt.visualization.util.display_map" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">display_map</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">disp_map</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">mn</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Writes an input map to a normalized image.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>filename</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of the file to store the input map.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>disp_map</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
+          </td>
+          <td><p>Map to be stored as an image file.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>mx</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>maximum value used for pixel intensity normalization.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>mn</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>minimum value used for pixel intensity normalization.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cvt/visualization/util.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">display_map</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">disp_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mn</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes an input map to a normalized image.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        filename: Name of the file to store the input map.</span>
+<span class="sd">        disp_map: Map to be stored as an image file.</span>
+<span class="sd">        mx: maximum value used for pixel intensity normalization.</span>
+<span class="sd">        mn: minimum value used for pixel intensity normalization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">disp_map</span> <span class="o">=</span> <span class="p">((</span><span class="n">disp_map</span><span class="o">-</span><span class="n">mn</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">mx</span><span class="o">-</span><span class="n">mn</span><span class="p">))</span><span class="o">*</span><span class="mi">255</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">disp_map</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
