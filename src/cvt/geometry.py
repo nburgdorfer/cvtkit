@@ -29,7 +29,7 @@ from typing import Tuple, List, Optional
 import torch
 
 import rendering as rd
-from cvt.io import *
+from io import *
 
 def match_features(src_image: np.ndarray, tgt_image: np.ndarray, max_features: int = 500) -> Tuple[np.ndarray, np.ndarray]:
     """Computer matching ORB features between a pair of images.
