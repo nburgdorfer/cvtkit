@@ -1750,7 +1750,7 @@ different types of data useful for computer vision applications.</p>
     <tbody>
         <tr>
           <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
+                <code><span title="typing.List">List</span>[<span title="typing.Tuple">Tuple</span>[int, <span title="typing.List">List</span>[int]]]</code>
           </td>
           <td><p>An array of tuples encoding (ref_view, [src_1,src_2,..])</p></td>
         </tr>
@@ -1779,7 +1779,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">185</span>
 <span class="normal">186</span>
 <span class="normal">187</span>
-<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_pair_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_pair_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a pair file encoding supporting camera viewpoints.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1799,7 +1799,7 @@ different types of data useful for computer vision applications.</p>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">src_views</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ref_view</span><span class="p">,</span> <span class="n">src_views</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

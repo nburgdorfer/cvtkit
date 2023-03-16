@@ -2912,28 +2912,16 @@ re-projection between two depth maps, or similar operations.</p>
           <td><p>The re-projected depth values for the source depth map.</p></td>
         </tr>
         <tr>
-<td><code>x_reprojected</code></td>          <td>
+<td><code>coords_reprojected</code></td>          <td>
                 <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
           </td>
-          <td><p>The re-projection x-coordinates for the source view.</p></td>
+          <td><p>The re-projection coordinates for the source view.</p></td>
         </tr>
         <tr>
-<td><code>y_reprojected</code></td>          <td>
+<td><code>coords_tgt</code></td>          <td>
                 <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
           </td>
-          <td><p>The re-projected y-coordinates for the source view.</p></td>
-        </tr>
-        <tr>
-<td><code>x_tgt</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The projected x-coordinates for the target view.</p></td>
-        </tr>
-        <tr>
-<td><code>y_tgt</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The projected y-coordinates for the target view.</p></td>
+          <td><p>The projected coordinates for the target view.</p></td>
         </tr>
     </tbody>
   </table>
@@ -3005,10 +2993,7 @@ re-projection between two depth maps, or similar operations.</p>
 <span class="normal">443</span>
 <span class="normal">444</span>
 <span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="n">src_depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">src_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tgt_depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tgt_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                                                                                                                <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                                                                                                                <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="n">src_depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">src_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tgt_depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tgt_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                                                                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                                                                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the re-projection depth values and pixel indices between two depth maps.</span>
@@ -3029,10 +3014,8 @@ re-projection between two depth maps, or similar operations.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        depth_reprojected: The re-projected depth values for the source depth map.</span>
-<span class="sd">        x_reprojected: The re-projection x-coordinates for the source view.</span>
-<span class="sd">        y_reprojected: The re-projected y-coordinates for the source view.</span>
-<span class="sd">        x_tgt: The projected x-coordinates for the target view.</span>
-<span class="sd">        y_tgt: The projected y-coordinates for the target view.</span>
+<span class="sd">        coords_reprojected: The re-projection coordinates for the source view.</span>
+<span class="sd">        coords_tgt: The projected coordinates for the target view.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">src_depth</span><span class="o">.</span><span class="n">shape</span>
 
@@ -3072,7 +3055,10 @@ re-projection between two depth maps, or similar operations.</p>
     <span class="n">x_reprojected</span> <span class="o">=</span> <span class="n">xy_reprojected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
     <span class="n">y_reprojected</span> <span class="o">=</span> <span class="n">xy_reprojected</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">depth_reprojected</span><span class="p">,</span> <span class="n">x_reprojected</span><span class="p">,</span> <span class="n">y_reprojected</span><span class="p">,</span> <span class="n">x_tgt</span><span class="p">,</span> <span class="n">y_tgt</span>
+    <span class="n">coords_reprojected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">x_reprojected</span><span class="p">,</span> <span class="n">y_reprojected</span><span class="p">))</span>
+    <span class="n">coords_tgt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">x_tgt</span><span class="p">,</span> <span class="n">y_tgt</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">depth_reprojected</span><span class="p">,</span> <span class="n">coords_reprojected</span><span class="p">,</span> <span class="n">coords_tgt</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -3187,7 +3173,8 @@ re-projection between two depth maps, or similar operations.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/geometry.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">449</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">448</span>
+<span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
 <span class="normal">452</span>
@@ -3218,8 +3205,7 @@ re-projection between two depth maps, or similar operations.</p>
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span>
-<span class="normal">480</span>
-<span class="normal">481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">visibility_mask</span><span class="p">(</span><span class="n">src_depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">src_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">depth_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">cam_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">src_ind</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">pixel_th</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">480</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">visibility_mask</span><span class="p">(</span><span class="n">src_depth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">src_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">depth_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">cam_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">src_ind</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">pixel_th</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes a visibility mask between a provided source depth map and list of target depth maps.</span>
 
 <span class="sd">    Parameters:</span>
@@ -3372,7 +3358,8 @@ re-projection between two depth maps, or similar operations.</p>
 
       <details class="quote">
         <summary>Source code in <code>cvt/geometry.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">483</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">482</span>
+<span class="normal">483</span>
 <span class="normal">484</span>
 <span class="normal">485</span>
 <span class="normal">486</span>
@@ -3455,8 +3442,7 @@ re-projection between two depth maps, or similar operations.</p>
 <span class="normal">563</span>
 <span class="normal">564</span>
 <span class="normal">565</span>
-<span class="normal">566</span>
-<span class="normal">567</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">warp_to_tgt</span><span class="p">(</span><span class="n">tgt_depth</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tgt_conf</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ref_cam</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tgt_cam</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">depth_planes</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">depth_vol</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="normal">566</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">warp_to_tgt</span><span class="p">(</span><span class="n">tgt_depth</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tgt_conf</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ref_cam</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tgt_cam</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">depth_planes</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">depth_vol</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Performs a homography warping</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">        tgt_depth: </span>
