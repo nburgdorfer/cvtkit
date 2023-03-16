@@ -18,7 +18,8 @@ nav:
             #- BlendedMVS: api/datasets_blended.md
             - DTU: api/datasets_dtu.md
             #- Tanks \& Temples: api/datasets_tanks.md
-        - Geometry: api/geometry.md 
+        - Geometry: api/geometry.md
+        - Filtering: api/filtering.md
         - Metrics: api/metrics.md
         - Visualization:
             - Latex: api/visualization_latex.md

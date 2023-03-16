@@ -37,8 +37,18 @@ def geometric_filter(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.n
     """Computes a geometric filter based off of pixel and depth reprojection error.
 
     Parameters:
+        src_depth:
+        src_cam:
+        tgt_depth:
+        tgt_depth:
+        pix_th:
+        depth_th:
 
     Returns:
+        mask:
+        depth_reprojected:
+        x_tgt:
+        y_tgt:
     """
     width, height = src_depth.shape[1], src_depth.shape[0]
     x_ref, y_ref = np.meshgrid(np.arange(0, width), np.arange(0, height))
@@ -59,14 +69,14 @@ def geometric_filter(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.n
 
     return mask, depth_reprojected, x_tgt, y_tgt
 
-def topk_filter(depth_map, conf_map, device='cuda:0', percent=0.3):
+def topk_filter(depth_map: np.ndarray, conf_map:np.ndarray, device: str='cuda:0', percent: float=0.3) -> Tuple(np.ndarray,np.ndarray):
     """Filters a map by the top percentage of confidence values.
 
     Parameters:
         depth_map:
         conf_map:
         device:
-        percentage:
+        percent:
 
     Returns:
         filtered_map:
@@ -91,14 +101,14 @@ def topk_filter(depth_map, conf_map, device='cuda:0', percent=0.3):
 
     return depth_map*filt, filt
 
-def topk_strict_filter(depth_map, filter_prob, device='cuda:0', percent=0.3):
+def topk_strict_filter(depth_map: np.ndarray, filter_prob: np.ndarray, device: str = 'cuda:0', percent: float = 0.3) -> Tuple(np.ndarray,np.ndarray):
     """Filters a map by the top percentage of confidence values.
 
     Parameters:
         depth_map:
-        conf_map:
+        filter_prob:
         device:
-        percentage:
+        percent:
 
     Returns:
         filtered_map:
