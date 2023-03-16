@@ -1,4 +1,5 @@
 # cvt/metrics.py
+
 """Module including routines computing metrics.
 
 This module includes the following functions:
@@ -8,15 +9,11 @@ This module includes the following functions:
 - `completeness_eval(est_ply, gt_ply, mask_th=20.0, est_filt=None, gt_filt=None)` - Computes the completeness of an estimated point cloud against the provided ground-truth.
 - `filter_outlier_points(est_ply, gt_ply, outlier_th)` - Filters out points from an estimated point cloud that are farther than some threshold to the ground-truth point cloud.
 """
-import os
-import scipy.io as sio
+
 import numpy as np
-import sys
 import open3d as o3d
 from sklearn.neighbors import KDTree
 from typing import Tuple, Optional
-
-from util import *
 
 def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
     """Computes the absolute error between an estimated and groun-truth depth map.

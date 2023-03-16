@@ -1,3 +1,17 @@
+# cvt/filtering.py
+
+"""A suite of common filtering utilities.
+
+This module includes several functions for filtering depth maps.
+
+This module contains the following functions:
+
+- `conf_filter(depth_map, conf_map, device, min_conf)` - Filters a map by confidence values above a minimum threshold.
+- `topk_filter(depth_map, conf_map, device, percent)` - Filters a map by the top percentage of confidence values.
+- `topk_strict_filter(depth_map, filter_prob, device, percent)` - Filters a map by the top percentage of confidence values.
+"""
+
+import torch
 
 def conf_filter(depth_map: torch.Tensor, conf_map: torch.Tensor, device: str = 'cuda:0', min_conf: float = 0.8) -> Tuple(torch.Tensor, torch.Tensor):
     """Filters a map by confidence values above a minimum threshold.

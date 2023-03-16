@@ -17,6 +17,7 @@ This module contains the following functions:
 - `read_point_cloud(point_cloud_file)` - Reads a point cloud from a file.
 - `read_single_cam_sfm(cam_file, depth_planes)` - Reads a single camera file in SFM format.
 - `read_stereo_intrinsics_yaml(intrinsics_file)` - Reads intrinsics information for a stereo camera pair from a *.yaml file.
+- `write_cam_sfm()` -
 - `write_matrix(M, mat_file)` - Writes a single matrix to a file.
 - `write_mesh(mesh_file, mesh)` - Writes a mesh to a file.
 - `write_pfm(pfm_file, data_map, scale)` - Writes a data map to a file in *.pfm format.
@@ -27,143 +28,14 @@ import sys
 import numpy as np
 import cv2
 import re
+import math
 import open3d as o3d
 from typing import List, Tuple
 
+from scipy.spatial.transform import Rotation as rot
 
-def read_pfm(pfm_file: str) -> np.ndarray:
-    """Reads a file in *.pfm format.
+from camera import y_axis_rotation
 
-    Parameters:
-        pfm_file: Input *.pfm file to be read.
-
-    Returns:
-        Data map that was stored in the *.pfm file.
-    """
-    with open(pfm_file, 'rb') as pfm_file:
-        color = None
-        width = None
-        height = None
-        scale = None
-        data_type = None
-        header = pfm_file.readline().decode('iso8859_15').rstrip()
-
-        if header == 'PF':
-            color = True
-        elif header == 'Pf':
-            color = False
-        else:
-            raise Exception('Not a PFM file.')
-        dim_match = re.match(r'^(\d+)\s(\d+)\s$', pfm_file.readline().decode('iso8859_15'))
-        if dim_match:
-            width, height = map(int, dim_match.groups())
-        else:
-            raise Exception('Malformed PFM header.')
-        # scale = float(file.readline().rstrip())
-        scale = float((pfm_file.readline()).decode('iso8859_15').rstrip())
-        if scale < 0: # little-endian
-            data_type = '<f'
-        else:
-            data_type = '>f' # big-endian
-        data_string = pfm_file.read()
-        data = np.fromstring(data_string, data_type)
-        shape = (height, width, 3) if color else (height, width)
-        data = np.reshape(data, shape)
-        data = cv2.flip(data, 0)
-    return data
-
-def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
-    """Writes a data map to a file in *.pfm format.
-
-    Parameters:
-        pfm_file: Output *.pfm file to store the data map.
-        data_map: Data map to be stored.
-        scale: Value used to scale the data map.
-    """
-    with open(pfm_file, 'wb') as pfm_file:
-        color = None
-
-        if image.dtype.name != 'float32':
-            raise Exception('Image dtype must be float32.')
-
-        image = np.flipud(image)
-
-        if len(image.shape) == 3 and image.shape[2] == 3: # color image
-            color = True
-        elif len(image.shape) == 2 or (len(image.shape) == 3 and image.shape[2] == 1): # greyscale
-            color = False
-        else:
-            raise Exception('Image must have H x W x 3, H x W x 1 or H x W dimensions.')
-
-        a = 'PF\n' if color else 'Pf\n'
-        b = '%d %d\n' % (image.shape[1], image.shape[0])
-        
-        pfm_file.write(a.encode('iso8859-15'))
-        pfm_file.write(b.encode('iso8859-15'))
-
-        endian = image.dtype.byteorder
-
-        if endian == '<' or endian == '=' and sys.byteorder == 'little':
-            scale = -scale
-
-        c = '%f\n' % scale
-        pfm_file.write(c.encode('iso8859-15'))
-
-        image_string = image.tostring()
-        pfm_file.write(image_string)
-
-
-def read_single_cam_sfm(cam_file: str, depth_planes: int = 256) -> np.ndarray:
-    """Reads a single camera file in SFM format.
-
-    Parameters:
-        cam_file: Input camera file to be read.
-        depth_planes: Number of depth planes to store in the view metadata.
-
-    Returns:
-        Camera extrinsics, intrinsics, and view metadata (2x4x4).
-    """
-    cam = np.zeros((2, 4, 4))
-
-    with open(cam_file, 'r') as cam_file:
-        words = cam_file.read().split()
-
-    words_len = len(words)
-
-    # read extrinsic
-    for i in range(0, 4):
-        for j in range(0, 4):
-            extrinsic_index = 4 * i + j + 1
-            cam[0,i,j] = float(words[extrinsic_index])
-
-    # read intrinsic
-    for i in range(0, 3):
-        for j in range(0, 3):
-            intrinsic_index = 3 * i + j + 18
-            cam[1,i,j] = float(words[intrinsic_index])
-
-    if words_len == 29:
-        cam[1,3,0] = float(words[27])
-        cam[1,3,1] = float(words[28])
-        cam[1,3,2] = depth_planes
-        cam[1,3,3] = cam[1][3][0] + (cam[1][3][1] * cam[1][3][2])
-    elif words_len == 30:
-        cam[1,3,0] = float(words[27])
-        cam[1,3,1] = float(words[28])
-        cam[1,3,2] = float(words[29])
-        cam[1,3,3] = cam[1][3][0] + (cam[1][3][1] * cam[1][3][2])
-    elif words_len == 31:
-        cam[1,3,0] = words[27]
-        cam[1,3,1] = float(words[28])
-        cam[1,3,2] = float(words[29])
-        cam[1,3,3] = float(words[30])
-    else:
-        cam[1,3,0] = 0
-        cam[1,3,1] = 0
-        cam[1,3,2] = 0
-        cam[1,3,3] = 1
-
-    return cam
 
 def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
     """Reads an entire directory of camera files in SFM format.
@@ -200,11 +72,9 @@ def read_cams_trajectory(log_file: str) -> np.ndarray:
     Returns:
         Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).
     """
-    cam_file = os.path.join(data_path,"camera_pose.log")
-
     cams = []
     
-    with open(cam_file,'r') as f:
+    with open(log_file,'r') as f:
         lines = f.readlines()
 
         for i in range(0,len(lines),5):
@@ -258,10 +128,168 @@ def read_extrinsics_tum(tum_file: str, key_frames: List[int] = None) -> np.ndarr
                 thetas = np.concatenate((left,right,center))
 
                 for theta in thetas:
-                    new_P = pose_rotation(P,theta)
+                    new_P = y_axis_rotation(P,theta)
                     extrinsics.append(new_P)
 
     return np.asarray(extrinsics)
+
+def read_matrix(mat_file: str) -> np.ndarray:
+    """Reads a single matrix of float values from a file.
+
+    Parameters:
+        mat_file: Input file for the matrix to be read.
+
+    Returns:
+        The matrix stored in the given file.
+    """
+    with open(mat_file, 'r') as f:
+        lines = f.readlines()
+        M = []
+
+        for l in lines:
+            row = l.split()
+            row = [float(s) for s in row]
+            M.append(row)
+        M = np.array(M)
+
+    return M
+
+def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
+    """Reads a mesh from a file.
+
+    Parameters:
+        mesh_file: Input mesh file.
+
+    Returns:
+        The mesh stored in the given file.
+    """
+    return o3d.io.read_triangle_mesh(mesh_file)
+
+def read_pair_file(filename: str) -> np.ndarray:
+    """Reads a pair file encoding supporting camera viewpoints.
+
+    Parameters:
+        filename: Input file encoding per-camera viewpoints.
+
+    Returns:
+        An array of tuples encoding (ref_view, [src_1,src_2,..])
+    """
+    data = []
+    with open(filename) as f:
+        num_views = int(f.readline())
+        all_views = list(range(0,num_views))
+
+        for view_idx in range(num_views):
+            ref_view = int(f.readline().rstrip())
+            src_views = [int(x) for x in f.readline().rstrip().split()[1::2]]
+            if len(src_views) == 0:
+                continue
+            data.append((ref_view, src_views))
+    return np.ndarray(data)
+
+def read_pfm(pfm_file: str) -> np.ndarray:
+    """Reads a file in *.pfm format.
+
+    Parameters:
+        pfm_file: Input *.pfm file to be read.
+
+    Returns:
+        Data map that was stored in the *.pfm file.
+    """
+    with open(pfm_file, 'rb') as pfm_file:
+        color = None
+        width = None
+        height = None
+        scale = None
+        data_type = None
+        header = pfm_file.readline().decode('iso8859_15').rstrip()
+
+        if header == 'PF':
+            color = True
+        elif header == 'Pf':
+            color = False
+        else:
+            raise Exception('Not a PFM file.')
+        dim_match = re.match(r'^(\d+)\s(\d+)\s$', pfm_file.readline().decode('iso8859_15'))
+        if dim_match:
+            width, height = map(int, dim_match.groups())
+        else:
+            raise Exception('Malformed PFM header.')
+        # scale = float(file.readline().rstrip())
+        scale = float((pfm_file.readline()).decode('iso8859_15').rstrip())
+        if scale < 0: # little-endian
+            data_type = '<f'
+        else:
+            data_type = '>f' # big-endian
+        data_string = pfm_file.read()
+        data = np.fromstring(data_string, data_type)
+        shape = (height, width, 3) if color else (height, width)
+        data = np.reshape(data, shape)
+        data = cv2.flip(data, 0)
+    return data
+
+def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
+    """Reads a point cloud from a file.
+
+    Parameters:
+        point_cloud_file: Input point cloud file.
+
+    Returns:
+        The point cloud stored in the given file.
+    """
+    return o3d.io.read_point_cloud(point_cloud_file)
+
+def read_single_cam_sfm(cam_file: str, depth_planes: int = 256) -> np.ndarray:
+    """Reads a single camera file in SFM format.
+
+    Parameters:
+        cam_file: Input camera file to be read.
+        depth_planes: Number of depth planes to store in the view metadata.
+
+    Returns:
+        Camera extrinsics, intrinsics, and view metadata (2x4x4).
+    """
+    cam = np.zeros((2, 4, 4))
+
+    with open(cam_file, 'r') as cam_file:
+        words = cam_file.read().split()
+
+    words_len = len(words)
+
+    # read extrinsic
+    for i in range(0, 4):
+        for j in range(0, 4):
+            extrinsic_index = 4 * i + j + 1
+            cam[0,i,j] = float(words[extrinsic_index])
+
+    # read intrinsic
+    for i in range(0, 3):
+        for j in range(0, 3):
+            intrinsic_index = 3 * i + j + 18
+            cam[1,i,j] = float(words[intrinsic_index])
+
+    if words_len == 29:
+        cam[1,3,0] = float(words[27])
+        cam[1,3,1] = float(words[28])
+        cam[1,3,2] = depth_planes
+        cam[1,3,3] = cam[1][3][0] + (cam[1][3][1] * cam[1][3][2])
+    elif words_len == 30:
+        cam[1,3,0] = float(words[27])
+        cam[1,3,1] = float(words[28])
+        cam[1,3,2] = float(words[29])
+        cam[1,3,3] = cam[1][3][0] + (cam[1][3][1] * cam[1][3][2])
+    elif words_len == 31:
+        cam[1,3,0] = words[27]
+        cam[1,3,1] = float(words[28])
+        cam[1,3,2] = float(words[29])
+        cam[1,3,3] = float(words[30])
+    else:
+        cam[1,3,0] = 0
+        cam[1,3,1] = 0
+        cam[1,3,2] = 0
+        cam[1,3,3] = 1
+
+    return cam
 
 def read_stereo_intrinsics_yaml(intrinsics_file: str) -> Tuple[ np.ndarray, \
                                                                 np.ndarray, \
@@ -304,28 +332,30 @@ def read_stereo_intrinsics_yaml(intrinsics_file: str) -> Tuple[ np.ndarray, \
 
     cv_file.release()
 
-    return [K_left, D_left, K_right, D_right, R, t]
+    return [K_left, D_left, K_right, D_right, R, T]
 
-def read_matrix(mat_file: str) -> np.ndarray:
-    """Reads a single matrix of float values from a file.
+def write_cam_sfm(cam_file: str, cam: np.ndarray) -> None:
+    """Writes intrinsic and extrinsic camera parameters to a file in sfm format.
 
     Parameters:
-        mat_file: Input file for the matrix to be read.
-
-    Returns:
-        The matrix stored in the given file.
+        cam_file: The file to be writen to.
+        cam: Camera extrinsic and intrinsic data to be written.
     """
-    with open(mat_file, 'r') as f:
-        lines = f.readlines()
-        M = []
+    with open(cam_file, "w") as f:
+        f.write('extrinsic\n')
+        for i in range(0, 4):
+            for j in range(0, 4):
+                f.write(str(cam[0][i][j]) + ' ')
+            f.write('\n')
+        f.write('\n')
 
-        for l in lines:
-            row = l.split()
-            row = [float(s) for s in row]
-            M.append(row)
-        M = np.array(M)
+        f.write('intrinsic\n')
+        for i in range(0, 3):
+            for j in range(0, 3):
+                f.write(str(cam[1][i][j]) + ' ')
+            f.write('\n')
 
-    return M
+        f.write('\n' + str(cam[1][3][0]) + ' ' + str(cam[1][3][1]) + ' ' + str(cam[1][3][2]) + ' ' + str(cam[1][3][3]) + '\n')
 
 def write_matrix(M: np.ndarray, mat_file: str) -> None:
     """Writes a single matrix to a file.
@@ -334,34 +364,11 @@ def write_matrix(M: np.ndarray, mat_file: str) -> None:
         M: Matrix to be stored.
         mat_file: Output file where the given matrix is to be writen.
     """
-    with open(filename, "w") as f:
+    with open(mat_file, "w") as f:
         for row in M:
             for e in row:
                 f.write("{} ".format(e))
             f.write("\n")
-
-def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
-    """Reads a point cloud from a file.
-
-    Parameters:
-        point_cloud_file: Input point cloud file.
-
-    Returns:
-        The point cloud stored in the given file.
-    """
-    return o3d.io.read_point_cloud(point_cloud_file)
-
-
-def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
-    """Reads a mesh from a file.
-
-    Parameters:
-        mesh_file: Input mesh file.
-
-    Returns:
-        The mesh stored in the given file.
-    """
-    return o3d.io.read_triangle_mesh(mesh_file)
 
 def write_mesh(mesh_file: str, mesh: o3d.geometry.TriangleMesh) -> None:
     """Writes a mesh to a file.
@@ -372,25 +379,42 @@ def write_mesh(mesh_file: str, mesh: o3d.geometry.TriangleMesh) -> None:
     """
     return o3d.io.write_triangle_mesh(mesh_file, mesh)
 
-
-def read_pair_file(filename: str) -> np.ndarray:
-    """Reads a pair file encoding supporting camera viewpoints.
+def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
+    """Writes a data map to a file in *.pfm format.
 
     Parameters:
-        filename: Input file encoding per-camera viewpoints.
-
-    Returns:
-        An array of tuples encoding (ref_view, [src_1,src_2,..])
+        pfm_file: Output *.pfm file to store the data map.
+        data_map: Data map to be stored.
+        scale: Value used to scale the data map.
     """
-    data = []
-    with open(filename) as f:
-        num_views = int(f.readline())
-        all_views = list(range(0,num_views))
+    with open(pfm_file, 'wb') as pfm_file:
+        color = None
 
-        for view_idx in range(num_views):
-            ref_view = int(f.readline().rstrip())
-            src_views = [int(x) for x in f.readline().rstrip().split()[1::2]]
-            if len(src_views) == 0:
-                continue
-            data.append((ref_view, src_views))
-    return np.ndarray(data)
+        if image.dtype.name != 'float32':
+            raise Exception('Image dtype must be float32.')
+
+        image = np.flipud(image)
+
+        if len(image.shape) == 3 and image.shape[2] == 3: # color image
+            color = True
+        elif len(image.shape) == 2 or (len(image.shape) == 3 and image.shape[2] == 1): # greyscale
+            color = False
+        else:
+            raise Exception('Image must have H x W x 3, H x W x 1 or H x W dimensions.')
+
+        a = 'PF\n' if color else 'Pf\n'
+        b = '%d %d\n' % (image.shape[1], image.shape[0])
+        
+        pfm_file.write(a.encode('iso8859-15'))
+        pfm_file.write(b.encode('iso8859-15'))
+
+        endian = image.dtype.byteorder
+
+        if endian == '<' or endian == '=' and sys.byteorder == 'little':
+            scale = -scale
+
+        c = '%f\n' % scale
+        pfm_file.write(c.encode('iso8859-15'))
+
+        image_string = image.tostring()
+        pfm_file.write(image_string)

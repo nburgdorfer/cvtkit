@@ -16,10 +16,8 @@ This module contains the following functions:
 """
 
 import os
-import sys
 import numpy as np
-import cv2
-import re
+import math
 from scipy.linalg import null_space
 from scipy.spatial.transform import Rotation
 
@@ -96,7 +94,7 @@ def sfm_to_trajectory(cams: np.ndarray, log_file: str) -> None:
     """
     num_cams = len(cams)
 
-    with open(output_file, 'w') as f:
+    with open(log_file, 'w') as f:
         for i,cam in enumerate(cams):
             # write camera to output_file
             f.write("{} {} 0\n".format(str(i),str(i)))

@@ -7,40 +7,12 @@ by the sub-packages of the CVT library.
 
 This module contains the following functions:
 
+- `non_zero_std(maps, device, dim, keepdim)` - Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.
+- `print_gpu_mem()` - Prints the current unallocated memory of the GPU.
 - `round_nearest(num, decimal=0)` - Rounds a floating point number to the nearest decimal place.
 """
-import numpy as np
+
 import torch
-
-def round_nearest(num: float, decimal: int = 0) -> int:
-    """Rounds a floating point number to the nearest decimal place.
-
-    Args:
-        num: Float to be rounded.
-        decimal: Decimal place to round to.
-
-    Returns:
-        The given number rounded to the nearest decimal place.
-
-    Examples:
-        >>> round_nearest(11.1)
-        11
-        >>> round_nearest(15.7)
-        16
-        >>> round_nearest(2.5)
-        2
-        >>> round_nearest(3.5)
-        3
-        >>> round_nearest(14.156, 1)
-        14.2
-        >>> round_nearest(15.156, 1)
-        15.2
-        >>> round_nearest(15.156, 2)
-        15.16
-    """
-
-    return round(num+10**(-len(str(num))-1), decimal)
-
 
 def non_zero_std(maps: torch.Tensor, device: str, dim: int = 1, keepdim: bool = False) -> torch.Tensor:
     """Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.
@@ -76,6 +48,34 @@ def print_gpu_mem() -> None:
     f = t- (a+r)
     print("Free: {:0.4f} GB".format(f/(1024*1024*1024)))
 
+def round_nearest(num: float, decimal: int = 0) -> int:
+    """Rounds a floating point number to the nearest decimal place.
+
+    Args:
+        num: Float to be rounded.
+        decimal: Decimal place to round to.
+
+    Returns:
+        The given number rounded to the nearest decimal place.
+
+    Examples:
+        >>> round_nearest(11.1)
+        11
+        >>> round_nearest(15.7)
+        16
+        >>> round_nearest(2.5)
+        2
+        >>> round_nearest(3.5)
+        3
+        >>> round_nearest(14.156, 1)
+        14.2
+        >>> round_nearest(15.156, 1)
+        15.2
+        >>> round_nearest(15.156, 2)
+        15.16
+    """
+
+    return round(num+10**(-len(str(num))-1), decimal)
 
 
 #   def center_image(img):
