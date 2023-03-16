@@ -9,8 +9,10 @@ This module contains the following functions:
 
 - `read_cams_sfm(camera_path, extension)` - Reads an entire directory of camera files in SFM format.
 - `read_cams_trajectory(log_file)` - Reads camera file in Trajectory File format.
+- `read_extrinsics_tum(tum_file, key_frames)` - Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].
 - `read_matrix(mat_file)` - Reads a single matrix of float values from a file.
 - `read_mesh(mesh_file)` - Reads a mesh from a file.
+- `read_pair_file(filename)` - Reads a pair file encoding supporting camera viewpoints.
 - `read_pfm(pfm_file)` - Reads a file in *.pfm format.
 - `read_point_cloud(point_cloud_file)` - Reads a point cloud from a file.
 - `read_single_cam_sfm(cam_file, depth_planes)` - Reads a single camera file in SFM format.
@@ -32,7 +34,7 @@ from typing import List, Tuple
 def read_pfm(pfm_file: str) -> np.ndarray:
     """Reads a file in *.pfm format.
 
-    Args:
+    Parameters:
         pfm_file: Input *.pfm file to be read.
 
     Returns:
@@ -73,7 +75,7 @@ def read_pfm(pfm_file: str) -> np.ndarray:
 def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
     """Writes a data map to a file in *.pfm format.
 
-    Args:
+    Parameters:
         pfm_file: Output *.pfm file to store the data map.
         data_map: Data map to be stored.
         scale: Value used to scale the data map.
@@ -114,7 +116,7 @@ def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
 def read_single_cam_sfm(cam_file: str, depth_planes: int = 256) -> np.ndarray:
     """Reads a single camera file in SFM format.
 
-    Args:
+    Parameters:
         cam_file: Input camera file to be read.
         depth_planes: Number of depth planes to store in the view metadata.
 
@@ -166,7 +168,7 @@ def read_single_cam_sfm(cam_file: str, depth_planes: int = 256) -> np.ndarray:
 def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
     """Reads an entire directory of camera files in SFM format.
 
-    Args:
+    Parameters:
         camera_path: Path to the directory of camera files.
         extension: File extension being used for the camera files.
 
@@ -192,7 +194,7 @@ def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
 def read_cams_trajectory(log_file: str) -> np.ndarray:
     """Reads camera file in Trajectory File format.
 
-    Args:
+    Parameters:
         log_file: Input *.log file to be read.
 
     Returns:
@@ -217,7 +219,14 @@ def read_cams_trajectory(log_file: str) -> np.ndarray:
     return cams
 
 def read_extrinsics_tum(tum_file: str, key_frames: List[int] = None) -> np.ndarray:
-    """
+    """Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].
+
+    Parameters:
+        tum_file: Input extrinsics file.
+        key_frames: Indices corresponding to the desired keyframes.
+
+    Returns:
+        Array of camera extrinsics (Nx4x4).
     """
     rot_interval = 30
     max_rot_angle = math.pi / 3
@@ -262,7 +271,7 @@ def read_stereo_intrinsics_yaml(intrinsics_file: str) -> Tuple[ np.ndarray, \
                                                                 np.ndarray]:
     """Reads intrinsics information for a stereo camera pair from a *.yaml file.
 
-    Args:
+    Parameters:
         intrinsics_file: Input *.yaml file storing the intrinsics information.
 
     Returns:
@@ -300,7 +309,7 @@ def read_stereo_intrinsics_yaml(intrinsics_file: str) -> Tuple[ np.ndarray, \
 def read_matrix(mat_file: str) -> np.ndarray:
     """Reads a single matrix of float values from a file.
 
-    Args:
+    Parameters:
         mat_file: Input file for the matrix to be read.
 
     Returns:
@@ -321,7 +330,7 @@ def read_matrix(mat_file: str) -> np.ndarray:
 def write_matrix(M: np.ndarray, mat_file: str) -> None:
     """Writes a single matrix to a file.
 
-    Args:
+    Parameters:
         M: Matrix to be stored.
         mat_file: Output file where the given matrix is to be writen.
     """
@@ -334,7 +343,7 @@ def write_matrix(M: np.ndarray, mat_file: str) -> None:
 def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
     """Reads a point cloud from a file.
 
-    Args:
+    Parameters:
         point_cloud_file: Input point cloud file.
 
     Returns:
@@ -346,7 +355,7 @@ def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
 def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
     """Reads a mesh from a file.
 
-    Args:
+    Parameters:
         mesh_file: Input mesh file.
 
     Returns:
@@ -357,8 +366,31 @@ def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
 def write_mesh(mesh_file: str, mesh: o3d.geometry.TriangleMesh) -> None:
     """Writes a mesh to a file.
 
-    Args:
+    Parameters:
         mesh_file: Output mesh file.
         mesh: Mesh to be stored.
     """
     return o3d.io.write_triangle_mesh(mesh_file, mesh)
+
+
+def read_pair_file(filename: str) -> np.ndarray:
+    """Reads a pair file encoding supporting camera viewpoints.
+
+    Parameters:
+        filename: Input file encoding per-camera viewpoints.
+
+    Returns:
+        An array of tuples encoding (ref_view, [src_1,src_2,..])
+    """
+    data = []
+    with open(filename) as f:
+        num_views = int(f.readline())
+        all_views = list(range(0,num_views))
+
+        for view_idx in range(num_views):
+            ref_view = int(f.readline().rstrip())
+            src_views = [int(x) for x in f.readline().rstrip().split()[1::2]]
+            if len(src_views) == 0:
+                continue
+            data.append((ref_view, src_views))
+    return np.ndarray(data)
