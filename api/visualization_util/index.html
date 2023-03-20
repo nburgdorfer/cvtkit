@@ -1360,7 +1360,7 @@
 <span class="sd">        mx: maximum value used for pixel intensity normalization.</span>
 <span class="sd">        mn: minimum value used for pixel intensity normalization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">disp_map</span> <span class="o">=</span> <span class="p">((</span><span class="n">disp_map</span><span class="o">-</span><span class="n">mn</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">mx</span><span class="o">-</span><span class="n">mn</span><span class="p">))</span><span class="o">*</span><span class="mi">255</span>
+    <span class="n">disp_map</span> <span class="o">=</span> <span class="p">((</span><span class="n">disp_map</span><span class="o">-</span><span class="n">mn</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">mx</span><span class="o">-</span><span class="n">mn</span><span class="o">+</span><span class="mf">1e-8</span><span class="p">))</span><span class="o">*</span><span class="mi">255</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">disp_map</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
