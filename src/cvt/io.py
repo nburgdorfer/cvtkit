@@ -12,7 +12,7 @@ This module contains the following functions:
 - `read_extrinsics_tum(tum_file, key_frames)` - Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].
 - `read_matrix(mat_file)` - Reads a single matrix of float values from a file.
 - `read_mesh(mesh_file)` - Reads a mesh from a file.
-- `read_pair_file(filename)` - Reads a pair file encoding supporting camera viewpoints.
+- `read_cluster_list(filename)` - Reads a cluster list file encoding supporting camera viewpoints.
 - `read_pfm(pfm_file)` - Reads a file in *.pfm format.
 - `read_point_cloud(point_cloud_file)` - Reads a point cloud from a file.
 - `read_single_cam_sfm(cam_file, depth_planes)` - Reads a single camera file in SFM format.
@@ -165,8 +165,8 @@ def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
     """
     return o3d.io.read_triangle_mesh(mesh_file)
 
-def read_pair_file(filename: str) -> List[Tuple[int,List[int]]]:
-    """Reads a pair file encoding supporting camera viewpoints.
+def read_cluster_list(filename: str) -> List[Tuple[int,List[int]]]:
+    """Reads a cluster list file encoding supporting camera viewpoints.
 
     Parameters:
         filename: Input file encoding per-camera viewpoints.
