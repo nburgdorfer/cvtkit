@@ -27,7 +27,7 @@ import torch
 import torch.nn.functional as F
 
 import rendering as rd
-from io import read_pfm, read_single_cam_sfm
+from io import *
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
     """Computes the essential matrix between two images using image features.
@@ -380,8 +380,6 @@ def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: i
 
 def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray) -> Tuple[ np.ndarray,
                                                                                                                 np.ndarray,
-                                                                                                                np.ndarray,
-                                                                                                                np.ndarray,
                                                                                                                 np.ndarray]:
     """Computes the re-projection depth values and pixel indices between two depth maps.
 
@@ -401,10 +399,8 @@ def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray,
 
     Returns:
         depth_reprojected: The re-projected depth values for the source depth map.
-        x_reprojected: The re-projection x-coordinates for the source view.
-        y_reprojected: The re-projected y-coordinates for the source view.
-        x_tgt: The projected x-coordinates for the target view.
-        y_tgt: The projected y-coordinates for the target view.
+        coords_reprojected: The re-projection coordinates for the source view.
+        coords_tgt: The projected coordinates for the target view.
     """
     height, width = src_depth.shape
 
@@ -444,7 +440,10 @@ def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray,
     x_reprojected = xy_reprojected[0].reshape([height, width]).astype(np.float32)
     y_reprojected = xy_reprojected[1].reshape([height, width]).astype(np.float32)
 
-    return depth_reprojected, x_reprojected, y_reprojected, x_tgt, y_tgt
+    coords_reprojected = np.dstack((x_reprojected, y_reprojected))
+    coords_tgt = np.dstack((x_tgt, y_tgt))
+
+    return depth_reprojected, coords_reprojected, coords_tgt
 
 def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: List[str], cam_files: List[str], src_ind: int = -1, pixel_th: float = 0.1) -> np.ndarray:
     """Computes a visibility mask between a provided source depth map and list of target depth maps.

@@ -224,7 +224,7 @@ def display_map(filename: str, disp_map: np.ndarray, mx: float, mn: float) -> No
         mx: maximum value used for pixel intensity normalization.
         mn: minimum value used for pixel intensity normalization.
     """
-    disp_map = ((disp_map-mn)/(mx-mn))*255
+    disp_map = ((disp_map-mn)/(mx-mn+1e-8))*255
     cv2.imwrite(filename, disp_map)
 
 

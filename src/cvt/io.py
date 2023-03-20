@@ -165,7 +165,7 @@ def read_mesh(mesh_file: str) -> o3d.geometry.TriangleMesh:
     """
     return o3d.io.read_triangle_mesh(mesh_file)
 
-def read_pair_file(filename: str) -> np.ndarray:
+def read_pair_file(filename: str) -> List[Tuple[int,List[int]]]:
     """Reads a pair file encoding supporting camera viewpoints.
 
     Parameters:
@@ -185,7 +185,7 @@ def read_pair_file(filename: str) -> np.ndarray:
             if len(src_views) == 0:
                 continue
             data.append((ref_view, src_views))
-    return np.ndarray(data)
+    return data
 
 def read_pfm(pfm_file: str) -> np.ndarray:
     """Reads a file in *.pfm format.
