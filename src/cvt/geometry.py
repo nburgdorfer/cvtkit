@@ -11,6 +11,7 @@ This module contains the following functions:
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `point_cloud_from_depth(depth, cam, color)` - Creates a point cloud from a single depth map.
+- `points_from_depth(depth, cam)` - Creates a point array from a single depth map.
 - `project_depth_map(depth, cam, mask)` - Projects a depth map into a list of 3D points.
 - `project_renderer(renderer, K, P, width, height)` - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
 - `render_custom_values(points, values, image_shape, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
@@ -118,12 +119,33 @@ def geometric_consistency_mask(src_depth: np.ndarray, src_cam: np.ndarray, tgt_d
     height, width = src_depth.shape
     x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
 
-    depth_reprojected, x2d_reprojected, y2d_reprojected, x2d_tgt, y2d_tgt = reproject(src_depth, src_cam, tgt_depth, tgt_cam)
+    depth_reprojected, coords_reprojected, coords_tgt, projection_map = reproject(src_depth, src_cam, tgt_depth, tgt_cam)
 
-    dist = np.sqrt((x2d_reprojected - x_src) ** 2 + (y2d_reprojected - y_src) ** 2)
+    dist = np.sqrt((coords_reprojected[:,:,0] - x_src) ** 2 + (coords_reprojected[:,:,1] - y_src) ** 2)
     mask = np.where(dist < pixel_th, 1, 0)
 
     return mask
+
+def geometric_consistency_error(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray) -> np.ndarray:
+    """Computes the geometric consistency error between a source and target depth map.
+
+    Parameters:
+        src_depth: Depth map for the source view.
+        src_cam: Camera parameters for the source depth map viewpoint.
+        tgt_depth: Depth map for the target view.
+        tgt_cam: Camera parameters for the target depth map viewpoint.
+
+    Returns:
+        The binary consistency mask encoding depth consensus between source and target depth maps.
+    """
+    height, width = src_depth.shape
+    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
+
+    depth_reprojected, coords_reprojected, coords_tgt, projection_map = reproject(src_depth, src_cam, tgt_depth, tgt_cam)
+
+    dist = np.sqrt((coords_reprojected[:,:,0] - x_src) ** 2 + (coords_reprojected[:,:,1] - y_src) ** 2)
+
+    return dist, projection_map
 
 def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
     """Computes a homography transformation between two images using image features.
@@ -213,6 +235,30 @@ def point_cloud_from_depth(depth: np.ndarray, cam: np.ndarray, color: np.ndarray
     cloud.colors = colors
     
     return cloud
+
+def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
+    """Creates a point array from a single depth map.
+
+    Parameters:
+        depth: Depth map to project to 3D.
+        cam: Camera parameters for the given depth map viewpoint.
+
+    Returns:
+        An array of 3D points corresponding to the input depth map.
+    """
+    # project depth map to point cloud
+    height, width = depth.shape
+    x = np.linspace(0,width-1,num=width)
+    y = np.linspace(0,height-1,num=height)
+    x,y = np.meshgrid(x,y, indexing="xy")
+    x = x.flatten()
+    y = y.flatten()
+    depth = depth.flatten()
+    xyz_cam = np.matmul(np.linalg.inv(cam[1,:3,:3]), np.vstack((x, y, np.ones_like(x))) * depth)
+    xyz_world = np.matmul(np.linalg.inv(cam[0,:4,:4]), np.vstack((xyz_cam, np.ones_like(x))))[:3]
+    points = xyz_world.transpose((1, 0))
+    return points
+
 
 def project_depth_map(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Projects a depth map into a list of 3D points
@@ -422,6 +468,7 @@ def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray,
 
     # sample the depth values from the src map at each pixel coord
     sampled_depth_tgt = cv2.remap(tgt_depth, x_tgt, y_tgt, interpolation=cv2.INTER_LINEAR)
+    projection_map = np.where(sampled_depth_tgt==0,0,1) # 0 where pixel does not project into src image plane
 
     # back-project src depths to 3D
     xyz_tgt = np.matmul(np.linalg.inv(tgt_cam[1,:3,:3]),
@@ -443,7 +490,7 @@ def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray,
     coords_reprojected = np.dstack((x_reprojected, y_reprojected))
     coords_tgt = np.dstack((x_tgt, y_tgt))
 
-    return depth_reprojected, coords_reprojected, coords_tgt
+    return depth_reprojected, coords_reprojected, coords_tgt, projection_map
 
 def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: List[str], cam_files: List[str], src_ind: int = -1, pixel_th: float = 0.1) -> np.ndarray:
     """Computes a visibility mask between a provided source depth map and list of target depth maps.

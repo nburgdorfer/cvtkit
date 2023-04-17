@@ -390,25 +390,25 @@ def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
     with open(pfm_file, 'wb') as pfm_file:
         color = None
 
-        if image.dtype.name != 'float32':
+        if data_map.dtype.name != 'float32':
             raise Exception('Image dtype must be float32.')
 
-        image = np.flipud(image)
+        data_map = np.flipud(data_map)
 
-        if len(image.shape) == 3 and image.shape[2] == 3: # color image
+        if len(data_map.shape) == 3 and data_map.shape[2] == 3: # color data_map
             color = True
-        elif len(image.shape) == 2 or (len(image.shape) == 3 and image.shape[2] == 1): # greyscale
+        elif len(data_map.shape) == 2 or (len(data_map.shape) == 3 and data_map.shape[2] == 1): # greyscale
             color = False
         else:
             raise Exception('Image must have H x W x 3, H x W x 1 or H x W dimensions.')
 
         a = 'PF\n' if color else 'Pf\n'
-        b = '%d %d\n' % (image.shape[1], image.shape[0])
+        b = '%d %d\n' % (data_map.shape[1], data_map.shape[0])
         
         pfm_file.write(a.encode('iso8859-15'))
         pfm_file.write(b.encode('iso8859-15'))
 
-        endian = image.dtype.byteorder
+        endian = data_map.dtype.byteorder
 
         if endian == '<' or endian == '=' and sys.byteorder == 'little':
             scale = -scale
@@ -416,5 +416,5 @@ def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
         c = '%f\n' % scale
         pfm_file.write(c.encode('iso8859-15'))
 
-        image_string = image.tostring()
-        pfm_file.write(image_string)
+        data_map_string = data_map.tostring()
+        pfm_file.write(data_map_string)

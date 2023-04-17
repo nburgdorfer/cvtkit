@@ -161,15 +161,3 @@ def y_axis_rotation(P: np.ndarray, theta: float) -> np.ndarray:
 
 
 
-#   def scale_camera(cam, scale=1):
-#       new_cam = np.copy(cam)
-#       new_cam[1][0][0] = cam[1][0][0] * scale
-#       new_cam[1][1][1] = cam[1][1][1] * scale
-#       new_cam[1][0][2] = cam[1][0][2] * scale
-#       new_cam[1][1][2] = cam[1][1][2] * scale
-#       return new_cam
-#   
-#   def scale_mvs_camera(cams, scale=1):
-#       for view in range(FLAGS.view_num):
-#           cams[view] = scale_camera(cams[view], scale=scale)
-#       return cams

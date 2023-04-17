@@ -10,9 +10,14 @@ This module contains the following functions:
 - `non_zero_std(maps, device, dim, keepdim)` - Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.
 - `print_gpu_mem()` - Prints the current unallocated memory of the GPU.
 - `round_nearest(num, decimal=0)` - Rounds a floating point number to the nearest decimal place.
+- `scale_image(image, scale, interpolation)` - Scales an input pixel grid.
 """
 
 import torch
+import numpy as np
+import cv2
+
+from typing import Tuple
 
 def non_zero_std(maps: torch.Tensor, device: str, dim: int = 1, keepdim: bool = False) -> torch.Tensor:
     """Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.
@@ -85,28 +90,68 @@ def round_nearest(num: float, decimal: int = 0) -> int:
 #       return (img - mean) / (np.sqrt(var) + 0.00000001)
 #   
 #   
-#   def scale_image(image, scale=1, interpolation='linear'):
-#       if interpolation == 'linear':
-#           return cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
-#       if interpolation == 'nearest':
-#           return cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
-#   
-#   def scale_mvs_input(depths, confs, cams, scale=1):
-#       views, height, width = depths.shape
-#   
-#       scaled_depths = []
-#       scaled_confs = []
-#   
-#       for view in range(views):
-#           scaled_depths.append(scale_image(depths[view], scale=scale, interpolation='linear'))
-#           scaled_confs.append(scale_image(confs[view], scale=scale, interpolation='linear'))
-#           cams[view] = scale_camera(cams[view], scale=scale)
-#   
-#       return np.asarray(scaled_depths), np.asarray(scaled_confs), cams
-#   
-#   def scale_gt(gt_depth, scale=1):
-#       return scale_image(gt_depth, scale=scale, interpolation='linear')
-#   
+
+def scale_camera(cam: np.ndarray, scale: float = 1.0) -> np.ndarray:
+    """Scales a camera intrinsic parameters.
+
+    Parameters:
+        cam: Input camera to be scaled.
+        scale: Scale factor.
+
+    Returns:
+        The scaled camera.
+    """
+    new_cam = np.copy(cam)
+    new_cam[1][0][0] = cam[1][0][0] * scale
+    new_cam[1][1][1] = cam[1][1][1] * scale
+    new_cam[1][0][2] = cam[1][0][2] * scale
+    new_cam[1][1][2] = cam[1][1][2] * scale
+    return new_cam
+
+def scale_image(image: np.ndarray, scale: float = 1.0, interpolation: str = "linear") -> np.ndarray:
+    """Scales an input pixel grid.
+
+    Parameters:
+        image: Input image to be scaled.
+        scale: Scale factor.
+        interpolation: Interpolation technique to be used.
+
+    Returns:
+        The scaled image.
+    """
+    if interpolation == 'linear':
+        return cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
+    if interpolation == 'nearest':
+        return cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+
+def scale_mvs_data(depths: np.ndarray, confs: np.ndarray, cams: np.ndarray, scale: float = 1.0, interpolation: str = "linear") -> Tuple[np.ndarray,np.ndarray,np.ndarray]:
+    """Scales input depth maps, confidence maps, and cameras.
+
+    Parameters:
+        depths: Input depth maps to be scaled.
+        confs: Input confidence maps to be scaled.
+        cams: Input cameras to be scaled
+        scale: Scale factor.
+        interpolation: Interpolation technique.
+
+    Returns:
+        scaled_depths: The scaled depth maps.
+        scaled_confs: The scaled confidence maps.
+        cams: The scaled cameras.
+    """
+    views, height, width = depths.shape
+
+    scaled_depths = []
+    scaled_confs = []
+
+    for view in range(views):
+        scaled_depths.append(scale_image(depths[view], scale=scale, interpolation=interpolation))
+        scaled_confs.append(scale_image(confs[view], scale=scale, interpolation=interpolation))
+        cams[view] = scale_camera(cams[view], scale=scale)
+
+    return np.asarray(scaled_depths), np.asarray(scaled_confs), cams
+
+
 #   def crop_mvs_input(images, cams, depth_image=None, max_w=0, max_h=0):
 #       # crop images and cameras
 #       for view in range(FLAGS.view_num):
