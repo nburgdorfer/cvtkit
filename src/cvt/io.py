@@ -57,9 +57,9 @@ def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
             continue
 
         cam_path = os.path.join(camera_path,cf)
-        with open(cam_path,'r') as f:
-            cam = read_single_cam_sfm(f, 256)
-            cams.append(cam)
+        #with open(cam_path,'r') as f:
+        cam = read_single_cam_sfm(cam_path, 256)
+        cams.append(cam)
 
     return np.asarray(cams)
 
