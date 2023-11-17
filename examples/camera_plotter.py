@@ -95,13 +95,13 @@ def build_pyr_point_cloud(pyr_pts, filename):
         for point in pyr_pts:
             pt = point[0]
             c = point[1]
-            if c==1:
+            if c==2:
                 color1 = np.asarray([255,0,0],dtype=np.ubyte)
                 color2 = np.asarray([255,50,0],dtype=np.ubyte)
                 color3 = np.asarray([255,100,0],dtype=np.ubyte)
                 color4 = np.asarray([255,150,0],dtype=np.ubyte)
                 color5 = np.asarray([255,200,0],dtype=np.ubyte)
-            elif c==2:
+            elif c==1:
                 color1 = np.asarray([0,0,255],dtype=np.ubyte)
                 color2 = np.asarray([0,50,255],dtype=np.ubyte)
                 color3 = np.asarray([0,100,255],dtype=np.ubyte)
