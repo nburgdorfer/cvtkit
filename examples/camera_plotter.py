@@ -25,34 +25,32 @@ def plot_cameras(cam_path, num_cams, scale, output_file):
 
     return
 
-def camera_cross(p):
-    rot = 0.5
-    tran = 15
-    x_rot_up = np.asarray([[1,0,0], [0,np.cos(-rot), -np.sin(-rot)],[0,np.sin(-rot),np.cos(-rot)]])
-    x_rot_down = np.asarray([[1,0,0], [0,np.cos(rot), -np.sin(rot)],[0,np.sin(rot),np.cos(rot)]])
+def camera_cross(p, theta=0.5, t=15):
+    x_rot_up = np.asarray([[1,0,0], [0,np.cos(-theta), -np.sin(-theta)],[0,np.sin(-theta),np.cos(-theta)]])
+    x_rot_down = np.asarray([[1,0,0], [0,np.cos(theta), -np.sin(theta)],[0,np.sin(theta),np.cos(theta)]])
 
-    y_rot_right = np.asarray([[np.cos(rot),0,np.sin(rot)], [0,1,0],[-np.sin(rot),0,np.cos(rot)]])
-    y_rot_left = np.asarray([[np.cos(-rot),0,np.sin(-rot)], [0,1,0],[-np.sin(-rot),0,np.cos(-rot)]])
+    y_rot_right = np.asarray([[np.cos(theta),0,np.sin(theta)], [0,1,0],[-np.sin(theta),0,np.cos(theta)]])
+    y_rot_left = np.asarray([[np.cos(-theta),0,np.sin(-theta)], [0,1,0],[-np.sin(-theta),0,np.cos(-theta)]])
     
     p_top = np.copy(p)
     p_top[:3,:3] = x_rot_down @ p_top[:3,:3]
-    p_top[1,3] += tran
+    p_top[1,3] += t
     p_top[2,3] += 5
 
     p_right = np.copy(p)
     p_right[:3,:3] = y_rot_left @ p_right[:3,:3]
-    p_right[0,3] += tran
+    p_right[0,3] += t
     p_right[2,3] += 5
 
     p_bottom = np.copy(p)
     p_bottom[:3,:3] = x_rot_up @ p_bottom[:3,:3]
-    p_bottom[1,3] -= tran
+    p_bottom[1,3] -= t
     p_bottom[2,3] += 5
 
 
     p_left = np.copy(p)
     p_left[:3,:3] = y_rot_right @ p_left[:3,:3]
-    p_left[0,3] -= tran
+    p_left[0,3] -= t
     p_left[2,3] += 5
 
     return [p_top, p_bottom, p_left, p_right]
@@ -96,24 +94,18 @@ def build_pyr_point_cloud(pyr_pts, filename):
             pt = point[0]
             c = point[1]
             if c==2:
-                color1 = np.asarray([255,0,0],dtype=np.ubyte)
-                color2 = np.asarray([255,50,0],dtype=np.ubyte)
-                color3 = np.asarray([255,100,0],dtype=np.ubyte)
-                color4 = np.asarray([255,150,0],dtype=np.ubyte)
-                color5 = np.asarray([255,200,0],dtype=np.ubyte)
+                color_center = np.asarray([80,80,80],dtype=np.ubyte)
+                color_face = np.asarray([255,50,0],dtype=np.ubyte)
             elif c==1:
-                color1 = np.asarray([0,0,255],dtype=np.ubyte)
-                color2 = np.asarray([0,50,255],dtype=np.ubyte)
-                color3 = np.asarray([0,100,255],dtype=np.ubyte)
-                color4 = np.asarray([0,150,255],dtype=np.ubyte)
-                color5 = np.asarray([0,200,255],dtype=np.ubyte)
+                color_center = np.asarray([80,80,80],dtype=np.ubyte)
+                color_face = np.asarray([68,114,196],dtype=np.ubyte)
 
 
-            fh.write(f'{pt[0,0,0]:.10f} {pt[0,1,0]:.10f} {pt[0,2,0]:.10f} {color1[0]} {color1[1]} {color1[2]}\n')
-            fh.write(f'{pt[1,0,0]:.10f} {pt[1,1,0]:.10f} {pt[1,2,0]:.10f} {color2[0]} {color2[1]} {color2[2]}\n')
-            fh.write(f'{pt[2,0,0]:.10f} {pt[2,1,0]:.10f} {pt[2,2,0]:.10f} {color3[0]} {color3[1]} {color3[2]}\n')
-            fh.write(f'{pt[3,0,0]:.10f} {pt[3,1,0]:.10f} {pt[3,2,0]:.10f} {color4[0]} {color4[1]} {color4[2]}\n')
-            fh.write(f'{pt[4,0,0]:.10f} {pt[4,1,0]:.10f} {pt[4,2,0]:.10f} {color5[0]} {color5[1]} {color5[2]}\n')
+            fh.write(f'{pt[0,0,0]:.10f} {pt[0,1,0]:.10f} {pt[0,2,0]:.10f} {color_center[0]} {color_center[1]} {color_center[2]}\n')
+            fh.write(f'{pt[1,0,0]:.10f} {pt[1,1,0]:.10f} {pt[1,2,0]:.10f} {color_face[0]} {color_face[1]} {color_face[2]}\n')
+            fh.write(f'{pt[2,0,0]:.10f} {pt[2,1,0]:.10f} {pt[2,2,0]:.10f} {color_face[0]} {color_face[1]} {color_face[2]}\n')
+            fh.write(f'{pt[3,0,0]:.10f} {pt[3,1,0]:.10f} {pt[3,2,0]:.10f} {color_face[0]} {color_face[1]} {color_face[2]}\n')
+            fh.write(f'{pt[4,0,0]:.10f} {pt[4,1,0]:.10f} {pt[4,2,0]:.10f} {color_face[0]} {color_face[1]} {color_face[2]}\n')
 
         # write edge data to file
         #   for i in range(num_pts):
