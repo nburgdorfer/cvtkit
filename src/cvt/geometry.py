@@ -27,7 +27,6 @@ from typing import Tuple, List, Optional
 import torch
 import torch.nn.functional as F
 
-import rendering as rd
 from io import *
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
@@ -357,41 +356,41 @@ def render_custom_values(points: np.ndarray, values: np.ndarray, image_shape: Tu
 
     return rendered_img
 
-def render_into_ref(depths: np.ndarray, confs: np.ndarray, cams: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """Renders all target depth and confidence maps into the reference view (assumed to be at index 0).
-
-    Parameters:
-        depths:
-        confs:
-        cams:
-
-    Returns:
-        rendered_depths:
-        rendered_confs:
-    """
-    shape = depths.shape
-    views = shape[0]
-    rcam = cams[0].flatten().tolist()
-
-    rendered_depths = [depths[0]]
-    rendered_confs = [confs[0]]
-
-    for v in range(1,views):
-        tcam = cams[v].flatten().tolist()
-        depth_map = depths[v].flatten().tolist()
-        conf_map = confs[v].flatten().tolist()
-
-        rendered_map = np.array(rd.render_to_ref(list([shape[1],shape[2]]),depth_map,conf_map,rcam,tcam))
-        rendered_depth = rendered_map[:(shape[1]*shape[2])].reshape((shape[1],shape[2]))
-        rendered_conf = rendered_map[(shape[1]*shape[2]):].reshape((shape[1],shape[2]))
-
-        rendered_depths.append(rendered_depth)
-        rendered_confs.append(rendered_conf)
-
-    rendered_depths = np.asarray(rendered_depths)
-    rendered_confs = np.asarray(rendered_confs)
-
-    return rendered_depths, rendered_confs
+#   def render_into_ref(depths: np.ndarray, confs: np.ndarray, cams: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+#       """Renders all target depth and confidence maps into the reference view (assumed to be at index 0).
+#   
+#       Parameters:
+#           depths:
+#           confs:
+#           cams:
+#   
+#       Returns:
+#           rendered_depths:
+#           rendered_confs:
+#       """
+#       shape = depths.shape
+#       views = shape[0]
+#       rcam = cams[0].flatten().tolist()
+#   
+#       rendered_depths = [depths[0]]
+#       rendered_confs = [confs[0]]
+#   
+#       for v in range(1,views):
+#           tcam = cams[v].flatten().tolist()
+#           depth_map = depths[v].flatten().tolist()
+#           conf_map = confs[v].flatten().tolist()
+#   
+#           rendered_map = np.array(rd.render_to_ref(list([shape[1],shape[2]]),depth_map,conf_map,rcam,tcam))
+#           rendered_depth = rendered_map[:(shape[1]*shape[2])].reshape((shape[1],shape[2]))
+#           rendered_conf = rendered_map[(shape[1]*shape[2]):].reshape((shape[1],shape[2]))
+#   
+#           rendered_depths.append(rendered_depth)
+#           rendered_confs.append(rendered_conf)
+#   
+#       rendered_depths = np.asarray(rendered_depths)
+#       rendered_confs = np.asarray(rendered_confs)
+#   
+#       return rendered_depths, rendered_confs
 
 def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: int, height: int) -> np.ndarray:
     """Renders a point cloud into a 2D image plane.

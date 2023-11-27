@@ -4,17 +4,15 @@ with open("README.md", "r") as doc:
     long_desc = doc.read()
 
 setup(
-        name="cvt",
-        version="0.0.1",
+        name="cvtkit",
+        version="0.0.3",
         description="A Python library including general functions and operations on various computer vision related structures.",
         long_description=long_desc,
         long_description_content_type="text/markdown",
         url="https://github.com/nburgdorfer/vision_toolkit",
         author="Nathaniel Burgdorfer",
         author_email="nburgdorfer@gmail.com",
-        packages=find_packages(
-            where="src",
-            ),
+        packages=find_packages(where="src"),
         package_dir={"": "src"},
         classifiers=[
             "Development Status :: 2 - Pre-Alpha",
@@ -36,4 +34,9 @@ setup(
             "Topic :: Scientific/Engineering :: Visualization",
             "Topic :: Utilities",
         ],
+        install_repuires=[],
+        extras_require={
+            "dev": ["pytest>=7.0"],
+            },
+        python_requires=">=3.9"
 )
