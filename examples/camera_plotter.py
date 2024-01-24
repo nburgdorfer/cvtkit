@@ -4,22 +4,20 @@ from cvt.io import read_cams_sfm
 
 def plot_cameras(cam_path, num_cams, scale, output_file):
     cams = read_cams_sfm(cam_path)
-    P = cams[:num_cams,0]
-    K = cams[:num_cams,1]
+    P = cams[:num_cams,0] # Num_Cams x 4 x 4
+    K = cams[:num_cams,1, :3, :3] # Num_Cams x 3 x 3
 
     # build list of camera pyramid points
     pyr_pts = []
     for k,p in zip(K,P):
-        p = np.eye(4)
-        pyr_pt = build_cam_pyr(scale, k)
-        pp = p @ pyr_pt
+        fx = k[0,0]
+        fy = k[1,1]
+        cx = k[0,2]
+        cy = k[1,2]
+        pyr_pt = build_cam_pyr(scale, fx, fy, cx, cy)
+        pp = np.linalg.inv(p) @ pyr_pt
         pyr_pts.append((pp, 1))
 
-        p_aug = camera_cross(p)
-        for pa in p_aug:
-            pp = pa @ pyr_pt
-            pyr_pts.append((pp, 2))
-            
     # build point cloud using camera centers
     build_pyr_point_cloud(pyr_pts, output_file)
 
@@ -76,14 +74,6 @@ def build_pyr_point_cloud(pyr_pts, filename):
         fh.write('property uchar green\n')
         fh.write('property uchar blue\n')
         
-        # edges
-        #   fh.write('element edge {}\n'.format(element_edge))
-        #   fh.write('property int vertex1\n')
-        #   fh.write('property int vertex2\n')
-        #   fh.write('property uchar red\n')
-        #   fh.write('property uchar green\n')
-        #   fh.write('property uchar blue\n')
-        
         # faces
         fh.write('element face {}\n'.format(element_face))
         fh.write('property list uchar int vertex_index\n')
@@ -107,18 +97,6 @@ def build_pyr_point_cloud(pyr_pts, filename):
             fh.write(f'{pt[3,0,0]:.10f} {pt[3,1,0]:.10f} {pt[3,2,0]:.10f} {color_face[0]} {color_face[1]} {color_face[2]}\n')
             fh.write(f'{pt[4,0,0]:.10f} {pt[4,1,0]:.10f} {pt[4,2,0]:.10f} {color_face[0]} {color_face[1]} {color_face[2]}\n')
 
-        # write edge data to file
-        #   for i in range(num_pts):
-        #       edge_ind = i*5
-        #       fh.write(f'{edge_ind} {edge_ind+1} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind} {edge_ind+2} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind} {edge_ind+3} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind} {edge_ind+4} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind+1} {edge_ind+2} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind+2} {edge_ind+3} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind+3} {edge_ind+4} {color[0]} {color[1]} {color[2]}\n')
-        #       fh.write(f'{edge_ind+4} {edge_ind+1} {color[0]} {color[1]} {color[2]}\n')
-
         # write face data to file
         for i in range(num_pts):
             edge_ind = i*5
@@ -130,12 +108,12 @@ def build_pyr_point_cloud(pyr_pts, filename):
             fh.write(f'3 {edge_ind+2} {edge_ind+3} {edge_ind+4}\n')
     return
 
-def build_cam_pyr(cam_scale, K):
+def build_cam_pyr(cam_scale, fx, fy, cx, cy):
     """Constructs a camera frustum for visualization.
     """
-    focallen   = K[0][0] * 0.4
-    cam_w      = 2 * K[0][2]
-    cam_h      = 2 * K[1][2]
+    focallen   = fx * 0.4
+    cam_w      = 2 * cx
+    cam_h      = 2 * cy
     cam_center = np.array([0.0,          0.0,          0.0,      1.0])
     cam_ul     = np.array([cam_w * -0.5, cam_h * -0.5, focallen, 1.0])
     cam_ur     = np.array([cam_w *  0.5, cam_h * -0.5, focallen, 1.0])
@@ -165,9 +143,9 @@ def build_cam_pyr(cam_scale, K):
 
 def main():
     cam_path = "/media/nate/Data/DTU/Cameras/"
-    num_cams = 1
-    scale = 0.005
-    output_file = "test.ply"
+    num_cams = 45
+    scale = 0.02
+    output_file = "cameras.ply"
 
     plot_cameras(cam_path, num_cams, scale, output_file)
 
