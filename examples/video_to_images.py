@@ -5,7 +5,7 @@ import cv2
 
 video_file = sys.argv[1]
 images_path = os.path.join(sys.argv[2], "images")
-desired_frame_rate = 1
+desired_frame_rate = int(sys.argv[3])
 
 
 cam = cv2.VideoCapture(video_file)
