@@ -18,8 +18,8 @@ import torch
 import torch.nn.functional as F
 import os
 
+from common import non_zero_std
 from io import *
-from util import non_zero_std
 
 def display_inlier_outlier(cloud: o3d.geometry.PointCloud, indices: np.ndarray) -> None:
     """Displays a point cloud with outlier points colored red.
@@ -40,6 +40,13 @@ def display_inlier_outlier(cloud: o3d.geometry.PointCloud, indices: np.ndarray) 
                                       up=[-0.0694, -0.9768, 0.2024])
 
     return
+
+def print_csv(data):
+    for i,d in enumerate(data):
+        if i==len(data)-1:
+            print(f"{d:6.4f}")
+        else:
+            print(f"{d:6.4f}", end=",")
 
 def plot_cameras(cams, num_cams, scale, A, output_file):
     # grab the requested number of cameras and apply the alignment

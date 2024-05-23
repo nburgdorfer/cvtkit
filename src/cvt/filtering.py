@@ -15,6 +15,7 @@ This module contains the following functions:
 import numpy as np
 import torch
 from typing import Tuple
+
 from geometry import reproject
 
 def conf_filter(depth_map: torch.Tensor, conf_map: torch.Tensor, device: str = 'cuda:0', min_conf: float = 0.8) -> Tuple[torch.Tensor, torch.Tensor]:

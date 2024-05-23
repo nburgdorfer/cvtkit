@@ -29,9 +29,9 @@ import torch.nn.functional as F
 import torchvision.transforms.functional as tvf
 from torch.cuda.amp import autocast
 
-from io import *
 from camera import intrinsic_pyramid
-from util import groupwise_correlation
+from common import groupwise_correlation
+from io import *
 
 
 def downsample_cloud(cloud, min_point_dist):

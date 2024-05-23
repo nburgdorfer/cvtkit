@@ -12,7 +12,7 @@ import scipy.io as sio
 import numpy as np
 import open3d as o3d
 
-from util import *
+from common import *
 
 def build_est_points_filter(est_ply: o3d.geometry.PointCloud, data_path: str, scan_num: int) -> np.ndarray:
     """Builds a filter for an estimated point cloud.
