@@ -66,8 +66,8 @@ markdown_extensions:
         emoji_index: !!python/name:materialx.emoji.twemoji
         emoji_generator: !!python/name:materialx.emoji.to_svg
 
-repo_name: nbugdorfer/vision_toolkit
-repo_url: https://github.com/nburgdorfer/vision_toolkit
+repo_name: nbugdorfer/cvtkit
+repo_url: https://github.com/nburgdorfer/cvtkit
 
 plugins:
     - mkdocstrings:
