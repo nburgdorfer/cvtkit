@@ -16,8 +16,105 @@ This module contains the following functions:
 import torch
 import numpy as np
 import cv2
+import random
 
 from typing import Tuple
+
+from camera import Z_from_disp, intrinsic_pyramid
+
+def print_csv(data):
+    for i,d in enumerate(data):
+        if i==len(data)-1:
+            print(f"{d:6.4f}")
+        else:
+            print(f"{d:6.4f}", end=",")
+
+def to_gpu(data, device):
+    no_gpu_list = ["index", "filenames", "num_frame"]
+
+    for key,val in data.items():
+        if (key not in no_gpu_list):
+            if key == "gbinet_cams" or key == "binary_tree":
+                for k,v in data[key].items():
+                        data[key][k] = v.cuda(device, non_blocking=True)
+            else:
+                data[key] = val.cuda(device, non_blocking=True)
+
+def build_coords_list(H, W, batch_size, device):
+    indices_h = torch.linspace(0, H, H, dtype=torch.int64)
+    indices_w = torch.linspace(0, W, W, dtype=torch.int64)
+    indices_h, indices_w = torch.meshgrid(indices_h, indices_w)
+    indices = torch.stack([indices_h, indices_w], dim=-1).to(torch.int64).to(device)
+    indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
+    return indices
+
+def set_random_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+def parameters_count(net, name, do_print=True):
+    model_parameters = filter(lambda p: p.requires_grad, net.parameters())
+    params = sum([np.prod(p.size()) for p in model_parameters])
+    if do_print:
+        print(f"#params {name}: {(params/1e6):0.3f} M")
+    return params
+
+
+
+def top_k_hypothesis_selection(grid, k, prev_hypos, prev_hypo_coords, prev_intervals):
+    selected_prob, selected_idx = torch.topk(grid,k=k,dim=2)
+    selected_hypos = torch.gather(prev_hypos, dim=2, index=selected_idx)
+    selected_intervals = torch.gather(prev_intervals, dim=2, index=selected_idx)
+    selected_intervals = selected_intervals/2
+    selected_coords = torch.gather(prev_hypo_coords, dim=2, index=selected_idx)
+    # subdivide hypos
+    upper_new_hypos = selected_hypos+selected_intervals/2
+    lower_new_hypos = selected_hypos-selected_intervals/2
+    new_hypos = torch.cat((upper_new_hypos,lower_new_hypos),dim=2)
+    new_hypos = torch.repeat_interleave(new_hypos,2,dim=3)
+    new_hypos = torch.repeat_interleave(new_hypos,2,dim=4)
+
+    # subdivide coords
+    upper_new_coords = selected_coords*2+1
+    lower_new_coords = selected_coords*2
+    new_coords = torch.cat((upper_new_coords,lower_new_coords),dim=2)
+    new_coords = torch.repeat_interleave(new_coords,2,dim=3)
+    new_coords = torch.repeat_interleave(new_coords,2,dim=4)
+
+    # subdivide intervals
+    selected_intervals = torch.cat((selected_intervals,selected_intervals),dim=2) # Dx2
+    selected_intervals = torch.repeat_interleave(selected_intervals,2,dim=3) # Hx2
+    new_intervals = torch.repeat_interleave(selected_intervals,2,dim=4) # Wx2
+
+    return new_hypos, new_coords, new_intervals
+
+def groupwise_correlation(v1, v2, num_groups):
+    assert(v1.shape==v2.shape)
+    if (len(v1.shape) == 5):
+        B, C, D, H, W = v1.shape
+        assert C % num_groups == 0
+        channels_per_group = C // num_groups
+        cost_volume = (v1 * v2).view([B, num_groups, channels_per_group,D, H, W]).mean(dim=2)
+        assert cost_volume.shape == (B, num_groups, D, H, W)
+    elif (len(v1.shape) == 4):
+        B, C, H, W = v1.shape
+        assert C % num_groups == 0
+        channels_per_group = C // num_groups
+        cost_volume = (v1 * v2).view([B, num_groups, channels_per_group, H, W]).mean(dim=2)
+        assert cost_volume.shape == (B, num_groups, H, W)
+    else:
+        print("Can only compute GWC with 4 or 5 dimension tensors")
+        sys.exit()
+    return cost_volume
+
+def cosine_similarity(v1, v2, num_groups):
+    assert(v1.shape==v2.shape)
+    B, C, D, H, W = v1.shape
+    cost_volume = torch.abs(F.cosine_similarity(v1,v2,dim=1).unsqueeze(1))
+    assert(cost_volume.shape == (B, 1, D, H, W))
+
+    return cost_volume
 
 def non_zero_std(maps: torch.Tensor, device: str, dim: int = 1, keepdim: bool = False) -> torch.Tensor:
     """Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.
@@ -90,6 +187,57 @@ def round_nearest(num: float, decimal: int = 0) -> int:
 #       return (img - mean) / (np.sqrt(var) + 0.00000001)
 #   
 #   
+
+def compute_laplacian_pyr(image, levels=4):
+    image = torch.movedim(image, (0,1,2,3), (0,2,3,1))
+    batch_size, c, h, w = image.shape
+
+    # for visualiation
+    color = torch.zeros(levels+1,1,1,3).to(image)
+    color[0,0,0,0], color[0,0,0,1], color[0,0,0,2] = 153, 0, 0 #red
+    color[1,0,0,0], color[1,0,0,1], color[1,0,0,2] = 255, 128, 0 #orange
+    color[2,0,0,0], color[2,0,0,1], color[2,0,0,2] = 0, 255, 0 #green
+    color[3,0,0,0], color[3,0,0,1], color[3,0,0,2] = 0, 255, 255 #cyan
+    color[4,0,0,0], color[4,0,0,1], color[4,0,0,2] = 51, 0, 102 #dark purple
+
+    # to ignore changes near image border
+    crop_mask = torch.zeros(batch_size, h, w).to(image)
+    crop_mask[0, 20:h-20, 20:w-20] = 1.0
+
+    # build gaussian pyramid
+    pyr = [image]
+    for l in range(levels):
+        pyr.append(F.interpolate(pyr[-1], scale_factor=0.5, mode="bilinear"))
+
+    # compute laplacian pyramid (differance between gaussian pyramid levels)
+    laplacian = torch.zeros(levels, batch_size, 1, h, w).to(image)
+    for l in range(levels, 0, -1):
+        diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True)
+        diff = F.interpolate(diff, size=(h, w), mode="bilinear")
+        diff *= crop_mask
+
+        d_th = diff.mean()
+        #dmin = diff.min()
+        #dmax = diff.max()
+        #diff = (diff-dmin)/(dmax-dmin)
+        diff = torch.where(diff > d_th, 1, 0)
+        laplacian[l-1] = diff
+
+        diff = diff.reshape(h,w,1)
+        color_diff = diff.repeat(1,1,3) * color[l-1]
+        cv2.imwrite(f"./log/laplace_{l-1}.png", color_diff.flip(dims=[-1]).detach().cpu().numpy())
+
+        if l==levels:
+            all_diff = color_diff
+        else:
+            all_diff = torch.where(diff==1, color[l-1,0,0], all_diff)
+
+    #cv2.imwrite("./log/laplace.png", (laplacian.sum(dim=0))[0,0].detach().cpu().numpy()*50)
+    all_diff = torch.where(all_diff.sum(dim=-1,keepdim=True)==0, color[-1,0,0], all_diff)
+    cv2.imwrite("./log/laplace.png", all_diff.flip(dims=[-1]).detach().cpu().numpy())
+    cv2.imwrite("./log/image.png", torch.movedim(image[0].flip(dims=[0]), (0,1,2), (2,0,1)).detach().cpu().numpy()*255)
+    sys.exit()
+
 
 def scale_camera(cam: np.ndarray, scale: float = 1.0) -> np.ndarray:
     """Scales a camera intrinsic parameters.

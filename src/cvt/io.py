@@ -30,6 +30,7 @@ import cv2
 import re
 import math
 import open3d as o3d
+import torch
 from typing import List, Tuple
 
 from scipy.spatial.transform import Rotation as rot
@@ -418,3 +419,41 @@ def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
 
         data_map_string = data_map.tostring()
         pfm_file.write(data_map_string)
+
+def write_point_cloud(fn, cloud):
+    o3d.io.write_point_cloud(fn, cloud)
+
+def save_state_dict(model, save_path):
+    torch.save(model.state_dict(), save_path)
+
+def load(model, load_path):
+    model.load_state_dict(torch.load(load_path))
+
+def save_ckpt(model, save_path):
+    save_dict = {"model": model.state_dict()}
+    torch.save(save_dict, save_path)
+
+def load_ckpt(model, load_path):
+    model_dict = torch.load(load_path)
+    model.load_state_dict(model_dict['model'])
+
+def save_model(model, cfg, name="ckpt_model.pth"):
+    """Saves model weights to disk.
+    """
+    ckpt_path = cfg["model"]["ckpt"]
+    if not os.path.exists(ckpt_path):
+        os.makedirs(ckpt_path)
+    print(f"Saving model checkpoint to {ckpt_path}...")
+    model_path = os.path.join(save_folder, name)
+    torch.save(model.state_dict(), model_path)
+
+def load_pretrained_model(model, ckpt):
+    """Loads model weights from disk.
+    """
+    print(f"Loading model from: {ckpt}...")
+    try:
+        model.load_state_dict(torch.load(ckpt))
+    except Exception as e:
+        print(e)
+        print("Failed loading network weights...")
+        sys.exit()

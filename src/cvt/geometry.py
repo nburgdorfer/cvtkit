@@ -26,8 +26,313 @@ import open3d as o3d
 from typing import Tuple, List, Optional
 import torch
 import torch.nn.functional as F
+import torchvision.transforms.functional as tvf
+from torch.cuda.amp import autocast
 
 from io import *
+from camera import intrinsic_pyramid
+from util import groupwise_correlation
+
+
+def downsample_cloud(cloud, min_point_dist):
+    return cloud.voxel_down_sample(voxel_size=min_point_dist)
+
+def get_matching_hypos(data, target_hypo, focal_length, min_hypo, max_hypo, M, delta_in=1):
+    B, _, D, H, W = target_hypo.shape
+    rand_match_offset = torch.rand(B,1,M,H,W).to(target_hypo)
+    near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
+    target_range = torch.abs(far - near).repeat(1,1,M,1,1)
+
+    target_samples = (rand_match_offset * target_range) + near
+    mask = torch.where(target_hypo <= 0, 0.0, 1.0).repeat(1,1,M,1,1)
+    matching_hypos = torch.clip(target_samples, min_hypo, max_hypo) * mask
+
+    # visualize example
+    #   print()
+    #   row = int(0.5*H)
+    #   col = int(0.5*W)
+    #   print("Near zone", near[0,0,0,row,col])
+    #   print("Far zone", far[0,0,0,row,col])
+    #   print("Samples", target_samples[0,0,:,row,col])
+    #   print("Mask", mask[0,0,0,row,col])
+    #   print("Matching hypos", matching_hypos[0,0,:,row,col])
+    #   print()
+
+    return matching_hypos
+
+###################### NUMPY ######################
+def _get_matching_hypos(data, target_hypo, focal_length, min_hypo, max_hypo, delta_in=1, delta_out=10):
+    B, _, D, H, W = target_hypo.shape
+    rand_match_offset = torch.rand(target_hypo.shape).to(target_hypo)
+    rand_mismatch_offset = torch.rand(target_hypo.shape).to(target_hypo)
+    near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
+    near_out, far_out = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_out)
+    target_range = torch.abs(far - near)
+    near_range = torch.abs(near - near_out)
+    far_range = torch.abs(far_out - far)
+
+    target_sample = (rand_match_offset * target_range) + near
+    near_sample = (rand_mismatch_offset * near_range) + near_out
+    far_sample = (rand_mismatch_offset * far_range) + far
+    matching_hypos = torch.concat((target_sample, near_sample, far_sample), dim=2)
+    mask = torch.where(target_hypo <= 0, 0.0, 1.0)
+    matching_hypos = torch.clip(matching_hypos, min_hypo, max_hypo) * mask
+
+    # visualize example
+    #   print()
+    #   row = int(0.05*H)
+    #   col = int(0.05*W)
+    #   print("Negative near zone", near_out[0,0,0,row,col])
+    #   print("Positive near zone", near[0,0,0,row,col])
+    #   print("Positive far zone", far[0,0,0,row,col])
+    #   print("Negative far zone", far_out[0,0,0,row,col])
+    #   print("Negative near sample", near_sample[0,0,0,row,col])
+    #   print("Positive sample", target_sample[0,0,0,row,col])
+    #   print("Negative far sample", far_sample[0,0,0,row,col])
+    #   print("Mask", mask[0,0,0,row,col])
+    #   print("Matching hypos", matching_hypos[0,0,:,row,col])
+    #   print()
+
+    return matching_hypos
+
+def _geometric_consistency_mask(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P, pixel_th):
+    """Computes the geometric consistency mask between a source and target depth map.
+
+    Parameters:
+        src_depth: Depth map for the source view.
+        src_K: Intrinsic camera parameters for the source depth map viewpoint.
+        src_P: Extrinsic camera parameters for the source depth map viewpoint.
+        tgt_depth: Target depth map used for re-projection.
+        tgt_K: Intrinsic camera parameters for the target depth map viewpoint.
+        tgt_P: Extrinsic camera parameters for the target depth map viewpoint.
+        pixel_th: Pixel re-projection threshold to determine matching depth estimates.
+
+    Returns:
+        The binary consistency mask encoding depth consensus between source and target depth maps.
+    """
+    height, width = src_depth.shape
+    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
+
+    depth_reprojected, coords_reprojected, coords_tgt = _reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P)
+
+    dist = np.sqrt((coords_reprojected[:,:,0] - x_src) ** 2 + (coords_reprojected[:,:,1] - y_src) ** 2)
+    mask = np.where(dist < pixel_th, 1, 0)
+
+    return mask
+
+
+def _reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P):
+    """Computes the re-projection depth values and pixel indices between two depth maps.
+
+    This function takes as input two depth maps: 'src_depth' and 'tgt_depth'. The source
+    depth map is first projected into the target camera plane using the source depth
+    values and the camera parameters for both views. Using the projected pixel
+    coordinates in the target view, the target depths are then re-projected back into
+    the source camera plane (again with the camera parameters for both views). The
+    information prouced from this process is often used to compute errors in
+    re-projection between two depth maps, or similar operations.
+
+    Parameters:
+        src_depth: Source depth map to be projected.
+        src_K: Intrinsic camera parameters for the source depth map viewpoint.
+        src_P: Extrinsic camera parameters for the source depth map viewpoint.
+        tgt_depth: Target depth map used for re-projection.
+        tgt_K: Intrinsic camera parameters for the target depth map viewpoint.
+        tgt_P: Extrinsic camera parameters for the target depth map viewpoint.
+
+    Returns:
+        depth_reprojected: The re-projected depth values for the source depth map.
+        coords_reprojected: The re-projection coordinates for the source view.
+        coords_tgt: The projected coordinates for the target view.
+    """
+    height, width = src_depth.shape
+
+    # back-project ref depths to 3D
+    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
+    x_src, y_src = x_src.reshape([-1]), y_src.reshape([-1])
+    xyz_src = np.matmul(np.linalg.inv(src_K),
+                        np.vstack((x_src, y_src, np.ones_like(x_src))) * src_depth.reshape([-1]))
+
+    # transform 3D points from ref to src coords
+    xyz_tgt = np.matmul(np.matmul(tgt_P, np.linalg.inv(src_P)),
+                        np.vstack((xyz_src, np.ones_like(x_src))))[:3]
+
+    # project src 3D points into pixel coords
+    K_xyz_tgt = np.matmul(tgt_K, xyz_tgt)
+    xy_tgt = K_xyz_tgt[:2] / K_xyz_tgt[2:3]
+    x_tgt = xy_tgt[0].reshape([height, width]).astype(np.float32)
+    y_tgt = xy_tgt[1].reshape([height, width]).astype(np.float32)
+
+    # sample the depth values from the src map at each pixel coord
+    sampled_depth_tgt = cv2.remap(tgt_depth, x_tgt, y_tgt, interpolation=cv2.INTER_LINEAR)
+
+    # back-project src depths to 3D
+    xyz_tgt = np.matmul(np.linalg.inv(tgt_K),
+                        np.vstack((xy_tgt, np.ones_like(x_src))) * sampled_depth_tgt.reshape([-1]))
+
+    # transform 3D points from src to ref coords
+    xyz_reprojected = np.matmul(np.matmul(src_P, np.linalg.inv(tgt_P)),
+                                np.vstack((xyz_tgt, np.ones_like(x_src))))[:3]
+
+    # extract reprojected depth values
+    depth_reprojected = xyz_reprojected[2].reshape([height, width]).astype(np.float32)
+
+    # project ref 3D points into pixel coords
+    K_xyz_reprojected = np.matmul(src_K, xyz_reprojected)
+    xy_reprojected = K_xyz_reprojected[:2] / (K_xyz_reprojected[2:3] + 1e-7)
+    x_reprojected = xy_reprojected[0].reshape([height, width]).astype(np.float32)
+    y_reprojected = xy_reprojected[1].reshape([height, width]).astype(np.float32)
+
+    coords_reprojected = np.dstack((x_reprojected, y_reprojected))
+    coords_tgt = np.dstack((x_tgt, y_tgt))
+
+    return depth_reprojected, coords_reprojected, coords_tgt
+
+
+def _compute_visibility(depths, K, Ps, vis_th=None):
+    views, height, width = depths.shape
+    vis_map = np.where(depths[0] > 0.0, 1, 0)
+
+    for i in range(1, views):
+        mask = _geometric_consistency_mask(depths[0], K, Ps[0], depths[i], K, Ps[i], pixel_th=0.75)
+        vis_map += mask
+    vis_map = vis_map.astype(np.float32)
+
+    if vis_th != None:
+        vis_map = np.where(vis_map >= vis_th, 1, 0)
+
+    return vis_map
+###################### NUMPY ######################
+
+
+def sample_volume(volume, z_vals, coords, H, W, near_depth, far_depth, inv_depth):
+    N, M = z_vals.shape
+    batch_size, c, _, _, _ = volume.shape
+
+    z_vals = z_vals.reshape(N,M,1) # N x M x 1
+    if inv_depth:
+        z_vals = 1/z_vals
+        near_depth = 1/near_depth
+        far_depth = 1/far_depth
+    coords = coords.reshape(N,1,2).repeat(1,M,1) # N x M x 2
+    x_coords = coords[:,:,1:2]
+    y_coords = coords[:,:,0:1]
+    points = torch.cat([x_coords, y_coords, z_vals], dim=-1) # N x M x 3
+    points = torch.reshape(points, [-1, 3]) # N*M x 3
+
+    # define coordinates bounds
+    min_coord = torch.tensor([0,0,near_depth]).to(points)
+    max_coord = torch.tensor([W-1,H-1,far_depth]).to(points)
+    min_coord = min_coord.reshape(1,3).repeat(N*M,1)
+    max_coord = max_coord.reshape(1,3).repeat(N*M,1) 
+
+    # normalize points
+    norm_points = (points - min_coord) / (max_coord - min_coord)
+    norm_points = norm_points.unsqueeze(0).repeat(batch_size, 1, 1)
+    norm_points = (norm_points * 2) - 1
+
+    # Note: The shape of the input volume is 5D: Batch x Channels x Depth x Height x Width.
+    #       The input coordinates must be in [x, y, z] format where x->width, y->height, z->depth.
+    #       These coordinates must be normalized between [-1, 1].
+    features = F.grid_sample(volume,
+                            norm_points.view(batch_size, N*M, 1, 1, 3),
+                            mode='bilinear',
+                            padding_mode='zeros',
+                            align_corners=True)
+    features = torch.movedim(features.reshape(c, N*M), 0, 1) # N*M x c
+
+    return features
+
+
+def _compute_plane_coords(K, P, near, far, H, W):
+    """Numpy version
+    """
+    xyz = np.asarray([[0,0,1], [W-1,0,1], [0,H-1,1], [W-1,H-1,1]], dtype=np.float32).transpose()
+    if K.shape[0]==3:
+        K_44 = np.zeros((4, 4))
+        K_44[:3,:3] = K[:3,:3]
+        K_44[3,3] = 1
+        K = K_44
+    proj = K @ P
+
+    near_plane = (np.linalg.inv(proj)[:3,:3] @ xyz) * near
+    near_plane += np.linalg.inv(proj)[:3,3:4]
+    far_plane = (np.linalg.inv(proj)[:3,:3] @ xyz) * far
+    far_plane += np.linalg.inv(proj)[:3,3:4]
+
+    return near_plane, far_plane
+
+def calculate_depth_hypothesis_init(cfg, ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, img_height, img_width, nhypothesis_init, inv_depth=False):
+    batchSize = ref_in.shape[0]
+    depth_range = depth_max-depth_min
+
+    depth_hypos = torch.zeros((batchSize,nhypothesis_init),device=ref_in.device)
+    for b in range(0,batchSize):
+        if inv_depth:
+            depth_hypos[b] = 1/(torch.linspace(1/depth_min,1/depth_max,steps=nhypothesis_init,device=ref_in.device))
+        else:
+            depth_hypos[b] = torch.linspace(depth_min, depth_max, steps=nhypothesis_init,device=ref_in.device)
+    depth_hypos = depth_hypos.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
+
+    # Make coordinate for depth hypothesis, to be used by sparse convolution.
+    depth_hypo_coords = torch.zeros((batchSize,nhypothesis_init),device=ref_in.device)
+    for b in range(0,batchSize):
+        depth_hypo_coords[b] = torch.linspace(0,nhypothesis_init-1,steps=nhypothesis_init,device=ref_in.device)
+    depth_hypo_coords = depth_hypo_coords.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
+
+    # Calculate hypothesis interval
+    hypo_intervals = depth_hypos[:,1:]-depth_hypos[:,:-1]
+    hypo_intervals = torch.cat((hypo_intervals,hypo_intervals[:,-1].unsqueeze(1)),dim=1)
+
+    return depth_hypos.unsqueeze(1), depth_hypo_coords.unsqueeze(1), hypo_intervals.unsqueeze(1)
+
+
+
+def compute_plane_coords(K, P, depth_hypos, H, W):
+    """Batched PyTorch version
+    """
+    batch_size,_,_ = K.shape
+    num_planes = depth_hypos.shape[0]
+
+    xyz = torch.movedim(torch.tensor([[0,0,1], [W-1,0,1], [0,H-1,1], [W-1,H-1,1]], dtype=torch.float32), 0, 1).to(P)
+    xyz = xyz.reshape(1,3,4).repeat(batch_size, 1, 1)
+    if K.shape[1]==3:
+        K_44 = torch.zeros((batch_size, 4, 4)).to(P)
+        K_44[:,:3,:3] = K[:,:3,:3]
+        K_44[:,3,3] = 1
+        K = K_44
+    proj = K @ P
+    inv_proj = torch.linalg.inv(proj)
+
+    planes = torch.zeros(num_planes, 3, 4).to(inv_proj)
+    for p in range(num_planes):
+        planes[p] = (inv_proj[0,:3,:3] @ xyz) * depth_hypos[p]
+        planes[p] += inv_proj[0,:3,3:4]
+
+    return planes
+
+def compute_visibility(depths, K, Ps, vis_th=None, levels=4):
+    batch_size, views, c, H, W = depths.shape
+
+    K_pyr = intrinsic_pyramid(K, levels)
+
+    vis_maps = []
+    for l in range(levels):
+        resized_depths = tvf.resize(depths[:,:,0], [int(H/(2**l)), int(W/(2**l))]).unsqueeze(2)
+        batch_size, views, c, height, width = resized_depths.shape
+        vis_map = torch.where(resized_depths[:,0] > 0.0, 1, 0)
+
+        for i in range(1, views):
+            mask = geometric_consistency_mask(resized_depths[:,0], K_pyr[:,l], Ps[:,0], resized_depths[:,i], K_pyr[:,l], Ps[:,i], pixel_th=0.5)
+            vis_map += mask.unsqueeze(1)
+        vis_map = vis_map.to(torch.float32)
+
+        if vis_th != None:
+            vis_map = torch.where(vis_map >= vis_th, 1, 0)
+
+        vis_maps.append(vis_map)
+    return vis_maps
+
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
     """Computes the essential matrix between two images using image features.
@@ -102,27 +407,30 @@ def fundamental_from_features(src_image_file: str, tgt_image_file: str) -> np.nd
 
     return F
 
-def geometric_consistency_mask(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray, pixel_th: float) -> np.ndarray:
+def geometric_consistency_mask(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P, pixel_th):
     """Computes the geometric consistency mask between a source and target depth map.
 
     Parameters:
         src_depth: Depth map for the source view.
-        src_cam: Camera parameters for the source depth map viewpoint.
-        tgt_depth: Depth map for the target view.
-        tgt_cam: Camera parameters for the target depth map viewpoint.
+        src_K: Intrinsic camera parameters for the source depth map viewpoint.
+        src_P: Extrinsic camera parameters for the source depth map viewpoint.
+        tgt_depth: Target depth map used for re-projection.
+        tgt_K: Intrinsic camera parameters for the target depth map viewpoint.
+        tgt_P: Extrinsic camera parameters for the target depth map viewpoint.
         pixel_th: Pixel re-projection threshold to determine matching depth estimates.
 
     Returns:
         The binary consistency mask encoding depth consensus between source and target depth maps.
     """
-    height, width = src_depth.shape
-    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
+    batch_size, c, height, width = src_depth.shape
+    depth_reprojected, coords_reprojected, coords_tgt = reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P)
 
-    depth_reprojected, coords_reprojected, coords_tgt, projection_map = reproject(src_depth, src_cam, tgt_depth, tgt_cam)
+    x_src, y_src = torch.meshgrid(torch.arange(0, width), torch.arange(0, height), indexing="xy")
+    x_src = x_src.unsqueeze(0).repeat(batch_size, 1, 1).to(src_depth)
+    y_src = y_src.unsqueeze(0).repeat(batch_size, 1, 1).to(src_depth)
+    dist = torch.sqrt((coords_reprojected[:,:,:,0] - x_src) ** 2 + (coords_reprojected[:,:,:,1] - y_src) ** 2)
 
-    dist = np.sqrt((coords_reprojected[:,:,0] - x_src) ** 2 + (coords_reprojected[:,:,1] - y_src) ** 2)
-    mask = np.where(dist < pixel_th, 1, 0)
-
+    mask = torch.where(dist < pixel_th, 1, 0)
     return mask
 
 def geometric_consistency_error(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray) -> np.ndarray:
@@ -234,6 +542,223 @@ def point_cloud_from_depth(depth: np.ndarray, cam: np.ndarray, color: np.ndarray
     cloud.colors = colors
     
     return cloud
+
+
+def proj_ray_cost(cfg, features, level, ref_in, src_in, ref_pose, src_pose, depth_hypos, coords, H, W, gwc_groups, va_net=None, vis_weights=None):
+    batch_size, c, h, w = features[0][level].shape
+    _, _, num_planes, _, _ = depth_hypos.shape
+    _, num_pixels, _ = coords.shape
+    num_src_views = len(features)-1
+
+    K_ref = torch.zeros(batch_size, 4, 4).to(ref_in)
+    K_ref[:, :3,:3] = ref_in
+    K_ref[:, 3, 3] = 1
+
+    K_src = torch.zeros(batch_size, num_src_views, 4, 4).to(ref_in)
+    for v in range(num_src_views):
+        K_src[:, v, :3, :3] = src_in[:,v]
+    K_src[:, :, 3, 3] = 1
+
+    vis_weight_list = []
+    cost_volume = None
+    reweight_sum = None
+
+    # build coordinates vector
+    depth_hypos = depth_hypos.reshape(batch_size, num_planes, num_pixels) # batch_size x num_planes x num_pixels
+    coords = torch.movedim(coords, (0,1,2), (0,2,1)).to(torch.float32) # batch_size x 2 x num_pixels
+    x_coords = coords[:,1,:]
+    y_coords = coords[:,0,:]
+    xyz = torch.stack((x_coords, y_coords, torch.ones_like(x_coords)), dim=1) # batch_size, 3 x num_pixels
+
+    # sample reference features
+    x_normalized = ((x_coords / (W-1)) * 2) - 1
+    y_normalized = ((y_coords / (H-1)) * 2) - 1
+    xy = torch.stack((x_normalized, y_normalized), dim=-1)  # [B, num_pixels, 2]
+    ref_features = features[0][level]
+    ref_features = F.grid_sample(ref_features,
+                            xy.view(batch_size, 1, num_pixels, 2),
+                            mode='nearest',
+                            padding_mode='zeros',
+                            align_corners=False)
+    ref_features = ref_features.repeat(1,1,num_planes,1) # [B x C x num_pixels x num_planes]
+
+    for src in range(num_src_views):
+        with torch.no_grad():
+            src_proj = torch.matmul(K_src[:,src],src_pose[:,src])
+            ref_proj = torch.matmul(K_ref,ref_pose)
+
+            proj = torch.matmul(src_proj, torch.inverse(ref_proj))
+            rot = proj[:, :3, :3]  # [B,3,3]
+            trans = proj[:, :3, 3:4]  # [B,3,1]
+
+            rot_xyz = torch.matmul(rot, xyz)  # [B, 3, num_pixels]
+            rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, num_planes, 1) * depth_hypos.view(batch_size, 1, num_planes, num_pixels)  # [B, 3, num_planes, num_pixels]
+            proj_xyz = rot_depth_xyz + trans.view(batch_size, 3, 1, 1)  # [B, 3, num_planes, num_pixels]
+            proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]  # [B, 2, num_planes, num_pixels]
+            proj_x_normalized = ((proj_xy[:, 0, :, :] / (W-1)) * 2) - 1
+            proj_y_normalized = ((proj_xy[:, 1, :, :] / (H-1)) * 2) - 1
+
+            proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, num_planes, num_pixels, 2]
+            grid = proj_xy
+
+        grid = grid.type(ref_features.dtype)
+        # Note: The shape of the input map is 4D: Batch x Channels x Height x Width.
+        #       The input coordinates must be in [x, y] format where x->width, y->height.
+        #       These coordinates must be normalized between [-1, 1].
+        src_features = features[src+1][level]
+        src_features = F.grid_sample(src_features,
+                                grid.view(batch_size, num_planes, num_pixels, 2),
+                                mode='bilinear',
+                                padding_mode='zeros',
+                                align_corners=False)
+        two_view_cost_volume = groupwise_correlation(src_features, ref_features, gwc_groups[level]) #B,C,num_planes,num_pixels
+        two_view_cost_volume = two_view_cost_volume.reshape(batch_size, gwc_groups[level], num_planes, H, W)
+
+        # Estimate visability weight for init level
+        if va_net is not None:
+            reweight = va_net(two_view_cost_volume) #B, H, W
+            vis_weight_list.append(reweight)
+            reweight = reweight.unsqueeze(1).unsqueeze(2) #B, 1, 1, H, W
+            two_view_cost_volume = reweight*two_view_cost_volume
+
+        # Use estimated visability weights for refine levels
+        elif vis_weights is not None:
+            reweight = vis_weights[src].unsqueeze(1)
+            if reweight.shape[2] < two_view_cost_volume.shape[3]:
+                reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
+            vis_weight_list.append(reweight.squeeze(1))
+            reweight = reweight.unsqueeze(2)
+            two_view_cost_volume = reweight*two_view_cost_volume
+
+        if cost_volume == None:
+            cost_volume = two_view_cost_volume
+            reweight_sum = reweight
+        else:
+            cost_volume = cost_volume + two_view_cost_volume
+            reweight_sum = reweight_sum + reweight
+
+    cost_volume = cost_volume/(reweight_sum+1e-5)
+    return cost_volume, vis_weight_list
+
+
+def proj_cost(cfg,features,level,ref_in,src_in,ref_ex,src_ex,depth_hypos,gwc_groups,va_net=None,vis_weights=None):
+    depth_hypos = depth_hypos.squeeze(1)
+    _,planes,_,_ = depth_hypos.shape
+
+    B,fCH,H,W = features[0][level].shape
+    num_depth = depth_hypos.shape[1]
+    nSrc = len(features)-1
+
+    vis_weight_list = []
+    ref_volume = features[0][level].unsqueeze(2).repeat(1,1,num_depth,1,1)
+
+    cost_volume = None
+    #cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0][level])
+    #cost_volume[0] = ref_volume
+    reweight_sum = None
+    for src in range(nSrc):
+        with torch.no_grad():
+            with autocast(enabled=False):
+                src_proj = torch.matmul(src_in[:,src,:,:],src_ex[:,src,0:3,:])
+                ref_proj = torch.matmul(ref_in,ref_ex[:,0:3,:])
+                last = torch.tensor([[[0,0,0,1.0]]]).repeat(len(src_in),1,1).cuda()
+                src_proj = torch.cat((src_proj,last),1)
+                ref_proj = torch.cat((ref_proj,last),1)
+
+                proj = torch.matmul(src_proj, torch.inverse(ref_proj))
+                rot = proj[:, :3, :3]  # [B,3,3]
+                trans = proj[:, :3, 3:4]  # [B,3,1]
+
+                y, x = torch.meshgrid([torch.arange(0, H, dtype=torch.float32, device=ref_volume.device),
+                                    torch.arange(0, W, dtype=torch.float32, device=ref_volume.device)],
+                                    indexing='ij')
+                y, x = y.contiguous(), x.contiguous()
+                y, x = y.view(H * W), x.view(H * W)
+                xyz = torch.stack((x, y, torch.ones_like(x)))  # [3, H*W]
+                xyz = torch.unsqueeze(xyz, 0).repeat(B, 1, 1)  # [B, 3, H*W]
+                rot_xyz = torch.matmul(rot, xyz)  # [B, 3, H*W]
+
+                rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, num_depth, 1) * depth_hypos.view(B, 1, num_depth,H*W)  # [B, 3, Ndepth, H*W]
+                proj_xyz = rot_depth_xyz + trans.view(B, 3, 1, 1)  # [B, 3, Ndepth, H*W]
+                proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]  # [B, 2, Ndepth, H*W]
+                proj_x_normalized = proj_xy[:, 0, :, :] / ((W - 1) / 2) - 1
+                proj_y_normalized = proj_xy[:, 1, :, :] / ((H - 1) / 2) - 1
+                proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, Ndepth, H*W, 2]
+                grid = proj_xy
+
+        
+        grid = grid.type(ref_volume.dtype)
+        src_feature = features[src+1][level]
+        warped_src_fea = F.grid_sample(src_feature, grid.view(B, num_depth * H, W, 2), mode='bilinear',
+                                    padding_mode='zeros',align_corners=False)
+        warped_src_fea = warped_src_fea.view(B, fCH, num_depth, H, W)
+
+
+        ########## dot prod ##########
+        two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_groups[level]) #B,C,D,H,W
+        ## Estimate visability weight for init level
+        if va_net is not None:
+            B,C,D,H,W = warped_src_fea.shape
+            reweight = va_net(two_view_cost_volume) #B, H, W
+            vis_weight_list.append(reweight)
+            reweight = reweight.unsqueeze(1).unsqueeze(2) #B, 1, 1, H, W
+            two_view_cost_volume = reweight*two_view_cost_volume
+        ## Use estimated visability weights for refine levels
+        elif vis_weights is not None:
+            reweight = vis_weights[src].unsqueeze(1)
+            if reweight.shape[2] < two_view_cost_volume.shape[3]:
+                reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
+            vis_weight_list.append(reweight.squeeze(1))
+            reweight = reweight.unsqueeze(2)
+            two_view_cost_volume = reweight*two_view_cost_volume
+        if cost_volume == None:
+            cost_volume = two_view_cost_volume
+            reweight_sum = reweight
+        else:
+            cost_volume = cost_volume + two_view_cost_volume
+            reweight_sum = reweight_sum + reweight
+
+        if cfg["mode"]=="inference":
+            del src_feature
+            del two_view_cost_volume
+            del warped_src_fea
+            del reweight
+            torch.cuda.empty_cache()
+        ########### dot prod ##########
+
+        ######## var prod ##########
+        ### Estimate visability weight for init level
+        #if va_net is not None:
+        #    two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_groups[level]) #B,C,D,H,W
+        #    B,C,D,H,W = warped_src_fea.shape
+        #    reweight = va_net(two_view_cost_volume) #B, H, W
+        #    vis_weight_list.append(reweight)
+        #    reweight = reweight.unsqueeze(1).unsqueeze(2) #B, 1, 1, H, W
+        #    warped_src_fea = reweight*warped_src_fea
+        ### Use estimated visability weights for refine levels
+        #elif vis_weights is not None:
+        #    reweight = vis_weights[src].unsqueeze(1)
+        #    if reweight.shape[2] < cost_volume[src+1].shape[3]:
+        #        reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
+        #    vis_weight_list.append(reweight.squeeze(1))
+        #    reweight = reweight.unsqueeze(2)
+        #    warped_src_fea = reweight*warped_src_fea
+
+        #cost_volume[src+1] = warped_src_fea
+
+        #if cfg["mode"]=="inference":
+        #    del src_feature
+        #    del warped_src_fea
+        #    torch.cuda.empty_cache()
+        ########## var prod ##########
+
+    cost_volume = cost_volume/(reweight_sum+0.00001)
+    #cost_volume = torch.var(cost_volume, dim=0)
+    #B,C,D,H,W = cost_volume.shape
+    #cost_volume = cost_volume.mean(dim=1, keepdim=True)
+
+    return cost_volume, vis_weight_list
+
 
 def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
     """Creates a point array from a single depth map.
@@ -423,73 +948,81 @@ def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: i
 
     return image
 
-def reproject(src_depth: np.ndarray, src_cam: np.ndarray, tgt_depth: np.ndarray, tgt_cam: np.ndarray) -> Tuple[ np.ndarray,
-                                                                                                                np.ndarray,
-                                                                                                                np.ndarray]:
+def reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P):
     """Computes the re-projection depth values and pixel indices between two depth maps.
 
-    This function takes as input two depth maps: 'src_depth' and 'tgt_depth'. The source 
+    This function takes as input two depth maps: 'src_depth' and 'tgt_depth'. The source
     depth map is first projected into the target camera plane using the source depth
     values and the camera parameters for both views. Using the projected pixel
     coordinates in the target view, the target depths are then re-projected back into
     the source camera plane (again with the camera parameters for both views). The
-    information prouced from this process is often used to compute errors in 
+    information prouced from this process is often used to compute errors in
     re-projection between two depth maps, or similar operations.
 
     Parameters:
         src_depth: Source depth map to be projected.
-        src_cam: Camera parameters for the source depth map viewpoint.
+        src_K: Intrinsic camera parameters for the source depth map viewpoint.
+        src_P: Extrinsic camera parameters for the source depth map viewpoint.
         tgt_depth: Target depth map used for re-projection.
-        tgt_cam: Camera parameters for the target depth map viewpoint.
+        tgt_K: Intrinsic camera parameters for the target depth map viewpoint.
+        tgt_P: Extrinsic camera parameters for the target depth map viewpoint.
 
     Returns:
         depth_reprojected: The re-projected depth values for the source depth map.
         coords_reprojected: The re-projection coordinates for the source view.
         coords_tgt: The projected coordinates for the target view.
     """
-    height, width = src_depth.shape
+    batch_size, c, height, width = src_depth.shape
 
     # back-project ref depths to 3D
-    x_src, y_src = np.meshgrid(np.arange(0, width), np.arange(0, height))
-    x_src, y_src = x_src.reshape([-1]), y_src.reshape([-1])
-    xyz_src = np.matmul(np.linalg.inv(src_cam[1,:3,:3]),
-                        np.vstack((x_src, y_src, np.ones_like(x_src))) * src_depth.reshape([-1]))
+    x_src, y_src = torch.meshgrid(torch.arange(0, width), torch.arange(0, height), indexing="xy")
+    x_src = x_src.reshape(-1).unsqueeze(0).repeat(batch_size, 1).to(src_depth)
+    y_src = y_src.reshape(-1).unsqueeze(0).repeat(batch_size, 1).to(src_depth)
+    homog = torch.stack((x_src, y_src, torch.ones_like(x_src)), dim=1)
+    xyz_src = torch.matmul(torch.linalg.inv(src_K), homog * src_depth.reshape(batch_size, 1, -1))
 
     # transform 3D points from ref to src coords
-    xyz_tgt = np.matmul(np.matmul(tgt_cam[0], np.linalg.inv(src_cam[0])),
-                        np.vstack((xyz_src, np.ones_like(x_src))))[:3]
+    homog_3d = torch.concatenate((xyz_src, torch.ones_like(x_src).unsqueeze(1)), dim=1)
+    xyz_tgt = torch.matmul(torch.matmul(tgt_P, torch.linalg.inv(src_P)), homog_3d)[:,:3]
 
     # project src 3D points into pixel coords
-    K_xyz_tgt = np.matmul(tgt_cam[1,:3,:3], xyz_tgt)
-    xy_tgt = K_xyz_tgt[:2] / K_xyz_tgt[2:3]
-    x_tgt = xy_tgt[0].reshape([height, width]).astype(np.float32)
-    y_tgt = xy_tgt[1].reshape([height, width]).astype(np.float32)
+    K_xyz_tgt = torch.matmul(tgt_K, xyz_tgt)
+    xy_tgt = K_xyz_tgt[:,:2] / K_xyz_tgt[:,2:3]
+    x_tgt = xy_tgt[:,0].reshape(batch_size, height, width).to(torch.float32)
+    y_tgt = xy_tgt[:,1].reshape(batch_size, height, width).to(torch.float32)
+    coords_tgt = torch.stack((x_tgt, y_tgt), dim=-1) # B x H x W x 2
 
     # sample the depth values from the src map at each pixel coord
-    sampled_depth_tgt = cv2.remap(tgt_depth, x_tgt, y_tgt, interpolation=cv2.INTER_LINEAR)
-    projection_map = np.where(sampled_depth_tgt==0,0,1) # 0 where pixel does not project into src image plane
+    x_normalized = ((x_tgt / (width-1)) * 2) - 1
+    y_normalized = ((y_tgt / (height-1)) * 2) - 1
+    grid = torch.stack((x_normalized, y_normalized), dim=-1) # B x H x W x 2
+    sampled_depth_tgt = F.grid_sample(
+                                    tgt_depth,
+                                    grid,
+                                    mode="bilinear",
+                                    padding_mode="zeros",
+                                    align_corners=False)
 
     # back-project src depths to 3D
-    xyz_tgt = np.matmul(np.linalg.inv(tgt_cam[1,:3,:3]),
-                        np.vstack((xy_tgt, np.ones_like(x_src))) * sampled_depth_tgt.reshape([-1]))
+    homog = torch.concatenate((xy_tgt, torch.ones_like(x_src).unsqueeze(1)), dim=1)
+    xyz_tgt = torch.matmul(torch.linalg.inv(tgt_K), homog * sampled_depth_tgt.reshape(batch_size, 1, -1))
 
     # transform 3D points from src to ref coords
-    xyz_reprojected = np.matmul(np.matmul(src_cam[0], np.linalg.inv(tgt_cam[0])),
-                                np.vstack((xyz_tgt, np.ones_like(x_src))))[:3]
+    homog_3d = torch.concatenate((xyz_tgt, torch.ones_like(x_src).unsqueeze(1)), dim=1)
+    xyz_reprojected = torch.matmul(torch.matmul(src_P, torch.linalg.inv(tgt_P)), homog_3d)[:,:3]
 
     # extract reprojected depth values
-    depth_reprojected = xyz_reprojected[2].reshape([height, width]).astype(np.float32)
+    depth_reprojected = xyz_reprojected[:,2].reshape(batch_size, height, width).to(torch.float32)
 
     # project ref 3D points into pixel coords
-    K_xyz_reprojected = np.matmul(src_cam[1,:3,:3], xyz_reprojected)
-    xy_reprojected = K_xyz_reprojected[:2] / (K_xyz_reprojected[2:3] + 1e-7)
-    x_reprojected = xy_reprojected[0].reshape([height, width]).astype(np.float32)
-    y_reprojected = xy_reprojected[1].reshape([height, width]).astype(np.float32)
+    K_xyz_reprojected = torch.matmul(src_K, xyz_reprojected)
+    xy_reprojected = K_xyz_reprojected[:,:2] / (K_xyz_reprojected[:,2:3] + 1e-7)
+    x_reprojected = xy_reprojected[:,0].reshape(batch_size, height, width).to(torch.float32)
+    y_reprojected = xy_reprojected[:,1].reshape(batch_size, height, width).to(torch.float32)
 
-    coords_reprojected = np.dstack((x_reprojected, y_reprojected))
-    coords_tgt = np.dstack((x_tgt, y_tgt))
+    coords_reprojected = torch.stack((x_reprojected, y_reprojected), dim=-1) # B x H x W x 2
 
-    return depth_reprojected, coords_reprojected, coords_tgt, projection_map
+    return depth_reprojected, coords_reprojected, coords_tgt
 
 def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: List[str], cam_files: List[str], src_ind: int = -1, pixel_th: float = 0.1) -> np.ndarray:
     """Computes a visibility mask between a provided source depth map and list of target depth maps.

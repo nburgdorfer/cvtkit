@@ -20,6 +20,83 @@ import numpy as np
 import math
 from scipy.linalg import null_space
 from scipy.spatial.transform import Rotation
+import torch
+import open3d as o3d
+
+def scale_cam(intrinsics, h=None, w=None, max_h=None, max_w=None, scale=None):
+    if scale:
+        new_intrinsics = intrinsics.copy()
+        new_intrinsics[0, :] *= scale
+        new_intrinsics[1, :] *= scale
+    elif h > max_h or w > max_w:
+        scale = 1.0 * max_h / h
+        if scale * w > max_w:
+            scale = 1.0 * max_w / w
+        new_intrinsics = intrinsics.copy()
+        new_intrinsics[0, :] *= scale
+        new_intrinsics[1, :] *= scale
+    return new_intrinsics
+
+def build_o3d_traj(poses, K, width, height):
+    trajectory = o3d.camera.PinholeCameraTrajectory()
+    for pose in poses:
+        camera_params = o3d.camera.PinholeCameraParameters()
+        camera_params.intrinsic = o3d.camera.PinholeCameraIntrinsic(width, height, K[0,0], K[1,1], K[0,2], K[1,2])
+        camera_params.extrinsic = pose
+        trajectory.parameters += [(camera_params)]
+    return trajectory
+
+def to_opengl_pose(pose):
+    """
+    OpenGL pose: (right-up-back) (cam-to-world)
+    """
+    #pose = torch.linalg.inv(pose)
+    pose = np.linalg.inv(pose)
+    pose[:3,1] *= -1
+    pose[:3,2] *= -1
+    return pose
+
+def intrinsic_pyramid(K, levels):
+    batch_size, _, _ = K.shape
+    K_pyr = torch.zeros((batch_size, levels, 3, 3)).to(K)
+
+    for l in range(levels):
+        if l==0:
+            k = K
+        else:
+            k = torch.clone(K) / (2**l)
+            k[:,2,2] = 1.0
+        K_pyr[:,l] = k
+
+    return K_pyr
+
+def Z_from_disp(Z, b, f, delta):
+    B, C, D, H, W = Z.shape
+    b = b.reshape(B,1,1,1,1).repeat(1,C,D,H,W)
+    f = f.reshape(B,1,1,1,1).repeat(1,C,D,H,W)
+
+    near = Z*(b*f/((b*f) + (delta*Z)))
+    far = Z*(b*f/((b*f) - (delta*Z)))
+
+    return near, far
+
+def compute_baselines(poses):
+    src_pose = poses[0]
+    src_camera_center = null_space(src_pose[:3,:])
+    src_camera_center = src_camera_center[:3,0] / src_camera_center[3,0]
+    min_baseline = np.Inf
+    max_baseline = 0.0
+
+    for i in range(1,len(poses)):
+        tgt_pose = poses[i]
+        tgt_camera_center = null_space(tgt_pose[:3,:])
+        tgt_camera_center = tgt_camera_center[:3,0] / tgt_camera_center[3,0]
+        b = np.linalg.norm(src_camera_center - tgt_camera_center)
+        if b < min_baseline:
+            min_baseline = b
+        if b > max_baseline:
+            max_baseline = b
+    return min_baseline, max_baseline
 
 def camera_center(cam: np.ndarray) -> np.ndarray:
     """Computes the center of a camera in world coordinates.

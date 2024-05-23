@@ -10,8 +10,16 @@ import numpy as np
 import cv2
 import scipy.ndimage as ndimage
 import skimage.transform as transform
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import matplotlib.collections as mc
+import torch
+import torch.nn.functional as F
+import os
 
 from io import *
+from util import non_zero_std
 
 def display_inlier_outlier(cloud: o3d.geometry.PointCloud, indices: np.ndarray) -> None:
     """Displays a point cloud with outlier points colored red.
@@ -229,3 +237,252 @@ def display_map(filename: str, disp_map: np.ndarray, mx: float, mn: float) -> No
 
 
 
+def visualize_relative_variance(target_cost, cost_volume, hypos, intervals, target_depth, mask, batch_ind, vis_path, level):
+    batch_size, _, planes, h, w = cost_volume.shape
+    batch_ind = int(batch_ind.item())
+    cv = cost_volume.squeeze(dim=1)
+    mask = mask.reshape(1, h, w).repeat(batch_size, 1, 1)
+    hypos = hypos.reshape(batch_size, planes, h, w)
+    intervals = intervals.reshape(batch_size, planes, h, w)
+    target_depth = target_depth.reshape(batch_size, 1, h, w)
+
+    ### compute coverage
+    diff = torch.abs(hypos - target_depth)
+    min_interval = intervals[:,0:1] * 0.5 # intervals are bin widths, divide by 2 for radius
+    coverage = torch.clip(torch.where(diff <= min_interval, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+    uncovered = torch.clip(torch.where(coverage <= 0, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+    valid_targets = torch.where(target_depth > 0, 1, 0)
+    uncovered *= valid_targets
+    cov_percent = coverage.sum() / (valid_targets.sum() + 1e-10)
+    coverage = coverage.reshape(h,w,1).repeat(1,1,3) * (torch.tensor([[[0,255,0]]]).to(coverage).repeat(h,w,1))
+    uncovered = uncovered.reshape(h,w,1).repeat(1,1,3) * (torch.tensor([[[255,0,0]]]).to(uncovered).repeat(h,w,1))
+    plt.imshow((coverage+uncovered).detach().cpu().numpy())
+    plt.title(f"Coverage ({cov_percent*100:0.2f}%)")
+    plt.axis('off')
+    plt.savefig(os.path.join(vis_path,f"coverage_{batch_ind:08d}_l{level}.png"))
+    plt.close()
+
+    min_interval = intervals[:,0:1].repeat(1, planes, 1, 1)
+    tcv = target_cost.reshape(batch_size, 1, h, w).repeat(1, planes, 1, 1)
+    mask = mask.reshape(batch_size, 1, h, w).repeat(1, planes, 1, 1)
+    gt_bin_mask = torch.where(diff <= min_interval, 0, 1)
+    mask *= gt_bin_mask
+    inds = torch.stack(torch.where(mask > 0), dim=-1)
+    var_diff = torch.div(tcv,cv+1e-10)[inds[:,0],inds[:,1],inds[:,2],inds[:,3]]
+
+    # compute mean and standard-deviation
+    sigma = torch.std(var_diff)
+    mean = torch.mean(var_diff)
+    # select only values in 3-sigma radius
+    var_diff = var_diff[torch.where(var_diff >= (mean-(3*sigma)))[0]]
+    var_diff = var_diff[torch.where(var_diff <= (mean+(3*sigma)))[0]]
+    # plot
+    flat_var = var_diff.detach().cpu().numpy().flatten()
+    plt.hist(flat_var, bins=100)
+    plt.axvline(flat_var.mean(), c="red")
+    plt.savefig(os.path.join(vis_path,f"relative_{batch_ind:08d}_l{level}.png"))
+    plt.close()
+
+    return mean, cov_percent
+
+def visualize_point_variance(target_cost, cost_volume, hypos, intervals, target_depth, mask, batch_ind, vis_path, level):
+    batch_size, groups, planes, h, w = cost_volume.shape
+    batch_ind = int(batch_ind.item())
+    tcv = target_cost.mean(dim=1, keepdim=True)
+    cv = cost_volume.mean(dim=1, keepdim=True)
+    mask = mask.reshape(1, h, w).repeat(batch_size, 1, 1)
+    hypos = hypos.reshape(batch_size, planes, h, w)
+    intervals = intervals.reshape(batch_size, planes, h, w)
+    target_depth = target_depth.reshape(batch_size, 1, h, w)
+
+    ### compute coverage
+    diff = torch.abs(hypos - target_depth)
+    min_interval = intervals[:,0:1]
+    coverage = torch.clip(torch.where(diff <= min_interval, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+    uncovered = torch.clip(torch.where(coverage <= 0, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+    valid_targets = torch.where(target_depth > 0, 1, 0)
+    uncovered *= valid_targets
+    cov_percent = coverage.sum() / (valid_targets.sum() + 1e-10)
+    coverage = coverage.reshape(h,w,1).repeat(1,1,3) * (torch.tensor([[[0,255,0]]]).to(coverage).repeat(h,w,1))
+    uncovered = uncovered.reshape(h,w,1).repeat(1,1,3) * (torch.tensor([[[255,0,0]]]).to(uncovered).repeat(h,w,1))
+    plt.imshow((coverage+uncovered).detach().cpu().numpy())
+    plt.title(f"Coverage ({cov_percent*100:0.2f}%)")
+    plt.axis('off')
+    plt.savefig(os.path.join(vis_path,f"coverage_{batch_ind:08d}_l{level}.png"))
+    plt.close()
+
+    ### compute correct matching variance histogram
+    var_match = tcv.reshape(batch_size, h, w)
+    inds = torch.stack(torch.where(mask > 0), dim=-1)
+    var_match = var_match[inds[:,0], inds[:,1], inds[:,2]]
+    # compute mean and standard-deviation
+    match_sigma = torch.std(var_match)
+    match_mean = torch.mean(var_match)
+    # select only values in 3-sigma radius
+    var_match = var_match[torch.where(var_match >= (match_mean-(3*match_sigma)))[0]]
+    var_match = var_match[torch.where(var_match <= (match_mean+(3*match_sigma)))[0]]
+    # plot
+    flat_var = var_match.detach().cpu().numpy().flatten()
+    plt.hist(flat_var, bins=100)
+    plt.axvline(flat_var.mean(), c="red")
+    plt.savefig(os.path.join(vis_path,f"match_{batch_ind:08d}_l{level}.png"))
+    plt.close()
+
+    ### compute incorrect matching variance histogram
+    mask = mask.reshape(batch_size, 1, h, w).repeat(1, planes, 1, 1)
+    inds = torch.stack(torch.where(mask > 0), dim=-1)
+    diff = diff[inds[:,0], inds[:,1], inds[:,2], inds[:,3]]
+    min_interval = min_interval[inds[:,0], 0, inds[:,2], inds[:,3]]
+    cv = cv[inds[:,0], 0, inds[:,1], inds[:,2], inds[:,3]]
+    inds = torch.stack(torch.where(diff > min_interval), dim=-1)
+    var_mismatch = cv[inds]
+    # compute mean and standard-deviation
+    mismatch_sigma = torch.std(var_mismatch)
+    mismatch_mean = torch.mean(var_mismatch)
+    # select only values in 3-sigma radius
+    var_mismatch = var_mismatch[torch.where(var_mismatch >= (mismatch_mean-(3*mismatch_sigma)))[0]]
+    var_mismatch = var_mismatch[torch.where(var_mismatch <= (mismatch_mean+(3*mismatch_sigma)))[0]]
+    # plot
+    flat_var = var_mismatch.detach().cpu().numpy().flatten()
+    plt.hist(flat_var, bins=100)
+    plt.axvline(flat_var.mean(), c="red")
+    plt.savefig(os.path.join(vis_path,f"mismatch_{batch_ind:08d}_l{level}.png"))
+    plt.close()
+
+    return match_mean, mismatch_mean
+
+def visualize_ray_points(rays, ind, edge_color="255 0 0"):
+    out_file = f"cam_vis/ray_points_{ind:04d}.ply"
+    num_rays, num_points, _ = rays.shape
+
+    with open(out_file, "w") as of:
+        of.write("ply\n")
+        of.write("format ascii 1.0\n")
+        of.write("comment VCGLIB generated\n")
+        of.write(f"element vertex {num_rays*num_points}\n")
+        of.write("property float x\n")
+        of.write("property float y\n")
+        of.write("property float z\n")
+        of.write("property uchar red\n")
+        of.write("property uchar green\n")
+        of.write("property uchar blue\n")
+        of.write("end_header\n")
+        for i in range(num_rays):
+            for j in range(num_points):
+                of.write(f"{rays[i,j,0]:0.3f} {rays[i,j,1]:0.3f} {rays[i,j,2]:0.3f} 0 0 0\n")
+
+def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
+    out_file = f"cam_vis/cam_frustum_{ind:04d}.ply"
+    num_planes, _, _ = planes.shape
+    num_verts = 4*num_planes
+    num_edges = 8*num_planes - 4
+
+    with open(out_file, "w") as of:
+        of.write("ply\n")
+        of.write("format ascii 1.0\n")
+        of.write("comment VCGLIB generated\n")
+        of.write(f"element vertex {num_verts}\n")
+        of.write("property float x\n")
+        of.write("property float y\n")
+        of.write("property float z\n")
+        of.write("property uchar red\n")
+        of.write("property uchar green\n")
+        of.write("property uchar blue\n")
+        of.write(f"element edge {num_edges}\n")
+        of.write("property int vertex1\n")
+        of.write("property int vertex2\n")
+        of.write("property uchar red\n")
+        of.write("property uchar green\n")
+        of.write("property uchar blue\n")
+        of.write("end_header\n")
+        for p in range(num_planes):
+            for i in range(4):
+                of.write(f"{planes[p,0,i]:0.3f} {planes[p,1,i]:0.3f} {planes[p,2,i]:0.3f} 0 0 0\n")
+
+        # draw plane border
+        for p in range(num_planes):
+            ind = p*4
+            of.write(f"{ind} {ind+1} {edge_color}\n")
+            of.write(f"{ind} {ind+2} {edge_color}\n")
+            of.write(f"{ind+1} {ind+3} {edge_color}\n")
+            of.write(f"{ind+2} {ind+3} {edge_color}\n")
+
+        # draw plane connections
+        for p in range(num_planes-1):
+            ind = p*4
+            of.write(f"{ind} {ind+4} {edge_color}\n")
+            of.write(f"{ind+1} {ind+5} {edge_color}\n")
+            of.write(f"{ind+2} {ind+6} {edge_color}\n")
+            of.write(f"{ind+3} {ind+7} {edge_color}\n")
+
+def visualize(cfg, data, output, batch_ind, vis_path):
+    image = torch.movedim(data['images'][:,0],(1,2,3), (3,1,2)).detach().cpu().numpy()[0]
+    target_depth = data["target_depth"].detach().cpu().numpy()[0]
+    est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
+    est_conf = output["confidence"].detach().cpu().numpy()[0]
+
+    maps = {
+            "image": image,
+            "target_depth": target_depth,
+            "est_depth": est_depth,
+            "est_conf": est_conf
+            }
+
+    plot(maps, batch_ind, vis_path, cfg["visualization"]["max_depth_error"])
+
+def plot(maps, batch_ind, vis_path, max_depth_error):
+    image = maps["image"]
+    target_depth = maps["target_depth"]
+    est_depth = maps["est_depth"]
+    est_conf = maps["est_conf"]
+
+    depth_residual = np.abs(est_depth - target_depth)
+
+    target_conf = (1-depth_residual)
+    valid_conf_vals = target_conf[target_depth != 0.0]
+    target_conf = (target_conf - valid_conf_vals.min()) / (valid_conf_vals.max() - valid_conf_vals.min() + 1e-10)
+
+    conf_residual = np.abs(est_conf - target_conf)
+
+    depth_residual[target_depth == 0.0] = 0.0
+    conf_residual[target_depth == 0.0] = 0.0
+    target_conf[target_depth == 0.0] = 0.0
+
+    depth_mae = np.mean(depth_residual)
+    conf_mae = np.mean(conf_residual)
+
+    fig, axs = plt.subplots(2, 3)
+    fig.tight_layout()
+    
+    max_depth = np.max(target_depth)
+    axs[0, 0].imshow(target_depth, cmap="gray", vmin=0, vmax=max_depth)
+    axs[0, 0].set_title('Target Depth')
+    axs[0, 0].set_xticks([])
+    axs[0, 0].set_yticks([])
+    axs[0, 1].imshow(est_depth, cmap="gray", vmin=0, vmax=max_depth)
+    axs[0, 1].set_title('Estimated Depth')
+    axs[0, 1].set_xticks([])
+    axs[0, 1].set_yticks([])
+    axs[0, 2].imshow(depth_residual, cmap="hot", vmin=0, vmax=max_depth_error)
+    axs[0, 2].set_title(f'Residual (mae: {depth_mae:0.3f}mm)')
+    axs[0, 2].set_xticks([])
+    axs[0, 2].set_yticks([])
+
+    axs[1, 0].imshow(target_conf, cmap="gray", vmin=0, vmax=1.0)
+    axs[1, 0].set_title('Target Confidence')
+    axs[1, 0].set_xticks([])
+    axs[1, 0].set_yticks([])
+    axs[1, 1].imshow(est_conf, cmap="gray", vmin=0, vmax=1.0)
+    axs[1, 1].set_title('Estimated Confidence')
+    axs[1, 1].set_xticks([])
+    axs[1, 1].set_yticks([])
+    axs[1, 2].imshow(conf_residual, cmap="hot", vmin=0, vmax=0.2)
+    axs[1, 2].set_title(f'Residual (mae: {conf_mae*100:0.3f}%)')
+    axs[1, 2].set_xticks([])
+    axs[1, 2].set_yticks([])
+    plt.subplots_adjust(wspace=0, hspace=0.2)
+
+    plot_file = os.path.join(vis_path, f"{batch_ind:08d}.png")
+    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
+    plt.clf()
+    plt.close()
