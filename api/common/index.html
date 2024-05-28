@@ -9,17 +9,17 @@
       
       
       
-        <link rel="prev" href="../io/">
+        <link rel="prev" href="../camera/">
       
       
-        <link rel="next" href="../datasets_dtu/">
+        <link rel="next" href="../io/">
       
       <link rel="icon" href="../../assets/logo.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.1">
     
     
       
-        <title>Utility - Computer Vision Toolkit</title>
+        <title>Common - Computer Vision Toolkit</title>
       
     
     
@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cvt.util" class="md-skip">
+        <a href="#cvt.common" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Utility
+              Common
             
           </span>
         </div>
@@ -488,20 +488,6 @@
               
   
   
-  
-    <li class="md-nav__item">
-      <a href="../io/" class="md-nav__link">
-        IO
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -512,12 +498,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Utility
+          Common
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Utility
+        Common
       </a>
       
         
@@ -534,50 +520,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cvt.util" class="md-nav__link">
-    cvt.util
+  <a href="#cvt.common" class="md-nav__link">
+    cvt.common
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.non_zero_std" class="md-nav__link">
+  <a href="#cvt.common.non_zero_std" class="md-nav__link">
     non_zero_std()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.print_gpu_mem" class="md-nav__link">
+  <a href="#cvt.common.print_gpu_mem" class="md-nav__link">
     print_gpu_mem()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.round_nearest" class="md-nav__link">
+  <a href="#cvt.common.round_nearest" class="md-nav__link">
     round_nearest()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.scale_camera" class="md-nav__link">
+  <a href="#cvt.common.scale_camera" class="md-nav__link">
     scale_camera()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.scale_image" class="md-nav__link">
+  <a href="#cvt.common.scale_image" class="md-nav__link">
     scale_image()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.scale_mvs_data" class="md-nav__link">
+  <a href="#cvt.common.scale_mvs_data" class="md-nav__link">
     scale_mvs_data()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.common.to_gpu" class="md-nav__link">
+    to_gpu()
   </a>
   
 </li>
@@ -586,6 +579,20 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../io/" class="md-nav__link">
+        IO
+      </a>
     </li>
   
 
@@ -896,50 +903,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cvt.util" class="md-nav__link">
-    cvt.util
+  <a href="#cvt.common" class="md-nav__link">
+    cvt.common
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.non_zero_std" class="md-nav__link">
+  <a href="#cvt.common.non_zero_std" class="md-nav__link">
     non_zero_std()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.print_gpu_mem" class="md-nav__link">
+  <a href="#cvt.common.print_gpu_mem" class="md-nav__link">
     print_gpu_mem()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.round_nearest" class="md-nav__link">
+  <a href="#cvt.common.round_nearest" class="md-nav__link">
     round_nearest()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.scale_camera" class="md-nav__link">
+  <a href="#cvt.common.scale_camera" class="md-nav__link">
     scale_camera()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.scale_image" class="md-nav__link">
+  <a href="#cvt.common.scale_image" class="md-nav__link">
     scale_image()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.util.scale_mvs_data" class="md-nav__link">
+  <a href="#cvt.common.scale_mvs_data" class="md-nav__link">
     scale_mvs_data()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.common.to_gpu" class="md-nav__link">
+    to_gpu()
   </a>
   
 </li>
@@ -963,17 +977,17 @@
 
 
 
-  <h1>Utility</h1>
+  <h1>Common</h1>
 
 <div class="doc doc-object doc-module">
 
 
-<a id="cvt.util"></a>
+<a id="cvt.common"></a>
   <div class="doc doc-contents first">
   
       <p>A suite of common utility functions.</p>
 <p>This module includes general utility functions used
-by the sub-packages of the CVT library.</p>
+by the sub-packages of the CVTkit library.</p>
 <p>This module contains the following functions:</p>
 <ul>
 <li><code>non_zero_std(maps, device, dim, keepdim)</code> - Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.</li>
@@ -998,7 +1012,7 @@ by the sub-packages of the CVT library.</p>
 
 
 
-<h2 id="cvt.util.non_zero_std" class="doc doc-heading">
+<h2 id="cvt.common.non_zero_std" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">non_zero_std</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 </h2>
@@ -1071,8 +1085,19 @@ by the sub-packages of the CVT library.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/util.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span>
@@ -1084,18 +1109,7 @@ by the sub-packages of the CVT library.</p>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">non_zero_std</span><span class="p">(</span><span class="n">maps</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">non_zero_std</span><span class="p">(</span><span class="n">maps</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1129,7 +1143,7 @@ by the sub-packages of the CVT library.</p>
 
 
 
-<h2 id="cvt.util.print_gpu_mem" class="doc doc-heading">
+<h2 id="cvt.common.print_gpu_mem" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">print_gpu_mem</span><span class="p">()</span></code>
 
 </h2>
@@ -1140,15 +1154,15 @@ by the sub-packages of the CVT library.</p>
       <p>Prints the current unallocated memory of the GPU.</p>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/util.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">print_gpu_mem</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">print_gpu_mem</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Prints the current unallocated memory of the GPU.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_properties</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">total_memory</span>
@@ -1166,7 +1180,7 @@ by the sub-packages of the CVT library.</p>
 
 
 
-<h2 id="cvt.util.round_nearest" class="doc doc-heading">
+<h2 id="cvt.common.round_nearest" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">round_nearest</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
 
 </h2>
@@ -1246,8 +1260,19 @@ by the sub-packages of the CVT library.</p>
 </code></pre></div>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/util.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
@@ -1263,18 +1288,7 @@ by the sub-packages of the CVT library.</p>
 <span class="normal">166</span>
 <span class="normal">167</span>
 <span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">round_nearest</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">decimal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">round_nearest</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">decimal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rounds a floating point number to the nearest decimal place.</span>
 
 <span class="sd">    Args:</span>
@@ -1312,7 +1326,7 @@ by the sub-packages of the CVT library.</p>
 
 
 
-<h2 id="cvt.util.scale_camera" class="doc doc-heading">
+<h2 id="cvt.common.scale_camera" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">scale_camera</span><span class="p">(</span><span class="n">cam</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
 
 </h2>
@@ -1375,23 +1389,23 @@ by the sub-packages of the CVT library.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/util.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">242</span>
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
 <span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_camera</span><span class="p">(</span><span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">246</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_camera</span><span class="p">(</span><span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Scales a camera intrinsic parameters.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1417,7 +1431,7 @@ by the sub-packages of the CVT library.</p>
 
 
 
-<h2 id="cvt.util.scale_image" class="doc doc-heading">
+<h2 id="cvt.common.scale_image" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">scale_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span></code>
 
 </h2>
@@ -1490,22 +1504,22 @@ by the sub-packages of the CVT library.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/util.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">259</span>
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
-<span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Scales an input pixel grid.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1530,7 +1544,7 @@ by the sub-packages of the CVT library.</p>
 
 
 
-<h2 id="cvt.util.scale_mvs_data" class="doc doc-heading">
+<h2 id="cvt.common.scale_mvs_data" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">scale_mvs_data</span><span class="p">(</span><span class="n">depths</span><span class="p">,</span> <span class="n">confs</span><span class="p">,</span> <span class="n">cams</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span></code>
 
 </h2>
@@ -1635,8 +1649,19 @@ by the sub-packages of the CVT library.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>cvt/util.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
 <span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
@@ -1650,18 +1675,7 @@ by the sub-packages of the CVT library.</p>
 <span class="normal">286</span>
 <span class="normal">287</span>
 <span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_mvs_data</span><span class="p">(</span><span class="n">depths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">confs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cams</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_mvs_data</span><span class="p">(</span><span class="n">depths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">confs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cams</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Scales input depth maps, confidence maps, and cameras.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1687,6 +1701,97 @@ by the sub-packages of the CVT library.</p>
         <span class="n">cams</span><span class="p">[</span><span class="n">view</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale_camera</span><span class="p">(</span><span class="n">cams</span><span class="p">[</span><span class="n">view</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">scaled_depths</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">scaled_confs</span><span class="p">),</span> <span class="n">cams</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cvt.common.to_gpu" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_gpu</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Loads a dictionary of elements onto the GPU device.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>data</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>Dictionary to be loaded.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>device</code></td>
+          <td>
+                <code>string</code>
+          </td>
+          <td><p>GPU device identifier.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cvt/common.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_gpu</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">string</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a dictionary of elements onto the GPU device.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: Dictionary to be loaded.</span>
+<span class="sd">        device: GPU device identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">no_gpu_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="s2">&quot;filenames&quot;</span><span class="p">,</span> <span class="s2">&quot;num_frame&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">no_gpu_list</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">non_blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
