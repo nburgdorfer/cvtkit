@@ -42,10 +42,13 @@ from io import *
 
 
 def downsample_cloud(cloud, min_point_dist):
-    """
+    """Downsamples a point cloud enforcing a minumum point spacing.
     Parameters:
+        cloud: Point cloud to be decimated.
+        min_point_dist: minimum point spacing to enforce.
 
     Returns:
+        The downsampled point cloud.
     """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
