@@ -12,8 +12,8 @@ nav:
         - Point Cloud To Video: tutorials/cloud_to_vid.md
     - API Reference: 
         - Camera: api/camera.md
+        - Common: api/common.md
         - IO: api/io.md
-        - Utility: api/util.md
         - Datasets:
             #- BlendedMVS: api/datasets_blended.md
             - DTU: api/datasets_dtu.md
@@ -26,7 +26,7 @@ nav:
             - Utilities: api/visualization_util.md
             - Video: api/visualization_video.md
     - Resources:
-        - File Formats: resources/file_formats.md
+        - Pose File Formats: resources/pose_file_formats.md
     - Development:
         - Contributing: development/contrib.md
         - Code of Conduct: development/conduct.md
