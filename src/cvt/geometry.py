@@ -511,6 +511,29 @@ def _plane_coords(K, P, near, far, H, W):
 
     return near_plane, far_plane
 
+def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
+    """Creates a point array from a single depth map.
+
+    Parameters:
+        depth: Depth map to project to 3D.
+        cam: Camera parameters for the given depth map viewpoint.
+
+    Returns:
+        An array of 3D points corresponding to the input depth map.
+    """
+    # project depth map to point cloud
+    height, width = depth.shape
+    x = np.linspace(0,width-1,num=width)
+    y = np.linspace(0,height-1,num=height)
+    x,y = np.meshgrid(x,y, indexing="xy")
+    x = x.flatten()
+    y = y.flatten()
+    depth = depth.flatten()
+    xyz_cam = np.matmul(np.linalg.inv(cam[1,:3,:3]), np.vstack((x, y, np.ones_like(x))) * depth)
+    xyz_world = np.matmul(np.linalg.inv(cam[0,:4,:4]), np.vstack((xyz_cam, np.ones_like(x))))[:3]
+    points = xyz_world.transpose((1, 0))
+    return points
+
 def project_depth_map(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Projects a depth map into a list of 3D points
 
@@ -564,29 +587,6 @@ def project_depth_map(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[tor
     #   coords_map = world_coords.reshape(batch_size, height, width, 3)
 
     return world_coords
-
-def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
-    """Creates a point array from a single depth map.
-
-    Parameters:
-        depth: Depth map to project to 3D.
-        cam: Camera parameters for the given depth map viewpoint.
-
-    Returns:
-        An array of 3D points corresponding to the input depth map.
-    """
-    # project depth map to point cloud
-    height, width = depth.shape
-    x = np.linspace(0,width-1,num=width)
-    y = np.linspace(0,height-1,num=height)
-    x,y = np.meshgrid(x,y, indexing="xy")
-    x = x.flatten()
-    y = y.flatten()
-    depth = depth.flatten()
-    xyz_cam = np.matmul(np.linalg.inv(cam[1,:3,:3]), np.vstack((x, y, np.ones_like(x))) * depth)
-    xyz_world = np.matmul(np.linalg.inv(cam[0,:4,:4]), np.vstack((xyz_cam, np.ones_like(x))))[:3]
-    points = xyz_world.transpose((1, 0))
-    return points
 
 def project_renderer(renderer: o3d.visualization.rendering.OffscreenRenderer, K: np.ndarray, P: np.ndarray, width: float, height: float) -> np.ndarray:
     """Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
