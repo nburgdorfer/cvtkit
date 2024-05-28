@@ -4,14 +4,14 @@
 
 This module contains the following functions:
 
-- `downsample_cloud(cloud, min_point_dist)` - .
+- `downsample_cloud(cloud, min_point_dist)` - Downsamples a point cloud enforcing a minumum point spacing.
 - `essential_from_features(src_image_file, tgt_image_file, K)` - Computes the essential matrix between two images using image features.
 - `fundamental_from_KP(K, P_src, P_tgt)` - Computes the fundamental matrix between two images using camera parameters.
 - `fundamental_from_features(src_image_file, tgt_image_file)` - Computes the fundamental matrix between two images using image features.
 - `geometric_consistency_error(src_depth, src_cam, tgt_depth, tgt_cam)` - .
 - `geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)` - Computes the geometric consistency mask between a source and target depth map.
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
-- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_groups, va_net, vis_weights, aggregation)` - .
+- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_groups, va_net, vis_weights, aggregation)` - Performs homography warping to create a Plane Sweeping Volume (PSV).
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `plane_coords(K, P, depth_hypos, H, W)` - .
 - `points_from_depth(depth, cam)` - Creates a point array from a single depth map.
@@ -219,11 +219,24 @@ def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
 
     return H
 
-def homography_warp(cfg,features,level,ref_in,src_in,ref_ex,src_ex,depth_hypos,gwc_groups, va_net=None, vis_weights=None, aggregation="variance"):
-    """
+def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_groups, va_net=None, vis_weights=None, aggregation="variance"):
+    """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
+        cfg: Configuration dictionary containing configuration parameters.
+        features: Feature maps to be warped into a PSV.
+        level: Current feature resolution level.
+        ref_in: Reference view intrinsics matrix.
+        src_in: Source view intrinsics matrices.
+        ref_ex: Reference view extrinsics matrix.
+        src_ex: Source view extrinsics matrices.
+        depth_hypos: Depth hypotheses to use for homography warping.
+        gwc_groups: Feature channel sizes used in group-wise correlation.
+        va_net: Network used for visibility weighting.
+        vis_weights: Pre-computed visibility weights.
+        aggregation: Aggregation method to be used.
 
     Returns:
+        The Plane Sweeping Volume computed via feature matching cost.
     """
     depth_hypos = depth_hypos.squeeze(1)
     _,planes,_,_ = depth_hypos.shape
