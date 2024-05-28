@@ -42,6 +42,11 @@ from io import *
 
 
 def downsample_cloud(cloud, min_point_dist):
+    """
+    Parameters:
+
+    Returns:
+    """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
@@ -212,6 +217,11 @@ def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
     return H
 
 def homography_warp(cfg,features,level,ref_in,src_in,ref_ex,src_ex,depth_hypos,gwc_groups, va_net=None, vis_weights=None, aggregation="variance"):
+    """
+    Parameters:
+
+    Returns:
+    """
     depth_hypos = depth_hypos.squeeze(1)
     _,planes,_,_ = depth_hypos.shape
 
@@ -806,6 +816,11 @@ def _reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P):
     return depth_reprojected, coords_reprojected, coords_tgt
 
 def sample_volume(volume, z_vals, coords, H, W, near_depth, far_depth, inv_depth):
+    """
+    Parameters:
+
+    Returns:
+    """
     N, M = z_vals.shape
     batch_size, c, _, _, _ = volume.shape
 
@@ -844,6 +859,11 @@ def sample_volume(volume, z_vals, coords, H, W, near_depth, far_depth, inv_depth
     return features
 
 def soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M, delta_in=1):
+    """
+    Parameters:
+
+    Returns:
+    """
     B, _, D, H, W = target_hypo.shape
     rand_match_offset = torch.rand(B,1,M,H,W).to(target_hypo)
     near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
@@ -856,6 +876,11 @@ def soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M, delt
     return matching_hypos
 
 def visibility(depths, K, Ps, vis_th=None, levels=4):
+    """
+    Parameters:
+
+    Returns:
+    """
     batch_size, views, c, H, W = depths.shape
 
     K_pyr = intrinsic_pyramid(K, levels)
@@ -878,6 +903,11 @@ def visibility(depths, K, Ps, vis_th=None, levels=4):
     return vis_maps
 
 def _visibility(depths, K, Ps, vis_th=None):
+    """
+    Parameters:
+
+    Returns:
+    """
     views, height, width = depths.shape
     vis_map = np.where(depths[0] > 0.0, 1, 0)
 
@@ -926,6 +956,11 @@ def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: Lis
     return vis_map.astype(np.float32)
 
 def uniform_hypothesis(cfg, ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, img_height, img_width, nhypothesis_init, inv_depth=False):
+    """
+    Parameters:
+
+    Returns:
+    """
     batchSize = ref_in.shape[0]
     depth_range = depth_max-depth_min
 
