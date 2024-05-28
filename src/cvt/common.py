@@ -243,7 +243,7 @@ def round_nearest(num: float, decimal: int = 0) -> int:
         15.16
     """
 
-    return round(num+10**(-len(str(num))-1), decimal)
+    return np.round(num+10**(-len(str(num))-1), decimal)
 
 def scale_camera(cam: np.ndarray, scale: float = 1.0) -> np.ndarray:
     """Scales a camera intrinsic parameters.
