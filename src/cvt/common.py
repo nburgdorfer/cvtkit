@@ -53,18 +53,18 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
     return indices
 
-def laplacian_pyramid(image: torch.Tensor, levels: int = 5, tau: float = 0.5) -> None:
+def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
     """Computes the Laplacian pyramid of an image.
 
     Parameters:
         image: 2D map to compute Laplacian over.
-        levels: Number of levels in the Laplacian pyramid.
         tau: Laplacian region threshold.
 
     Returns:
         The map of the Laplacian regions.
     """
     batch_size, c, h, w = image.shape
+    levels = 4
 
     # for visualiation
     color = torch.zeros(levels+1,1,1,3).to(image)
@@ -85,7 +85,6 @@ def laplacian_pyramid(image: torch.Tensor, levels: int = 5, tau: float = 0.5) ->
         diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True)
         diff = F.interpolate(diff, size=(h, w), mode="bilinear")
 
-        #tau = diff.mean()
         diff = torch.where(diff > tau, 1, 0)
         laplacian[l-1] = diff
 
