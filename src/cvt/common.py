@@ -28,6 +28,7 @@ import numpy as np
 import cv2
 import random
 from typing import Tuple
+import torch.nn.functional as F
 
 # custom libraries
 from camera import Z_from_disp, intrinsic_pyramid
@@ -52,16 +53,17 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
     return indices
 
-def compute_laplacian_pyr(image: torch.Tensor, levels: int = 4) -> None:
+def laplacian_pyramid(image: torch.Tensor, levels: int = 5, tau: float = 0.5) -> None:
     """Computes the Laplacian pyramid of an image.
 
     Parameters:
         image: 2D map to compute Laplacian over.
         levels: Number of levels in the Laplacian pyramid.
+        tau: Laplacian region threshold.
 
     Returns:
+        The map of the Laplacian regions.
     """
-    image = torch.movedim(image, (0,1,2,3), (0,2,3,1))
     batch_size, c, h, w = image.shape
 
     # for visualiation
@@ -71,10 +73,6 @@ def compute_laplacian_pyr(image: torch.Tensor, levels: int = 4) -> None:
     color[2,0,0,0], color[2,0,0,1], color[2,0,0,2] = 0, 255, 0 #green
     color[3,0,0,0], color[3,0,0,1], color[3,0,0,2] = 0, 255, 255 #cyan
     color[4,0,0,0], color[4,0,0,1], color[4,0,0,2] = 51, 0, 102 #dark purple
-
-    # to ignore changes near image border
-    crop_mask = torch.zeros(batch_size, h, w).to(image)
-    crop_mask[0, 20:h-20, 20:w-20] = 1.0
 
     # build gaussian pyramid
     pyr = [image]
@@ -86,29 +84,28 @@ def compute_laplacian_pyr(image: torch.Tensor, levels: int = 4) -> None:
     for l in range(levels, 0, -1):
         diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True)
         diff = F.interpolate(diff, size=(h, w), mode="bilinear")
-        diff *= crop_mask
 
-        d_th = diff.mean()
-        #dmin = diff.min()
-        #dmax = diff.max()
-        #diff = (diff-dmin)/(dmax-dmin)
-        diff = torch.where(diff > d_th, 1, 0)
+        #tau = diff.mean()
+        diff = torch.where(diff > tau, 1, 0)
         laplacian[l-1] = diff
 
         diff = diff.reshape(h,w,1)
         color_diff = diff.repeat(1,1,3) * color[l-1]
-        cv2.imwrite(f"./log/laplace_{l-1}.png", color_diff.flip(dims=[-1]).detach().cpu().numpy())
+        #cv2.imwrite(f"./log/laplace_{l-1}.png", color_diff.flip(dims=[-1]).detach().cpu().numpy())
 
         if l==levels:
-            all_diff = color_diff
+            all_diff = diff
+            total_color = color_diff
         else:
-            all_diff = torch.where(diff==1, color[l-1,0,0], all_diff)
+            all_diff += diff
+            total_color = torch.where(diff==1, color[l-1,0,0], total_color)
 
-    #cv2.imwrite("./log/laplace.png", (laplacian.sum(dim=0))[0,0].detach().cpu().numpy()*50)
-    all_diff = torch.where(all_diff.sum(dim=-1,keepdim=True)==0, color[-1,0,0], all_diff)
-    cv2.imwrite("./log/laplace.png", all_diff.flip(dims=[-1]).detach().cpu().numpy())
+    total_color = torch.where(total_color.sum(dim=-1,keepdim=True)==0, color[-1,0,0], total_color)
+    cv2.imwrite("./log/laplace_color.png", total_color.flip(dims=[-1]).detach().cpu().numpy())
+    #cv2.imwrite("./log/laplace.png", (all_diff.detach().cpu().numpy()/4)*255)
     cv2.imwrite("./log/image.png", torch.movedim(image[0].flip(dims=[0]), (0,1,2), (2,0,1)).detach().cpu().numpy()*255)
-    sys.exit()
+
+    return all_diff.squeeze(-1)
 
 
 def cosine_similarity(t1: torch.Tensor, t2: torch.Tensor) -> torch.Tensor:

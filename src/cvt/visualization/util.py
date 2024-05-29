@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.collections as mc
 import torch
 import torch.nn.functional as F
-import os
+import os,sys
 
 from common import non_zero_std
 from io import *
@@ -425,6 +425,15 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
 def visualize(cfg, data, output, batch_ind, vis_path):
     image = torch.movedim(data['images'][:,0],(1,2,3), (3,1,2)).detach().cpu().numpy()[0]
     target_depth = data["target_depth"].detach().cpu().numpy()[0]
+    vis_mask = data["vis_masks"][0].detach().cpu().numpy()[0,0]
+    image_laplacian = data["image_laplacian"].detach().cpu().numpy()
+    depth_laplacian = data["depth_laplacian"].detach().cpu().numpy()
+    print(target_depth.shape)
+    print(vis_mask.shape)
+    print(image_laplacian.shape)
+    print(depth_laplacian.shape)
+    sys.exit()
+
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
     est_conf = output["confidence"].detach().cpu().numpy()[0]
 
