@@ -891,7 +891,7 @@ def soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M, delt
 
     return matching_hypos
 
-def visibility(depths, K, Ps, vis_th=None, levels=4):
+def visibility(depths, K, Ps, vis_th, levels=4):
     """
     Parameters:
 
@@ -902,6 +902,7 @@ def visibility(depths, K, Ps, vis_th=None, levels=4):
     K_pyr = intrinsic_pyramid(K, levels)
 
     vis_maps = []
+    vis_masks = []
     for l in range(levels):
         resized_depths = tvf.resize(depths[:,:,0], [int(H/(2**l)), int(W/(2**l))]).unsqueeze(2)
         batch_size, views, c, height, width = resized_depths.shape
@@ -912,11 +913,9 @@ def visibility(depths, K, Ps, vis_th=None, levels=4):
             vis_map += mask.unsqueeze(1)
         vis_map = vis_map.to(torch.float32)
 
-        if vis_th != None:
-            vis_map = torch.where(vis_map >= vis_th, 1, 0)
-
         vis_maps.append(vis_map)
-    return vis_maps
+        vis_masks.append(torch.where(vis_map >= vis_th, 1, 0))
+    return vis_maps, vis_masks
 
 def _visibility(depths, K, Ps, vis_th=None):
     """

@@ -425,14 +425,9 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
 def visualize(cfg, data, output, batch_ind, vis_path):
     image = torch.movedim(data['images'][:,0],(1,2,3), (3,1,2)).detach().cpu().numpy()[0]
     target_depth = data["target_depth"].detach().cpu().numpy()[0]
-    vis_mask = data["vis_masks"][0].detach().cpu().numpy()[0,0]
+    vis_map = data["vis_maps"][0].detach().cpu().numpy()[0,0]
     image_laplacian = data["image_laplacian"].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"].detach().cpu().numpy()
-    print(target_depth.shape)
-    print(vis_mask.shape)
-    print(image_laplacian.shape)
-    print(depth_laplacian.shape)
-    sys.exit()
 
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
     est_conf = output["confidence"].detach().cpu().numpy()[0]
@@ -440,6 +435,9 @@ def visualize(cfg, data, output, batch_ind, vis_path):
     maps = {
             "image": image,
             "target_depth": target_depth,
+            "vis_map": vis_map,
+            "image_laplacian": image_laplacian,
+            "depth_laplacian": depth_laplacian,
             "est_depth": est_depth,
             "est_conf": est_conf
             }
@@ -449,6 +447,9 @@ def visualize(cfg, data, output, batch_ind, vis_path):
 def plot(maps, batch_ind, vis_path, max_depth_error):
     image = maps["image"]
     target_depth = maps["target_depth"]
+    vis_map = maps["vis_map"]
+    image_laplacian = maps["image_laplacian"]
+    depth_laplacian = maps["depth_laplacian"]
     est_depth = maps["est_depth"]
     est_conf = maps["est_conf"]
 
@@ -502,3 +503,56 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
     plt.clf()
     plt.close()
+
+
+    # Visibility vs. Depth Residual (signed error)
+    signed_err = est_depth - target_depth
+    inds = np.argwhere(target_depth.flatten() > 0.0)
+    err = (signed_err.flatten())[inds]
+    vis = (vis_map.flatten())[inds]
+    plt.scatter(err, vis, s=0.5)
+    plt.xlabel("Signed Error")
+    plt.ylabel("Visibility")
+    plot_file = os.path.join(vis_path, f"vis_{batch_ind:08d}.png")
+    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    plt.clf()
+    plt.close()
+
+    # Target Depth vs. Depth Residual (signed error)
+    signed_err = (est_depth - target_depth)
+    inds = np.argwhere(target_depth.flatten() > 0.0)
+    err = (signed_err.flatten())[inds]
+    target = (target_depth.flatten())[inds]
+    plt.scatter(err, target, s=0.5)
+    plt.xlabel("Signed Error")
+    plt.ylabel("Target Depth")
+    plot_file = os.path.join(vis_path, f"target_{batch_ind:08d}.png")
+    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    plt.clf()
+    plt.close()
+
+    # Image Laplacian vs. Depth Laplacian vs. Depth Residual (absolute error)
+    abs_err = np.abs((est_depth - target_depth))
+    inds = np.argwhere(target_depth.flatten() > 0.0)
+    err = (abs_err.flatten())[inds]
+    il = (image_laplacian.flatten())[inds][:,0]
+    dl = (depth_laplacian.flatten())[inds][:,0]
+    M = np.zeros((5,5))
+    for i in range(5):
+        for d in range(5):
+            M[i,d] = err[np.argwhere((il == i) & (dl == d))].mean()
+
+    fig,ax = plt.subplots()
+    img = ax.imshow(M, interpolation="none", cmap="copper")
+    ax.set_xlabel("Depth Laplacian")
+    ax.set_ylabel("Image Laplacian")
+    ax.set_xticks(np.arange(5))
+    ax.set_yticks(np.arange(5))
+    for i in range(5):
+        for j in range(5):
+            text = ax.text(i, j, f"{M[j, i]:0.2f}", ha="center", va="center", color="w")
+    plot_file = os.path.join(vis_path, f"lap_{batch_ind:08d}.png")
+    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    plt.clf()
+    plt.close()
+

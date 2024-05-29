@@ -80,29 +80,33 @@ def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
         pyr.append(F.interpolate(pyr[-1], scale_factor=0.5, mode="bilinear"))
 
     # compute laplacian pyramid (differance between gaussian pyramid levels)
-    laplacian = torch.zeros(levels, batch_size, 1, h, w).to(image)
     for l in range(levels, 0, -1):
+        region_id = (levels-l+1)
+
         diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True)
         diff = F.interpolate(diff, size=(h, w), mode="bilinear")
 
         diff = torch.where(diff > tau, 1, 0)
-        laplacian[l-1] = diff
 
         diff = diff.reshape(h,w,1)
         color_diff = diff.repeat(1,1,3) * color[l-1]
-        #cv2.imwrite(f"./log/laplace_{l-1}.png", color_diff.flip(dims=[-1]).detach().cpu().numpy())
+        #cv2.imwrite(f"./log/laplace_{region_id}.png", color_diff.flip(dims=[-1]).detach().cpu().numpy())
 
         if l==levels:
-            all_diff = diff
+            all_diff = diff*region_id
             total_color = color_diff
         else:
-            all_diff += diff
+            all_diff = torch.where(diff==1, region_id, all_diff)
             total_color = torch.where(diff==1, color[l-1,0,0], total_color)
 
-    total_color = torch.where(total_color.sum(dim=-1,keepdim=True)==0, color[-1,0,0], total_color)
-    cv2.imwrite("./log/laplace_color.png", total_color.flip(dims=[-1]).detach().cpu().numpy())
+
+    region_0 = torch.where(total_color.sum(dim=-1,keepdim=True)==0, 1, 0) * color[-1]
+    total_color = torch.where(total_color.sum(dim=-1,keepdim=True)==0, region_0, total_color)
+
+    #cv2.imwrite("./log/laplace_0.png", region_0.flip(dims=[-1]).detach().cpu().numpy())
+    #cv2.imwrite("./log/laplace_color.png", total_color.flip(dims=[-1]).detach().cpu().numpy())
     #cv2.imwrite("./log/laplace.png", (all_diff.detach().cpu().numpy()/4)*255)
-    cv2.imwrite("./log/image.png", torch.movedim(image[0].flip(dims=[0]), (0,1,2), (2,0,1)).detach().cpu().numpy()*255)
+    #cv2.imwrite("./log/image.png", torch.movedim(image[0].flip(dims=[0]), (0,1,2), (2,0,1)).detach().cpu().numpy()*255)
 
     return all_diff.squeeze(-1)
 
