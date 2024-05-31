@@ -428,6 +428,7 @@ def visualize(cfg, data, output, batch_ind, vis_path):
     vis_map = data["vis_maps"][0].detach().cpu().numpy()[0,0]
     image_laplacian = data["image_laplacian"].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"].detach().cpu().numpy()
+    est_depth_laplacian = data["est_depth_laplacian"].detach().cpu().numpy()
 
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
     est_conf = output["confidence"].detach().cpu().numpy()[0]
@@ -438,11 +439,12 @@ def visualize(cfg, data, output, batch_ind, vis_path):
             "vis_map": vis_map,
             "image_laplacian": image_laplacian,
             "depth_laplacian": depth_laplacian,
+            "est_depth_laplacian": est_depth_laplacian,
             "est_depth": est_depth,
             "est_conf": est_conf
             }
 
-    plot(maps, batch_ind, vis_path, cfg["visualization"]["max_depth_error"])
+    return plot(maps, batch_ind, vis_path, cfg["visualization"]["max_depth_error"])
 
 def plot(maps, batch_ind, vis_path, max_depth_error):
     image = maps["image"]
@@ -450,6 +452,7 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     vis_map = maps["vis_map"]
     image_laplacian = maps["image_laplacian"]
     depth_laplacian = maps["depth_laplacian"]
+    est_depth_laplacian = maps["est_depth_laplacian"]
     est_depth = maps["est_depth"]
     est_conf = maps["est_conf"]
 
@@ -498,16 +501,20 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     axs[1, 2].set_xticks([])
     axs[1, 2].set_yticks([])
 
-    axs[2, 0].imshow(image)
-    axs[2, 0].set_title('Image')
+    #axs[2, 0].imshow(image)
+    #axs[2, 0].set_title('Image')
+    #axs[2, 0].set_xticks([])
+    #axs[2, 0].set_yticks([])
+    axs[2, 0].imshow(image_laplacian, cmap="hot")
+    axs[2, 0].set_title('Image Laplacian')
     axs[2, 0].set_xticks([])
     axs[2, 0].set_yticks([])
-    axs[2, 1].imshow(image_laplacian, cmap="hot")
-    axs[2, 1].set_title('Image Laplacian')
+    axs[2, 1].imshow(depth_laplacian, cmap="hot")
+    axs[2, 1].set_title("Depth Laplacian")
     axs[2, 1].set_xticks([])
     axs[2, 1].set_yticks([])
-    axs[2, 2].imshow(depth_laplacian, cmap="hot")
-    axs[2, 2].set_title("Depth Laplacian")
+    axs[2, 2].imshow(est_depth_laplacian, cmap="hot")
+    axs[2, 2].set_title("Est. Depth Laplacian")
     axs[2, 2].set_xticks([])
     axs[2, 2].set_yticks([])
     plt.subplots_adjust(wspace=0, hspace=0.2)
@@ -518,31 +525,31 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     plt.close()
 
 
-    # Visibility vs. Depth Residual (signed error)
-    signed_err = est_depth - target_depth
-    inds = np.argwhere(target_depth.flatten() > 0.0)
-    err = (signed_err.flatten())[inds]
-    vis = (vis_map.flatten())[inds]
-    plt.scatter(err, vis, s=0.5)
-    plt.xlabel("Signed Error")
-    plt.ylabel("Visibility")
-    plot_file = os.path.join(vis_path, f"vis_{batch_ind:08d}.png")
-    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
-    plt.clf()
-    plt.close()
+    #   # Visibility vs. Depth Residual (signed error)
+    #   signed_err = est_depth - target_depth
+    #   inds = np.argwhere(target_depth.flatten() > 0.0)
+    #   err = (signed_err.flatten())[inds]
+    #   vis = (vis_map.flatten())[inds]
+    #   plt.scatter(err, vis, s=0.5)
+    #   plt.xlabel("Signed Error")
+    #   plt.ylabel("Visibility")
+    #   plot_file = os.path.join(vis_path, f"vis_{batch_ind:08d}.png")
+    #   plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    #   plt.clf()
+    #   plt.close()
 
-    # Target Depth vs. Depth Residual (signed error)
-    signed_err = (est_depth - target_depth)
-    inds = np.argwhere(target_depth.flatten() > 0.0)
-    err = (signed_err.flatten())[inds]
-    target = (target_depth.flatten())[inds]
-    plt.scatter(err, target, s=0.5)
-    plt.xlabel("Signed Error")
-    plt.ylabel("Target Depth")
-    plot_file = os.path.join(vis_path, f"target_{batch_ind:08d}.png")
-    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
-    plt.clf()
-    plt.close()
+    #   # Target Depth vs. Depth Residual (signed error)
+    #   signed_err = (est_depth - target_depth)
+    #   inds = np.argwhere(target_depth.flatten() > 0.0)
+    #   err = (signed_err.flatten())[inds]
+    #   target = (target_depth.flatten())[inds]
+    #   plt.scatter(err, target, s=0.5)
+    #   plt.xlabel("Signed Error")
+    #   plt.ylabel("Target Depth")
+    #   plot_file = os.path.join(vis_path, f"target_{batch_ind:08d}.png")
+    #   plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    #   plt.clf()
+    #   plt.close()
 
     # Image Laplacian vs. Depth Laplacian vs. Depth Residual (absolute error)
     abs_err = np.abs((est_depth - target_depth))
@@ -550,22 +557,97 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     err = (abs_err.flatten())[inds]
     il = (image_laplacian.flatten())[inds][:,0]
     dl = (depth_laplacian.flatten())[inds][:,0]
-    M = np.zeros((5,5))
+    M_err1 = np.zeros((5,5))
     for i in range(5):
         for d in range(5):
-            M[i,d] = err[np.argwhere((il == i) & (dl == d))].mean()
+            M_err1[i,d] = err[np.argwhere((il == i) & (dl == d))].mean()
 
-    fig,ax = plt.subplots()
-    img = ax.imshow(M, interpolation="none", cmap="copper")
-    ax.set_xlabel("Depth Laplacian")
-    ax.set_ylabel("Image Laplacian")
-    ax.set_xticks(np.arange(5))
-    ax.set_yticks(np.arange(5))
+    #   fig,ax = plt.subplots()
+    #   img = ax.imshow(M_err1, interpolation="none", cmap="copper")
+    #   ax.set_xlabel("Depth Laplacian")
+    #   ax.set_ylabel("Image Laplacian")
+    #   ax.set_xticks(np.arange(5))
+    #   ax.set_yticks(np.arange(5))
+    #   for i in range(5):
+    #       for j in range(5):
+    #           text = ax.text(i, j, f"{M_err1[j, i]:0.2f}", ha="center", va="center", color="w")
+    #   plot_file = os.path.join(vis_path, f"lap_{batch_ind:08d}.png")
+    #   plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    #   plt.clf()
+    #   plt.close()
+
+    # Image Laplacian vs. Depth Laplacian Count
+    inds = np.argwhere(target_depth.flatten() > 0.0)
+    num_pix = int(inds.shape[0])
+    il = (image_laplacian.flatten())[inds][:,0]
+    dl = (depth_laplacian.flatten())[inds][:,0]
+    M_count1 = np.zeros((5,5))
     for i in range(5):
-        for j in range(5):
-            text = ax.text(i, j, f"{M[j, i]:0.2f}", ha="center", va="center", color="w")
-    plot_file = os.path.join(vis_path, f"lap_{batch_ind:08d}.png")
-    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
-    plt.clf()
-    plt.close()
+        for d in range(5):
+            M_count1[i,d] = (int(((il == i) & (dl == d)).sum()) / num_pix)
 
+    #   fig,ax = plt.subplots()
+    #   img = ax.imshow(M_count1, interpolation="none", cmap="copper")
+    #   ax.set_xlabel("Depth Laplacian")
+    #   ax.set_ylabel("Image Laplacian")
+    #   ax.set_xticks(np.arange(5))
+    #   ax.set_yticks(np.arange(5))
+    #   for i in range(5):
+    #       for j in range(5):
+    #           text = ax.text(i, j, f"{(M_count1[j, i]*100):0.2f}%", ha="center", va="center", color="w")
+    #   plot_file = os.path.join(vis_path, f"lap_count_{batch_ind:08d}.png")
+    #   plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    #   plt.clf()
+    #   plt.close()
+
+
+    # Image Laplacian vs. Est. Depth Laplacian vs. Depth Residual (absolute error)
+    abs_err = np.abs((est_depth - target_depth))
+    inds = np.argwhere(target_depth.flatten() > 0.0)
+    err = (abs_err.flatten())[inds]
+    il = (image_laplacian.flatten())[inds][:,0]
+    dl = (est_depth_laplacian.flatten())[inds][:,0]
+    M_err2 = np.zeros((5,5))
+    for i in range(5):
+        for d in range(5):
+            M_err2[i,d] = err[np.argwhere((il == i) & (dl == d))].mean()
+
+    #   fig,ax = plt.subplots()
+    #   img = ax.imshow(M_err2, interpolation="none", cmap="copper")
+    #   ax.set_xlabel("Est. Depth Laplacian")
+    #   ax.set_ylabel("Image Laplacian")
+    #   ax.set_xticks(np.arange(5))
+    #   ax.set_yticks(np.arange(5))
+    #   for i in range(5):
+    #       for j in range(5):
+    #           text = ax.text(i, j, f"{M_err2[j, i]:0.2f}", ha="center", va="center", color="w")
+    #   plot_file = os.path.join(vis_path, f"lap_est_{batch_ind:08d}.png")
+    #   plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    #   plt.clf()
+    #   plt.close()
+
+    # Image Laplacian vs. Depth Laplacian Count
+    inds = np.argwhere(target_depth.flatten() > 0.0)
+    num_pix = int(inds.shape[0])
+    il = (image_laplacian.flatten())[inds][:,0]
+    dl = (est_depth_laplacian.flatten())[inds][:,0]
+    M_count2 = np.zeros((5,5))
+    for i in range(5):
+        for d in range(5):
+            M_count2[i,d] = (int(((il == i) & (dl == d)).sum()) / num_pix)
+
+    #   fig,ax = plt.subplots()
+    #   img = ax.imshow(M_count2, interpolation="none", cmap="copper")
+    #   ax.set_xlabel("Est. Depth Laplacian")
+    #   ax.set_ylabel("Image Laplacian")
+    #   ax.set_xticks(np.arange(5))
+    #   ax.set_yticks(np.arange(5))
+    #   for i in range(5):
+    #       for j in range(5):
+    #           text = ax.text(i, j, f"{(M_count2[j, i]*100):0.2f}%", ha="center", va="center", color="w")
+    #   plot_file = os.path.join(vis_path, f"lap_est_count_{batch_ind:08d}.png")
+    #   plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
+    #   plt.clf()
+    #   plt.close()
+
+    return M_err1, M_err2, M_count1, M_count2

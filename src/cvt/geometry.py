@@ -657,12 +657,13 @@ def render_custom_values(points: np.ndarray, values: np.ndarray, image_shape: Tu
 
     return rendered_img
 
-def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: int, height: int) -> np.ndarray:
+def render_point_cloud(cloud: o3d.geometry.PointCloud, pose: np.ndarray, K: np.ndarray, width: int, height: int) -> np.ndarray:
     """Renders a point cloud into a 2D image plane.
 
     Parameters:
         cloud: Point cloud to be rendered.
-        cam: Camera parameters for the image plane.
+        pose: Camera extrinsic parameters for the image plane.
+        K: Camera intrinsic parameters for the image plane.
         width: Desired width of the rendered image.
         height: Desired height of the rendered image.
 
@@ -679,14 +680,67 @@ def render_point_cloud(cloud: o3d.geometry.PointCloud, cam: np.ndarray, width: i
     mat.shader = 'defaultUnlit'
     render.scene.add_geometry("cloud", cloud, mat)
     render.scene.set_background(np.asarray([0,0,0,1])) #r,g,b,a
-    intrins = o3d.camera.PinholeCameraIntrinsic(width, height, cam[1,0,0], cam[1,1,1], cam[1,0,2], cam[1,1,2])
-    render.setup_camera(intrins, cam[0])
+    intrins = o3d.camera.PinholeCameraIntrinsic(width, height, K[0,0], K[1,1], K[0,2], K[1,2])
+    render.setup_camera(intrins, pose)
 
     # render image
     image = np.asarray(render.render_to_image())
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    return image
+    depth = np.asarray(render.render_to_depth_image(z_in_view_space=True))
+
+    return image, depth
+
+def render_point_cloud_single(cloud: o3d.geometry.PointCloud, pose: np.ndarray, K: np.ndarray, width: int, height: int) -> np.ndarray:
+    """Renders a point cloud into a 2D image plane.
+
+    Parameters:
+        cloud: Point cloud to be rendered.
+        pose: Camera extrinsic parameters for the image plane.
+        K: Camera intrinsic parameters for the image plane.
+        width: Desired width of the rendered image.
+        height: Desired height of the rendered image.
+
+    Returns:
+        The rendered image for the point cloud at the specified camera viewpoint.
+    """
+    #   cmap = plt.get_cmap("hot_r")
+    #   colors = cmap(dists)[:, :3]
+    #   ply.colors = o3d.utility.Vector3dVector(colors)
+
+    # set up the renderer
+    render = o3d.visualization.rendering.OffscreenRenderer(width, height)
+    mat = o3d.visualization.rendering.MaterialRecord()
+    mat.shader = 'defaultUnlit'
+    render.scene.add_geometry("cloud", cloud, mat)
+    render.scene.set_background(np.asarray([0,0,0,1])) #r,g,b,a
+    intrins = o3d.camera.PinholeCameraIntrinsic(width, height, K[0,0], K[1,1], K[0,2], K[1,2])
+    render.setup_camera(intrins, pose)
+
+    # render image
+    image = np.asarray(render.render_to_image())
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    depth = np.asarray(render.render_to_depth_image(z_in_view_space=True))
+
+    return image, depth
+
+def render_point_cloud(render, intrins, pose):
+    """Renders a point cloud into a 2D image plane.
+
+    Parameters:
+
+    Returns:
+    """
+    render.setup_camera(intrins, pose)
+
+    # render image
+    image = np.asarray(render.render_to_image())
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    depth = np.asarray(render.render_to_depth_image(z_in_view_space=True))
+
+    return image, depth
 
 def reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P):
     """Computes the re-projection depth values and pixel indices between two depth maps.
