@@ -17,6 +17,8 @@ import matplotlib.collections as mc
 import torch
 import torch.nn.functional as F
 import os,sys
+import torchvision.transforms.functional as tvf
+import torchvision.transforms as tvt
 
 from common import non_zero_std
 from io import *
@@ -242,7 +244,39 @@ def display_map(filename: str, disp_map: np.ndarray, mx: float, mn: float) -> No
     disp_map = ((disp_map-mn)/(mx-mn+1e-8))*255
     cv2.imwrite(filename, disp_map)
 
+def plot_coverage(data, output, batch_ind, vis_path):
+    hypos = output["hypos"]
+    intervals = output["intervals"]
+    _,H,W = data["target_depth"].shape
+    levels = len(hypos)
 
+    uncovered_mask
+    for l in range(levels):
+        hypo = hypos[l].squeeze(1)
+        batch_size, planes, h, w = hypo.shape
+        interval = intervals[l].squeeze(1)
+        target_depth = tvf.resize(data["target_depth"], [h,w]).unsqueeze(1)
+
+
+        ### compute coverage
+        diff = torch.abs(hypo - target_depth)
+        min_interval = interval[:,0:1] * 0.5 # intervals are bin widths, divide by 2 for radius
+        coverage = torch.clip(torch.where(diff <= min_interval, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+        uncovered = torch.clip(torch.where(coverage <= 0, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+        valid_targets = torch.where(target_depth > 0, 1, 0)
+        uncovered *= valid_targets
+        cov_percent = coverage.sum() / (valid_targets.sum() + 1e-10)
+        coverage = coverage.reshape(h,w,1).repeat(1,1,3) * (torch.tensor([[[0,255,0]]]).to(coverage).repeat(h,w,1))
+        uncovered = uncovered.reshape(h,w,1).repeat(1,1,3) * (torch.tensor([[[255,0,0]]]).to(uncovered).repeat(h,w,1))
+
+        # plot
+        total_coverage = torch.movedim(coverage+uncovered, (0,1,2), (1,2,0))
+        total_coverage = torch.movedim(tvf.resize(total_coverage, [H,W], interpolation=tvt.InterpolationMode.NEAREST), (0,1,2), (2,0,1))
+        plt.imshow((total_coverage).detach().cpu().numpy())
+        plt.title(f"Coverage ({cov_percent*100:0.2f}%)")
+        plt.axis('off')
+        plt.savefig(os.path.join(vis_path, f"coverage_{batch_ind:08d}_l{l}.png"))
+        plt.close()
 
 def visualize_relative_variance(target_cost, cost_volume, hypos, intervals, target_depth, mask, batch_ind, vis_path, level):
     batch_size, _, planes, h, w = cost_volume.shape

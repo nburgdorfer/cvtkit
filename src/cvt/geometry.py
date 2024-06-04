@@ -34,6 +34,7 @@ from typing import Tuple, List, Optional
 import torch
 import torch.nn.functional as F
 import torchvision.transforms.functional as tvf
+import torchvision.transforms as tvt
 from torch.cuda.amp import autocast
 
 from camera import intrinsic_pyramid
@@ -196,6 +197,30 @@ def _geometric_consistency_mask(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P
     mask = np.where(dist < pixel_th, 1, 0)
 
     return mask
+
+def get_uncovered_mask(data, output):
+    hypos = output["hypos"]
+    intervals = output["intervals"]
+    _,H,W = data["target_depth"].shape
+    levels = len(hypos)
+
+    uncovered_masks = torch.zeros(levels,H,W)
+    for l in range(levels):
+        hypo = hypos[l].squeeze(1)
+        batch_size, planes, h, w = hypo.shape
+        interval = intervals[l].squeeze(1)
+        target_depth = tvf.resize(data["target_depth"], [h,w]).unsqueeze(1)
+
+        ### compute coverage
+        diff = torch.abs(hypo - target_depth)
+        min_interval = interval[:,0:1] * 0.5 # intervals are bin widths, divide by 2 for radius
+        coverage = torch.clip(torch.where(diff <= min_interval, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+        uncovered = torch.clip(torch.where(coverage <= 0, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+        valid_targets = torch.where(target_depth > 0, 1, 0)
+        uncovered *= valid_targets
+        uncovered_masks[l] = (tvf.resize(uncovered.reshape(1,h,w), [H,W], interpolation=tvt.InterpolationMode.NEAREST)).squeeze(0)
+
+    return uncovered_masks
 
 def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
     """Computes a homography transformation between two images using image features.
