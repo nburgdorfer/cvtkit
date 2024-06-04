@@ -463,6 +463,7 @@ def visualize(cfg, data, output, batch_ind, vis_path):
     image_laplacian = data["image_laplacian"].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"].detach().cpu().numpy()
     est_depth_laplacian = data["est_depth_laplacian"].detach().cpu().numpy()
+    uncovered_masks = output["uncovered_masks"]
 
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
     est_conf = output["confidence"].detach().cpu().numpy()[0]
@@ -475,7 +476,8 @@ def visualize(cfg, data, output, batch_ind, vis_path):
             "depth_laplacian": depth_laplacian,
             "est_depth_laplacian": est_depth_laplacian,
             "est_depth": est_depth,
-            "est_conf": est_conf
+            "est_conf": est_conf,
+            "uncovered_masks": uncovered_masks
             }
 
     return plot(maps, batch_ind, vis_path, cfg["visualization"]["max_depth_error"])
@@ -489,6 +491,7 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     est_depth_laplacian = maps["est_depth_laplacian"]
     est_depth = maps["est_depth"]
     est_conf = maps["est_conf"]
+    uncovered_masks = maps["uncovered_masks"]
 
     depth_residual = np.abs(est_depth - target_depth)
 
@@ -620,6 +623,7 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
         for d in range(5):
             M_count1[i,d] = (int(((il == i) & (dl == d)).sum()) / num_pix)
 
+
     #   fig,ax = plt.subplots()
     #   img = ax.imshow(M_count1, interpolation="none", cmap="copper")
     #   ax.set_xlabel("Depth Laplacian")
@@ -684,4 +688,15 @@ def plot(maps, batch_ind, vis_path, max_depth_error):
     #   plt.clf()
     #   plt.close()
 
-    return M_err1, M_err2, M_count1, M_count2
+    # Image Laplacian vs. Depth Laplacian vs. Uncovered Count
+    for mask in uncovered_masks:
+        inds = np.argwhere(mask.flatten() > 0.0)
+        num_pix = int(inds.shape[0])
+        il = (image_laplacian.flatten())[inds][:,0]
+        dl = (depth_laplacian.flatten())[inds][:,0]
+        M_count3 = np.zeros((5,5))
+        for i in range(5):
+            for d in range(5):
+                M_count3[i,d] += (int(((il == i) & (dl == d)).sum()) / num_pix)
+
+    return M_err1, M_err2, M_count1, M_count2, M_count3
