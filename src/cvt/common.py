@@ -66,13 +66,13 @@ def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
     batch_size, c, h, w = image.shape
     levels = 4
 
-    # for visualiation
-    color = torch.zeros(levels+1,1,1,3).to(image)
-    color[0,0,0,0], color[0,0,0,1], color[0,0,0,2] = 153, 0, 0 #red
-    color[1,0,0,0], color[1,0,0,1], color[1,0,0,2] = 255, 128, 0 #orange
-    color[2,0,0,0], color[2,0,0,1], color[2,0,0,2] = 0, 255, 0 #green
-    color[3,0,0,0], color[3,0,0,1], color[3,0,0,2] = 0, 255, 255 #cyan
-    color[4,0,0,0], color[4,0,0,1], color[4,0,0,2] = 51, 0, 102 #dark purple
+    #   # for visualiation
+    #   color = torch.zeros(levels+1,1,1,3).to(image)
+    #   color[0,0,0,0], color[0,0,0,1], color[0,0,0,2] = 153, 0, 0 #red
+    #   color[1,0,0,0], color[1,0,0,1], color[1,0,0,2] = 255, 128, 0 #orange
+    #   color[2,0,0,0], color[2,0,0,1], color[2,0,0,2] = 0, 255, 0 #green
+    #   color[3,0,0,0], color[3,0,0,1], color[3,0,0,2] = 0, 255, 255 #cyan
+    #   color[4,0,0,0], color[4,0,0,1], color[4,0,0,2] = 51, 0, 102 #dark purple
 
     # build gaussian pyramid
     pyr = [image]
@@ -88,20 +88,19 @@ def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
 
         diff = torch.where(diff > tau, 1, 0)
 
-        diff = diff.reshape(h,w,1)
-        color_diff = diff.repeat(1,1,3) * color[l-1]
+        diff = diff.reshape(batch_size,h,w,1)
+        #color_diff = diff.repeat(1,1,1,3) * color[l-1]
         #cv2.imwrite(f"./log/laplace_{region_id}.png", color_diff.flip(dims=[-1]).detach().cpu().numpy())
 
         if l==levels:
             all_diff = diff*region_id
-            total_color = color_diff
+            #total_color = color_diff
         else:
             all_diff = torch.where(diff==1, region_id, all_diff)
-            total_color = torch.where(diff==1, color[l-1,0,0], total_color)
+            #total_color = torch.where(diff==1, color[l-1,0,0], total_color)
 
-
-    region_0 = torch.where(total_color.sum(dim=-1,keepdim=True)==0, 1, 0) * color[-1]
-    total_color = torch.where(total_color.sum(dim=-1,keepdim=True)==0, region_0, total_color)
+    #region_0 = torch.where(total_color.sum(dim=-1,keepdim=True)==0, 1, 0) * color[-1]
+    #total_color = torch.where(total_color.sum(dim=-1,keepdim=True)==0, region_0, total_color)
 
     #cv2.imwrite("./log/laplace_0.png", region_0.flip(dims=[-1]).detach().cpu().numpy())
     #cv2.imwrite("./log/laplace_color.png", total_color.flip(dims=[-1]).detach().cpu().numpy())

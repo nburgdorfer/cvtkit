@@ -460,9 +460,9 @@ def visualize(cfg, data, output, batch_ind, vis_path):
     image = torch.movedim(data['images'][:,0],(1,2,3), (3,1,2)).detach().cpu().numpy()[0]
     target_depth = data["target_depth"].detach().cpu().numpy()[0]
     vis_map = data["vis_maps"][0].detach().cpu().numpy()[0,0]
-    image_laplacian = data["image_laplacian"].detach().cpu().numpy()
-    depth_laplacian = data["depth_laplacian"].detach().cpu().numpy()
-    est_depth_laplacian = data["est_depth_laplacian"].detach().cpu().numpy()
+    image_laplacian = data["image_laplacian"][0].detach().cpu().numpy()
+    depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
+    est_depth_laplacian = data["est_depth_laplacian"][0].detach().cpu().numpy()
     uncovered_masks = output["uncovered_masks"]
 
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
