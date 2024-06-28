@@ -28,6 +28,7 @@ This module contains the following functions:
 """
 
 import numpy as np
+import sys
 import cv2
 import open3d as o3d
 from typing import Tuple, List, Optional
@@ -969,6 +970,33 @@ def soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M, delt
     matching_hypos = torch.clip(target_samples, min_hypo, max_hypo) * mask
 
     return matching_hypos
+
+def _soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M=1, delta_in=1):
+    """
+    Parameters:
+
+    Returns:
+    """
+    B, _, D, H, W = target_hypo.shape
+    rand_match_offset = torch.rand(B,1,M,H,W).to(target_hypo)
+    rand_near_offset = torch.rand(B,1,M,H,W).to(target_hypo)
+    rand_far_offset = torch.rand(B,1,M,H,W).to(target_hypo)
+
+    near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
+    target_range = torch.abs(far - near).repeat(1,1,M,1,1)
+    near_range = torch.abs(near - min_hypo).repeat(1,1,M,1,1)
+    far_range = torch.abs(max_hypo - far).repeat(1,1,M,1,1)
+
+    target_samples = (rand_match_offset * target_range) + near
+    near_samples = (rand_near_offset * near_range) + min_hypo
+    far_samples = (rand_far_offset * far_range) + far
+    samples = torch.cat([target_samples,near_samples,far_samples], dim=1)
+    samples = samples.reshape(B,-1,H,W).unsqueeze(1) # [B, 1, M*3, H, W]
+
+    mask = torch.where(target_hypo <= 0, 0.0, 1.0).repeat(1,1,M*3,1,1)
+    hypos = torch.clip(samples, min_hypo, max_hypo) * mask
+
+    return hypos
 
 def visibility(depths, K, Ps, vis_th, levels=4):
     """
