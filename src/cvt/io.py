@@ -433,9 +433,9 @@ def save_ckpt(model, save_path):
     save_dict = {"model": model.state_dict()}
     torch.save(save_dict, save_path)
 
-def load_ckpt(model, load_path):
+def load_ckpt(model, load_path, strict=True):
     model_dict = torch.load(load_path)
-    model.load_state_dict(model_dict['model'])
+    model.load_state_dict(model_dict['model'], strict=strict)
 
 def save_model(model, cfg, name="ckpt_model.pth"):
     """Saves model weights to disk.
