@@ -4,13 +4,20 @@ import numpy as np
 
 
 
-def load_points(points_file, output_file):
+def load_points(points_file, output_file, error_th=1.0, track_len_th=4):
     points = []
     with open(points_file, 'r') as pf:
         lines = pf.readlines()[3:]
 
         for i, l in enumerate(lines):
-            points.append(np.asarray(l.strip().split()[1:7]))
+            l = l.strip().split()
+            point = l[1:7]
+            error = float(l[7])
+            track = l[8:]
+            track_len = len(track) // 2
+            
+            if error <= error_th and track_len >= track_len_th:
+                points.append(np.asarray(point))
 
     # write header meta-data
     ply_str = ""
