@@ -1,9 +1,6 @@
 import sys, os
 import numpy as np
 
-
-
-
 def load_points(points_file, output_file, error_th=1.0, track_len_th=4):
     points = []
     with open(points_file, 'r') as pf:

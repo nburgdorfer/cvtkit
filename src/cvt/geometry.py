@@ -683,7 +683,7 @@ def render_custom_values(points: np.ndarray, values: np.ndarray, image_shape: Tu
 
     return rendered_img
 
-def render_point_cloud(cloud: o3d.geometry.PointCloud, pose: np.ndarray, K: np.ndarray, width: int, height: int) -> np.ndarray:
+def _render_point_cloud(cloud: o3d.geometry.PointCloud, pose: np.ndarray, K: np.ndarray, width: int, height: int) -> np.ndarray:
     """Renders a point cloud into a 2D image plane.
 
     Parameters:
@@ -751,22 +751,22 @@ def render_point_cloud_single(cloud: o3d.geometry.PointCloud, pose: np.ndarray, 
 
     return image, depth
 
-#def render_point_cloud(render, intrins, pose):
-#    """Renders a point cloud into a 2D image plane.
-#
-#    Parameters:
-#
-#    Returns:
-#    """
-#    render.setup_camera(intrins, pose)
-#
-#    # render image
-#    image = np.asarray(render.render_to_image())
-#    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#
-#    depth = np.asarray(render.render_to_depth_image(z_in_view_space=True))
-#
-#    return image, depth
+def render_point_cloud(render, intrins, pose):
+    """Renders a point cloud into a 2D image plane.
+
+    Parameters:
+
+    Returns:
+    """
+    render.setup_camera(intrins, pose)
+
+    # render image
+    image = np.asarray(render.render_to_image())
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    depth = np.asarray(render.render_to_depth_image(z_in_view_space=True))
+
+    return image, depth
 
 def reproject(src_depth, src_K, src_P, tgt_depth, tgt_K, tgt_P):
     """Computes the re-projection depth values and pixel indices between two depth maps.
