@@ -54,6 +54,40 @@ def downsample_cloud(cloud, min_point_dist):
     """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
+def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size=16):
+    batch_size, _, _, height, width = imgs.shape
+    K = intrinsics[:,0]
+    P_src = extrinsics[:,0]
+
+    x = torch.arange((patch_size//2),width)[::patch_size] - 0.5
+    y = torch.arange((patch_size//2),height)[::patch_size] - 0.5
+    xgrid, ygrid = torch.meshgrid([x,y], indexing="xy")
+    xy = torch.stack([xgrid, ygrid, torch.ones_like(xgrid)], dim=-1).to(imgs) # [h, w, 3]
+    xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
+
+    for i in range(1,imgs.shape[1]):
+        P_tgt = extrinsics[:,i]
+        F = fundamental_from_KP(K, P_src, P_tgt)
+        F = F.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
+        print(F.shape)
+        print(xy.shape)
+
+        l = torch.matmul(F,xy)
+        print(l.shape)
+
+        # given x coordinates, compute closest y coordinate to the line
+        dists = torch.abs(l[:,:,:,0:1]*xy[:,:,:,0:1] + l[:,:,:,1:2]*xy[:,:,:,1:2] + l[:,:,:,2:3]) / (torch.sqrt((l[:,:,:,2:3]**2) + (l[:,:,:,2:3]**2)) + 1e-10)
+        print(dists.shape)
+        print(xy[0,10,10,:,0])
+        print(dists[0,10,10,0,0])
+        sys.exit()
+
+
+
+
+    sys.exit()
+
+
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
     """Computes the essential matrix between two images using image features.
 
@@ -77,6 +111,39 @@ def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndar
     return E
 
 def fundamental_from_KP(K: np.ndarray, P_src: np.ndarray, P_tgt: np.ndarray) -> np.ndarray:
+    """Computes the fundamental matrix between two images using camera parameters.
+
+    Parameters:
+        K: Intrinsics matrix of the two cameras (assumed to be constant between views).
+        P_src: Extrinsics matrix for the source view.
+        P_tgt: Extrinsics matrix for the target view.
+
+    Returns:
+        The fundamental matrix betweent the two cameras.
+    """
+    F_mats = []
+    for i in range(K.shape[0]):
+        R1 = P_src[i,0:3,0:3]
+        t1 = P_src[i,0:3,3]
+        R2 = P_tgt[i,0:3,0:3]
+        t2 = P_tgt[i,0:3,3]
+
+        t1aug = torch.tensor([t1[0], t1[1], t1[2], 1]).to(K)
+        epi2 = torch.matmul(P_tgt[i],t1aug)
+        epi2 = torch.matmul(K[i],epi2[0:3])
+
+        R = torch.matmul(R2,torch.t(R1))
+        t = t2 - torch.matmul(R,t1)
+        K1inv = torch.linalg.inv(K[i])
+        K2invT = torch.t(K1inv)
+        tx = torch.tensor([[0, -t[2], t[1]], [t[2], 0, -t[0]], [-t[1], t[0], 0]]).to(K)
+        F = torch.matmul(K2invT,torch.matmul(tx,torch.matmul(R,K1inv)))
+        F = F/(torch.max(F)+1e-10)
+        F_mats.append(F)
+
+    return torch.stack(F_mats, dim=0)
+
+def _fundamental_from_KP(K: np.ndarray, P_src: np.ndarray, P_tgt: np.ndarray) -> np.ndarray:
     """Computes the fundamental matrix between two images using camera parameters.
 
     Parameters:
