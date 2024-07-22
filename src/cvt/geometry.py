@@ -38,6 +38,8 @@ import torchvision.transforms.functional as tvf
 import torchvision.transforms as tvt
 from torch.cuda.amp import autocast
 
+import matplotlib.pyplot as plt
+
 from camera import intrinsic_pyramid, Z_from_disp
 from common import groupwise_correlation
 from io import *
@@ -54,32 +56,44 @@ def downsample_cloud(cloud, min_point_dist):
     """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
-def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size=16):
+def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size=4):
     batch_size, _, _, height, width = imgs.shape
     K = intrinsics[:,0]
     P_src = extrinsics[:,0]
 
-    x = torch.arange((patch_size//2),width)[::patch_size] - 0.5
-    y = torch.arange((patch_size//2),height)[::patch_size] - 0.5
-    xgrid, ygrid = torch.meshgrid([x,y], indexing="xy")
+    x_flat = torch.arange((patch_size//2),width)[::patch_size] - 0.5
+    y_flat = torch.arange((patch_size//2),height)[::patch_size] - 0.5
+
+    xgrid, ygrid = torch.meshgrid([x_flat,y_flat], indexing="xy")
     xy = torch.stack([xgrid, ygrid, torch.ones_like(xgrid)], dim=-1).to(imgs) # [h, w, 3]
+    patched_height, patched_width, _ = xy.shape
     xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
 
     for i in range(1,imgs.shape[1]):
         P_tgt = extrinsics[:,i]
         F = fundamental_from_KP(K, P_src, P_tgt)
         F = F.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
-        print(F.shape)
-        print(xy.shape)
-
         l = torch.matmul(F,xy)
-        print(l.shape)
+        
+
+
+        line = l[0,30,35,:]
+        print("ref_pixel", xy[0,30,35,:,0])
+
+        for x in x_flat:
+            y_i = int(torch.abs((-(line[0]/line[1])*x) - (line[2]/line[1])).item())
+            if y_i < height and y_i >= 0:
+                print("src_pixel", f"{x}, {y_i}")
+
+        ref_img = torch.zeros((patched_height, patched_width)).to(imgs)
+        ref_img[10,15] = 1
+
+        src_img = torch.zeros((patched_height, patched_width)).to(imgs)
+        #cv2.imwrite
 
         # given x coordinates, compute closest y coordinate to the line
-        dists = torch.abs(l[:,:,:,0:1]*xy[:,:,:,0:1] + l[:,:,:,1:2]*xy[:,:,:,1:2] + l[:,:,:,2:3]) / (torch.sqrt((l[:,:,:,2:3]**2) + (l[:,:,:,2:3]**2)) + 1e-10)
-        print(dists.shape)
-        print(xy[0,10,10,:,0])
-        print(dists[0,10,10,0,0])
+        #dists = torch.abs(l[:,:,:,0:1]*xy[:,:,:,0:1] + l[:,:,:,1:2]*xy[:,:,:,1:2] + l[:,:,:,2:3]) / (torch.sqrt((l[:,:,:,2:3]**2) + (l[:,:,:,2:3]**2)) + 1e-10)
+
         sys.exit()
 
 

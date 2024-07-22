@@ -5,7 +5,7 @@ import sys
 import skimage
 
 from cvt.visualization.util import *
-from cvt.geometry import *
+from cvt.geometry import _fundamental_from_KP
 
 def main():
     if len(sys.argv) < 6:
@@ -38,7 +38,7 @@ def main():
     P2 = np.loadtxt(P2_path)
     P2 = np.reshape(P2,(3,4))
 
-    f = fundamental_from_KP(K,P1,P2)
+    f = _fundamental_from_KP(K,P1,P2)
 
     fmat_demo(img1, img2, f, scale)
 
