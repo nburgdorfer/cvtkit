@@ -111,25 +111,50 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
     P_src = extrinsics[:,0]
     half_patch_size = patch_size//2
 
-    x_flat = torch.arange((half_patch_size),width+(patch_size))[::patch_size]
-    y_flat = torch.arange((half_patch_size),height+(patch_size))[::patch_size]
+    x_flat = torch.arange((half_patch_size),width+(patch_size))[::patch_size].to(imgs)
+    y_flat = torch.arange((half_patch_size),height+(patch_size))[::patch_size].to(imgs)
 
     xgrid, ygrid = torch.meshgrid([x_flat,y_flat], indexing="xy")
-    xy = torch.stack([xgrid, ygrid, torch.ones_like(xgrid)], dim=-1).to(imgs) # [h, w, 3]
+    xy = torch.stack([xgrid, ygrid, torch.ones_like(xgrid)], dim=-1) # [patched_height, patch_width, 3]
     patched_height, patched_width, _ = xy.shape
-    xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, h, w, 3, 1]
+    xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, patched_height, patch_width, 3, 1]
+
+    #### FOR A SINGLE PIXEL ####
+    r=patched_height//2
+    c=patched_width//2
 
     for i in range(1,imgs.shape[1]):
         P_tgt = extrinsics[:,i]
         Fm = fundamental_from_KP(K, P_src, P_tgt)
-        Fm = Fm.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
-        l = torch.matmul(Fm,xy)
+        Fm = Fm.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, patched_height, patch_width, 3, 1]
+        line = torch.matmul(Fm,xy)
         
-        line = l[0,4,5,:]
 
         # determine start point
-        x0 = int(x_flat[0].item())
-        y0 = int((-(line[0]/line[1])*x0) - (line[2]/line[1]).item())
+        x0 = x_flat[0].reshape(1,1,1,1,1).repeat(batch_size, patched_height, patched_width, 3, 1)
+        y0 = (-(line[:,:,:,0:1]/line[:,:,:,1:2])*x0) - (line[:,:,:,2:3]/line[:,:,:,1:2])
+
+        print(x0.shape)
+        print(y0.shape)
+
+        y_mask_lt = torch.where(y0 < 0, 1, 0)
+        y_mask_gt = torch.where(y0 >= height, 1, 0)
+
+        print(x0[0,0,0,0,0])
+        print(y0[0,0,0,0,0])
+        print(x0[0,30,100,0,0])
+        print(y0[0,30,100,0,0])
+        y0 = y0*(1-y_mask_lt) + y_flat[0]*y_mask_lt
+        y0 = y0*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
+
+        x0 = x0 * (1-(y_mask_lt+y_mask_gt)) + ((-(line[:,:,:,0:1]/line[:,:,:,1:2])*y0) - (line[:,:,:,2:3]/line[:,:,:,1:2])) * (y_mask_lt+y_mask_gt)
+        print(x0[0,0,0,0,0])
+        print(y0[0,0,0,0,0])
+        print(x0[0,30,100,0,0])
+        print(y0[0,30,100,0,0])
+
+
+        sys.exit()
         if y0 < 0:
             y0 = int(y_flat[0].item())
             x0 = int((-(line[1]/line[0])*y0) - (line[2]/line[0]).item())
@@ -178,13 +203,71 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         plt.savefig(f"src_img_{i}.png")
         plt.close()
 
+
+
+
+        ###### SINGLE POINT ######
+        #line = l[0,r,c,:]
+
+        ## determine start point
+        #x0 = int(x_flat[0].item())
+        #y0 = int((-(line[0]/line[1])*x0) - (line[2]/line[1]).item())
+        #if y0 < 0:
+        #    y0 = int(y_flat[0].item())
+        #    x0 = int((-(line[1]/line[0])*y0) - (line[2]/line[0]).item())
+        #elif y0 >= height:
+        #    y0 = int(y_flat[-1].item())
+        #    x0 = int((-(line[1]/line[0])*y0) - (line[2]/line[0]).item())
+
+        ## determine end point
+        #x1 = int(x_flat[-1].item())
+        #y1 = int((-(line[0]/line[1])*x1) - (line[2]/line[1]).item())
+        #if y1 < 0:
+        #    y1 = int(y_flat[0].item())
+        #    x1 = int((-(line[1]/line[0])*y1) - (line[2]/line[0]).item())
+        #elif y1 >= height:
+        #    y1 = int(y_flat[-1].item())
+        #    x1 = int((-(line[1]/line[0])*y1) - (line[2]/line[0]).item())
+
+        ## convert image indices into patch indices
+        #x0 = (x0-(half_patch_size))//patch_size
+        #x1 = (x1-(half_patch_size))//patch_size
+        #y0 = (y0-(half_patch_size))//patch_size
+        #y1 = (y1-(half_patch_size))//patch_size
+
+        #if abs(y1-y0) < abs(x1-x0):
+        #    if x0 > x1:
+        #        xp,yp = get_epipolar_inds_low(x1,y1,x0,y0)
+        #    else:
+        #        xp,yp = get_epipolar_inds_low(x0,y0,x1,y1)
+        #else:
+        #    if y0 > y1:
+        #        xp,yp = get_epipolar_inds_high(x1,y1,x0,y0)
+        #    else:
+        #        xp,yp = get_epipolar_inds_high(x0,y0,x1,y1)
+
+        ## convert patch indices into image indices
+        #xp = xp*patch_size + (half_patch_size)
+        #yp = yp*patch_size + (half_patch_size)
+
+        ## plot src patches
+        #fig = plt.figure()
+        #ax = fig.add_subplot(111)
+        #ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+        #for x_i,y_i in zip(xp,yp):
+        #    rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+        #    ax.add_patch(rect_i)
+        #plt.savefig(f"src_img_{i}.png")
+        #plt.close()
+
     # plot ref point
-    ref_pix = xy[0,4,5,:,0]
+    ref_pix = xy[0,r,c,:,0]
     plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
     plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
     plt.savefig(f"ref_img.png")
     plt.close()
     sys.exit()
+    #### FOR A SINGLE PIXEL ####
 
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
