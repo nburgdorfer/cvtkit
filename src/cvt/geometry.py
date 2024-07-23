@@ -39,6 +39,7 @@ import torchvision.transforms as tvt
 from torch.cuda.amp import autocast
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 from camera import intrinsic_pyramid, Z_from_disp
 from common import groupwise_correlation
@@ -56,49 +57,133 @@ def downsample_cloud(cloud, min_point_dist):
     """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
-def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size=4):
+def get_epipolar_inds_low(x0, y0, x1, y1):
+    dx = x1-x0
+    dy = y1-y0
+    yi=1
+    if dy < 0:
+        yi=-1
+        dy=-dy
+
+    D = (2*dy) - dx
+    y=y0
+
+    xy = []
+    for i,x in enumerate(range(x0,x1+1)):
+        xy.append([x,y])
+
+        if D > 0:
+            y = y + yi
+            D = D + (2*(dy-dx))
+        else:
+            D = D + (2*dy)
+
+    xy = np.asarray(xy).astype(np.int32)
+    return xy[:,0], xy[:,1]
+
+def get_epipolar_inds_high(x0, y0, x1, y1):
+    dx = x1-x0
+    dy = y1-y0
+    xi=1
+    if dx < 0:
+        xi=-1
+        dx=-dx
+
+    D = (2*dx) - dy
+    x=x0
+
+    xy = []
+    for y in range(y0,y1+1):
+        xy.append([x,y])
+
+        if D > 0:
+            x = x + xi
+            D = D + (2*(dx-dy))
+        else:
+            D = D + (2*dx)
+
+    xy = np.asarray(xy).astype(np.int32)
+    return xy[:,0], xy[:,1]
+
+def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
     batch_size, _, _, height, width = imgs.shape
     K = intrinsics[:,0]
     P_src = extrinsics[:,0]
+    half_patch_size = patch_size//2
 
-    x_flat = torch.arange((patch_size//2),width)[::patch_size] - 0.5
-    y_flat = torch.arange((patch_size//2),height)[::patch_size] - 0.5
+    x_flat = torch.arange((half_patch_size),width+(patch_size))[::patch_size]
+    y_flat = torch.arange((half_patch_size),height+(patch_size))[::patch_size]
 
     xgrid, ygrid = torch.meshgrid([x_flat,y_flat], indexing="xy")
     xy = torch.stack([xgrid, ygrid, torch.ones_like(xgrid)], dim=-1).to(imgs) # [h, w, 3]
     patched_height, patched_width, _ = xy.shape
-    xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
+    xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, h, w, 3, 1]
 
     for i in range(1,imgs.shape[1]):
         P_tgt = extrinsics[:,i]
-        F = fundamental_from_KP(K, P_src, P_tgt)
-        F = F.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
-        l = torch.matmul(F,xy)
+        Fm = fundamental_from_KP(K, P_src, P_tgt)
+        Fm = Fm.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, h//patch_size, w//patch_size, 3, 1]
+        l = torch.matmul(Fm,xy)
         
+        line = l[0,4,5,:]
 
+        # determine start point
+        x0 = int(x_flat[0].item())
+        y0 = int((-(line[0]/line[1])*x0) - (line[2]/line[1]).item())
+        if y0 < 0:
+            y0 = int(y_flat[0].item())
+            x0 = int((-(line[1]/line[0])*y0) - (line[2]/line[0]).item())
+        elif y0 >= height:
+            y0 = int(y_flat[-1].item())
+            x0 = int((-(line[1]/line[0])*y0) - (line[2]/line[0]).item())
 
-        line = l[0,30,35,:]
-        print("ref_pixel", xy[0,30,35,:,0])
+        # determine end point
+        x1 = int(x_flat[-1].item())
+        y1 = int((-(line[0]/line[1])*x1) - (line[2]/line[1]).item())
+        if y1 < 0:
+            y1 = int(y_flat[0].item())
+            x1 = int((-(line[1]/line[0])*y1) - (line[2]/line[0]).item())
+        elif y1 >= height:
+            y1 = int(y_flat[-1].item())
+            x1 = int((-(line[1]/line[0])*y1) - (line[2]/line[0]).item())
 
-        for x in x_flat:
-            y_i = int(torch.abs((-(line[0]/line[1])*x) - (line[2]/line[1])).item())
-            if y_i < height and y_i >= 0:
-                print("src_pixel", f"{x}, {y_i}")
+        # convert image indices into patch indices
+        x0 = (x0-(half_patch_size))//patch_size
+        x1 = (x1-(half_patch_size))//patch_size
+        y0 = (y0-(half_patch_size))//patch_size
+        y1 = (y1-(half_patch_size))//patch_size
 
-        ref_img = torch.zeros((patched_height, patched_width)).to(imgs)
-        ref_img[10,15] = 1
+        if abs(y1-y0) < abs(x1-x0):
+            if x0 > x1:
+                xp,yp = get_epipolar_inds_low(x1,y1,x0,y0)
+            else:
+                xp,yp = get_epipolar_inds_low(x0,y0,x1,y1)
+        else:
+            if y0 > y1:
+                xp,yp = get_epipolar_inds_high(x1,y1,x0,y0)
+            else:
+                xp,yp = get_epipolar_inds_high(x0,y0,x1,y1)
 
-        src_img = torch.zeros((patched_height, patched_width)).to(imgs)
-        #cv2.imwrite
+        # convert patch indices into image indices
+        xp = xp*patch_size + (half_patch_size)
+        yp = yp*patch_size + (half_patch_size)
 
-        # given x coordinates, compute closest y coordinate to the line
-        #dists = torch.abs(l[:,:,:,0:1]*xy[:,:,:,0:1] + l[:,:,:,1:2]*xy[:,:,:,1:2] + l[:,:,:,2:3]) / (torch.sqrt((l[:,:,:,2:3]**2) + (l[:,:,:,2:3]**2)) + 1e-10)
+        # plot src patches
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+        for x_i,y_i in zip(xp,yp):
+            rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+            ax.add_patch(rect_i)
+        plt.savefig(f"src_img_{i}.png")
+        plt.close()
 
-        sys.exit()
-
-
-
-
+    # plot ref point
+    ref_pix = xy[0,4,5,:,0]
+    plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
+    plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
+    plt.savefig(f"ref_img.png")
+    plt.close()
     sys.exit()
 
 
