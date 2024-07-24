@@ -57,6 +57,38 @@ def downsample_cloud(cloud, min_point_dist):
     """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
+def get_epipolar_inds(x0, y0, x1, y1):
+    dx = x1-x0
+    dy = y1-y0
+    yi = torch.ones_like(y0)
+
+    negative_mask = torch.where(dy < 0, -1, 1)
+    yi *= negative_mask
+    dy *= negative_mask
+
+    D = (2*dy) - dx
+    y = y0
+    x = x0
+
+    batch,h,w = x.shape
+
+    max_disp = int((x1-x0).max().item())
+
+    xy = []
+    for _ in range(max_disp):
+        xy.append(torch.stack([x,y],dim=-1))
+
+
+        mask = torch.where(D > 0, 1, 0)
+        y = (y+yi)*mask + y*(1-mask)
+        D = ((D + (2*(dy-dx)))*mask) + ((D + (2*dy))*(1-mask))
+        x += 1
+
+    print(len(xy))
+    sys.exit()
+    xy = np.asarray(xy).astype(np.int32)
+    return xy[:,0], xy[:,1]
+
 def get_epipolar_inds_low(x0, y0, x1, y1):
     dx = x1-x0
     dy = y1-y0
@@ -69,7 +101,7 @@ def get_epipolar_inds_low(x0, y0, x1, y1):
     y=y0
 
     xy = []
-    for i,x in enumerate(range(x0,x1+1)):
+    for x in range(x0,x1+1):
         xy.append([x,y])
 
         if D > 0:
@@ -120,19 +152,19 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
     xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, patched_height, patch_width, 3, 1]
 
     #### FOR A SINGLE PIXEL ####
-    r=0#patched_height//2
-    c=0#patched_width//2
+    r=patched_height//2
+    c=patched_width//2
 
     for i in range(1,imgs.shape[1]):
         P_tgt = extrinsics[:,i]
         Fm = fundamental_from_KP(K, P_src, P_tgt)
         Fm = Fm.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, patched_height, patch_width, 3, 1]
-        line = torch.matmul(Fm,xy)
+        line = torch.matmul(Fm,xy).squeeze(-1) # [batch_size, patched_height, patch_width, 3]
         
         ## Start Point ##
         # initial x coordinate, comput y corrdinate
-        x0 = x_flat[0].reshape(1,1,1,1,1).repeat(batch_size, patched_height, patched_width, 3, 1)
-        y0 = (-(line[:,:,:,0:1]/line[:,:,:,1:2])*x0) - (line[:,:,:,2:3]/line[:,:,:,1:2])
+        x0 = x_flat[0].reshape(1,1,1).repeat(batch_size, patched_height, patched_width)
+        y0 = (-(line[:,:,:,0]/line[:,:,:,1])*x0) - (line[:,:,:,2]/line[:,:,:,1])
         # check for invalid y coordinates
         y_mask_lt = torch.where(y0 < 0, 1, 0)
         y_mask_gt = torch.where(y0 >= height, 1, 0)
@@ -140,7 +172,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         # adjust for invalid y coordinates
         y0 = y0*(1-y_mask_lt) + y_flat[0]*y_mask_lt
         y0 = y0*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
-        x0 = (x0 * (1-y_mask_out)) + (((-(line[:,:,:,1:2]/line[:,:,:,0:1])*y0) - (line[:,:,:,2:3]/line[:,:,:,0:1])) * (y_mask_out))
+        x0 = (x0 * (1-y_mask_out)) + (((-(line[:,:,:,1]/line[:,:,:,0])*y0) - (line[:,:,:,2]/line[:,:,:,0])) * (y_mask_out))
         # if x coordinate is invalid
         valid_mask = torch.where((x0 >= 0).to(torch.bool) & (x0 < width).to(torch.bool), 1, 0)
         x0 = (x0*valid_mask) - (1-valid_mask)
@@ -148,8 +180,8 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
 
         ## End Point ##
         # initial x coordinate, comput y corrdinate
-        x1 = x_flat[-1].reshape(1,1,1,1,1).repeat(batch_size, patched_height, patched_width, 3, 1)
-        y1 = (-(line[:,:,:,0:1]/line[:,:,:,1:2])*x1) - (line[:,:,:,2:3]/line[:,:,:,1:2])
+        x1 = x_flat[-1].reshape(1,1,1).repeat(batch_size, patched_height, patched_width)
+        y1 = (-(line[:,:,:,0]/line[:,:,:,1])*x1) - (line[:,:,:,2]/line[:,:,:,1])
         # check for invalid y coordinates
         y_mask_lt = torch.where(y1 < 0, 1, 0)
         y_mask_gt = torch.where(y1 >= height, 1, 0)
@@ -157,7 +189,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         # adjust for invalid y coordinates
         y1 = y1*(1-y_mask_lt) + y_flat[0]*y_mask_lt
         y1 = y1*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
-        x1 = (x1 * (1-y_mask_out)) + (((-(line[:,:,:,1:2]/line[:,:,:,0:1])*y1) - (line[:,:,:,2:3]/line[:,:,:,0:1])) * (y_mask_out))
+        x1 = (x1 * (1-y_mask_out)) + (((-(line[:,:,:,1]/line[:,:,:,0])*y1) - (line[:,:,:,2]/line[:,:,:,0])) * (y_mask_out))
         # if x coordinate is invalid
         valid_mask = torch.where((x1 >= 0).to(torch.bool) & (x1 < width).to(torch.bool), 1, 0)
         x1 = (x1*valid_mask) - (1-valid_mask)
@@ -169,42 +201,96 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         y0 = (y0-(half_patch_size))//patch_size
         y1 = (y1-(half_patch_size))//patch_size
 
-        print(x0[0,r,c,0,0], y0[0,r,c,0,0])
-        print(x1[0,r,c,0,0], y1[0,r,c,0,0])
-        x0 = int(x0[0,r,c,0,0].item())
-        y0 = int(y0[0,r,c,0,0].item())
-        x1 = int(x1[0,r,c,0,0].item())
-        y1 = int(y1[0,r,c,0,0].item())
 
-        if abs(y1-y0) < abs(x1-x0):
-            if x0 > x1:
-                xp,yp = get_epipolar_inds_low(x1,y1,x0,y0)
-            else:
-                xp,yp = get_epipolar_inds_low(x0,y0,x1,y1)
-        else:
-            if y0 > y1:
-                xp,yp = get_epipolar_inds_high(x1,y1,x0,y0)
-            else:
-                xp,yp = get_epipolar_inds_high(x0,y0,x1,y1)
+
+        # compute x and y slopes
+        slope_x = torch.abs(x1-x0)
+        slope_y = torch.abs(y1-y0)
+
+        # flip x's and y's depending on slope
+        small_slope_mask = torch.where(slope_y < slope_x, 1, 0)
+        x0_temp = x0*small_slope_mask + y0*(1 - small_slope_mask)
+        y0 = y0*small_slope_mask + x0*(1 - small_slope_mask)
+        x0 = x0_temp
+        x1_temp = x1*small_slope_mask + y1*(1 - small_slope_mask)
+        y1 = y1*small_slope_mask + x1*(1 - small_slope_mask)
+        x1 = x1_temp
+        
+        # flip start and end points so start is smaller
+        small_end_mask = torch.where(x1 < x0, 1, 0)
+        x0_temp = x0*(1-small_end_mask) + x1*small_end_mask
+        x1 = x1*(1-small_end_mask) + x0*small_end_mask
+        x0 = x0_temp
+        y0_temp = y0*(1-small_end_mask) + y1*small_end_mask
+        y1 = y1*(1-small_end_mask) + y0*small_end_mask
+        y0 = y0_temp
+
+        x_inds, y_inds = get_epipolar_inds(x0,y0,x1,y1)
+
+        sys.exit()
+
+        # flip x and y indices back where necessary (using small_slope_mask)
+        #TODO
 
         # convert patch indices into image indices
         xp = xp*patch_size + (half_patch_size)
         yp = yp*patch_size + (half_patch_size)
+        print()
         print(xp.shape)
         print(yp.shape)
         print(xp)
         print(yp)
-        sys.exit()
+        print()
 
-        # plot src patches
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
-        for x_i,y_i in zip(xp,yp):
-            rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
-            ax.add_patch(rect_i)
-        plt.savefig(f"src_img_{i}.png")
-        plt.close()
+        ## plot src patches
+        #fig = plt.figure()
+        #ax = fig.add_subplot(111)
+        #ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+        #for x_i,y_i in zip(xp,yp):
+        #    rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+        #    ax.add_patch(rect_i)
+        #plt.savefig(f"src_img_{i}.png")
+        #plt.close()
+
+
+
+
+
+        #   x0 = int(x0[0,r,c,0,0].item())
+        #   y0 = int(y0[0,r,c,0,0].item())
+        #   x1 = int(x1[0,r,c,0,0].item())
+        #   y1 = int(y1[0,r,c,0,0].item())
+
+        #   if abs(y1-y0) < abs(x1-x0):
+        #       if x0 > x1:
+        #           xp,yp = get_epipolar_inds_low(x1,y1,x0,y0)
+        #       else:
+        #           xp,yp = get_epipolar_inds_low(x0,y0,x1,y1)
+        #   else:
+        #       if y0 > y1:
+        #           xp,yp = get_epipolar_inds_high(x1,y1,x0,y0)
+        #       else:
+        #           xp,yp = get_epipolar_inds_high(x0,y0,x1,y1)
+
+        #   # convert patch indices into image indices
+        #   xp = xp*patch_size + (half_patch_size)
+        #   yp = yp*patch_size + (half_patch_size)
+        #   print()
+        #   print(xp.shape)
+        #   print(yp.shape)
+        #   print(xp)
+        #   print(yp)
+        #   print()
+
+        #   # plot src patches
+        #   fig = plt.figure()
+        #   ax = fig.add_subplot(111)
+        #   ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+        #   for x_i,y_i in zip(xp,yp):
+        #       rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+        #       ax.add_patch(rect_i)
+        #   plt.savefig(f"src_img_{i}.png")
+        #   plt.close()
 
 
 
@@ -263,14 +349,14 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         #   plt.savefig(f"src_img_{i}.png")
         #   plt.close()
 
-    # plot ref point
-    ref_pix = xy[0,r,c,:,0]
-    plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
-    plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
-    plt.savefig(f"ref_img.png")
-    plt.close()
-    sys.exit()
-    #### FOR A SINGLE PIXEL ####
+    ## plot ref point
+    #ref_pix = xy[0,r,c,:,0]
+    #plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
+    #plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
+    #plt.savefig(f"ref_img.png")
+    #plt.close()
+    #sys.exit()
+    ##### FOR A SINGLE PIXEL ####
 
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
