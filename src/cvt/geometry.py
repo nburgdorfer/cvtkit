@@ -153,9 +153,6 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
     xy = xy.unsqueeze(0).repeat(batch_size, 1, 1, 1).unsqueeze(-1) # [batch_size, patched_height, patch_width, 3, 1]
 
     max_patches = patched_height+patched_width-1
-    #### VISUAL
-    r,c = 15,15
-    #### VISUAL
 
     for i in range(1,imgs.shape[1]):
         x_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_width).to(imgs)
@@ -199,27 +196,12 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         valid_mask = torch.where((x1 >= 0).to(torch.bool) & (x1 < width).to(torch.bool), 1, 0)
         x1 = (x1*valid_mask) - (1-valid_mask)
         y1 = (y1*valid_mask) - (1-valid_mask)
-        print()
-        print()
-        print(x0[0,r,c])
-        print(y0[0,r,c])
-        print(x1[0,r,c])
-        print(y1[0,r,c])
-        print(x_lim[0,r,c])
-        print(y_lim[0,r,c])
 
         # convert image indices into patch indices
         x0 = (x0-(half_patch_size))//patch_size
         x1 = (x1-(half_patch_size))//patch_size
         y0 = (y0-(half_patch_size))//patch_size
         y1 = (y1-(half_patch_size))//patch_size
-        print()
-        print(x0[0,r,c])
-        print(y0[0,r,c])
-        print(x1[0,r,c])
-        print(y1[0,r,c])
-        print(x_lim[0,r,c])
-        print(y_lim[0,r,c])
 
         # compute x and y slopes
         slope_x = torch.abs(x1-x0)
@@ -236,13 +218,6 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         x_lim_temp = x_lim*small_slope_mask + y_lim*(1 - small_slope_mask)
         y_lim = y_lim*small_slope_mask + x_lim*(1 - small_slope_mask)
         x_lim = x_lim_temp
-        print()
-        print(x0[0,r,c])
-        print(y0[0,r,c])
-        print(x1[0,r,c])
-        print(y1[0,r,c])
-        print(x_lim[0,r,c])
-        print(y_lim[0,r,c])
         
         # flip start and end points so start is smaller
         small_end_mask = torch.where(x1 < x0, 1, 0)
@@ -252,13 +227,6 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         y0_temp = y0*(1-small_end_mask) + y1*small_end_mask
         y1 = y1*(1-small_end_mask) + y0*small_end_mask
         y0 = y0_temp
-        print()
-        print(x0[0,r,c])
-        print(y0[0,r,c])
-        print(x1[0,r,c])
-        print(y1[0,r,c])
-        print(x_lim[0,r,c])
-        print(y_lim[0,r,c])
 
         # grab nearest patch indices
         x_inds, y_inds = get_epipolar_inds(x0,y0,x1,y1, x_lim, y_lim, max_patches)
@@ -277,11 +245,9 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
 
         #### visual
         # plot src patches
+        r,c = 17,20
         xp = x_inds[0,r,c,:].cpu().numpy()
         yp = y_inds[0,r,c,:].cpu().numpy()
-        print()
-        print(xp)
-        print(yp)
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
