@@ -72,7 +72,7 @@ def get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches):
 
     batch,h,w = x.shape
 
-    xy = torch.zeros((batch,h,w,max_patches,2)).to(x0)
+    epipolar_grid = torch.zeros((batch, max_patches, h, w, 2)).to(x0)
     for i in range(max_patches):
         # build valid indices mask
         valid_mask = torch.where((x < x_lim).to(torch.bool) & (x >= 0).to(torch.bool), 1, 0)
@@ -80,15 +80,15 @@ def get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches):
         valid_mask = valid_mask.unsqueeze(-1).repeat(1,1,1,2)
         
         # stack xy and apply valid indices mask
-        xy_i = torch.stack([x,y],dim=-1)
-        xy[:,:,:,i,:] = (xy_i*valid_mask) - (1-valid_mask)
+        xy = torch.stack([x,y],dim=-1)
+        epipolar_grid[:,i,:,:,:] = (xy*valid_mask) - (1-valid_mask)
 
         mask = torch.where(D > 0, 1, 0)
         y = (y+yi)*mask + y*(1-mask)
         D = ((D + (2*(dy-dx)))*mask) + ((D + (2*dy))*(1-mask))
         x += 1
 
-    return xy[:,:,:,:,0], xy[:,:,:,:,1]
+    return epipolar_grid[:,:,:,:,0], epipolar_grid[:,:,:,:,1]
 
 def get_epipolar_inds_low(x0, y0, x1, y1):
     dx = x1-x0
@@ -154,7 +154,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
 
     max_patches = patched_height+patched_width-1
 
-    for i in range(1,imgs.shape[1]):
+    for i in range(2,imgs.shape[1]):
         x_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_width).to(imgs)
         y_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_height).to(imgs)
     
@@ -229,45 +229,97 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         y0 = y0_temp
 
         # grab nearest patch indices
-        x_inds, y_inds = get_epipolar_inds(x0,y0,x1,y1, x_lim, y_lim, max_patches)
+        x_grid, y_grid = get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches)
 
         # flip x and y indices back where necessary (using small_slope_mask)
-        small_slope_mask = small_slope_mask.unsqueeze(-1).repeat(1,1,1,max_patches)
-        x_inds_temp = x_inds*small_slope_mask + y_inds*(1 - small_slope_mask)
-        y_inds = y_inds*small_slope_mask + x_inds*(1 - small_slope_mask)
-        x_inds = x_inds_temp
+        small_slope_mask = small_slope_mask.reshape(batch_size,1,patched_height,patched_width).repeat(1,max_patches,1,1)
+        x_grid_temp = x_grid*small_slope_mask + y_grid*(1 - small_slope_mask)
+        y_grid = y_grid*small_slope_mask + x_grid*(1 - small_slope_mask)
+        x_gird = x_grid_temp
+        epipolar_grid = torch.stack([x_grid,y_grid], dim=-1)
 
         # convert patch indices into image indices
-        x_inds = x_inds*patch_size + (half_patch_size)
-        x_inds = torch.where(x_inds < 0, -1, x_inds)
-        y_inds = y_inds*patch_size + (half_patch_size)
-        y_inds = torch.where(y_inds < 0, -1, y_inds)
+        epipolar_grid = epipolar_grid*patch_size + (half_patch_size)
+        epipolar_grid = torch.where(epipolar_grid < 0, -1, epipolar_grid)
 
-        #### visual
-        # plot src patches
-        r,c = 17,20
-        xp = x_inds[0,r,c,:].cpu().numpy()
-        yp = y_inds[0,r,c,:].cpu().numpy()
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
-        for x_i,y_i in zip(xp,yp):
-            if x_i>=0 and y_i>=0:
-                rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
-                ax.add_patch(rect_i)
-        plt.savefig(f"src_img_{i}.png")
-        plt.close()
-        #### visual
+        patch=30
+        r,c=40,40
+        rr,cc = (r*patch_size + (half_patch_size)), (c*patch_size + (half_patch_size))
+        print(epipolar_grid[0,patch,r-1,c-1,0])
+        print(epipolar_grid[0,patch,r-1,c-1,1])
+        print(epipolar_grid[0,patch,r,c,0])
+        print(epipolar_grid[0,patch,r,c,1])
+        print(epipolar_grid[0,patch,r+1,c+1,0])
+        print(epipolar_grid[0,patch,r+1,c+1,1])
 
-    #### visual
-    # plot ref point
-    ref_pix = xy[0,r,c,:,0].cpu().numpy()
-    plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
-    plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
-    plt.savefig(f"ref_img.png")
-    plt.close()
-    #### visual
+        print()
+        print(epipolar_grid.shape)
+        epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=2)
+        print(epipolar_grid.shape)
+        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc,0])
+        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc,1])
+        epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=3)
+        print(epipolar_grid.shape)
+        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc-(patch_size):cc+(patch_size),0])
+        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc-(patch_size):cc+(patch_size),1])
+        sys.exit()
+        epipolar_grid = epipolar_grid.reshape(batch_size, max_patches, -1, 1, 1, 2).repeat(1, 1, 1, patch_size, patch_size, 1)
+        print(epipolar_grid[0,100,9650,:,:,0])
+        print(epipolar_grid[0,100,9650,:,:,1])
+
+        # create center offset matrix
+        valid_mask = torch.where(epipolar_grid >= 0, 1, 0)
+        patch_offset = torch.arange(-half_patch_size,half_patch_size).to(imgs)
+        x_offset, y_offset = torch.meshgrid([patch_offset,patch_offset], indexing="xy")
+        patch_offset = torch.stack([x_offset,y_offset],dim=-1)
+        patch_offset = patch_offset.reshape(1,1,1,patch_size,patch_size,2).repeat(batch_size,max_patches,patched_height*patched_width,1,1,1)
+        print(patch_offset.shape)
+        print(patch_offset[0,100,9650,:,:,0])
+        print(patch_offset[0,100,9650,:,:,1])
+        epipolar_grid += patch_offset
+        print(epipolar_grid[0,100,9650,:,:,0])
+        print(epipolar_grid[0,100,9650,:,:,1])
+
+
+
+
+
+        sys.exit()
+        print(imgs[:,i].shape)
+        print(epipolar_grid.reshape(batch_size,-1,patched_width,2).shape)
+        img_patches = F.grid_sample(imgs[:,i],
+                                    epipolar_grid.reshape(batch_size,-1,patched_width,2),
+                                    mode="nearest",
+                                    padding_mode="zeros")
+        img_patches = img_patches.reshape(batch_size, 3, max_patches, patched_height, patched_width)
+        print(img_patches.shape)
+
+        sys.exit()
+        #   #### visual
+        #   # plot src patches
+        #   r,c = 15,20
+        #   ep = epipolar_grid[0,:,r,c,:].cpu().numpy()
+
+        #   fig = plt.figure()
+        #   ax = fig.add_subplot(111)
+        #   ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+        #   for x_i,y_i in ep:
+        #       if x_i>=0 and y_i>=0:
+        #           rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+        #           ax.add_patch(rect_i)
+        #   plt.savefig(f"src_img_{i}.png")
+        #   plt.close()
+        #   #### visual
+
+    #   #### visual
+    #   # plot ref point
+    #   ref_pix = xy[0,r,c,:,0].cpu().numpy()
+    #   plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
+    #   plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
+    #   plt.savefig(f"ref_img.png")
+    #   plt.close()
+    #   #### visual
 
     sys.exit()
 
