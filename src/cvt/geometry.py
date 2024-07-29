@@ -198,10 +198,10 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         y1 = (y1*valid_mask) - (1-valid_mask)
 
         # convert image indices into patch indices
-        x0 = (x0-(half_patch_size))//patch_size
-        x1 = (x1-(half_patch_size))//patch_size
-        y0 = (y0-(half_patch_size))//patch_size
-        y1 = (y1-(half_patch_size))//patch_size
+        x0 = torch.round((x0-(half_patch_size))/patch_size)
+        x1 = torch.round((x1-(half_patch_size))/patch_size)
+        y0 = torch.round((y0-(half_patch_size))/patch_size)
+        y1 = torch.round((y1-(half_patch_size))/patch_size)
 
         # compute x and y slopes
         slope_x = torch.abs(x1-x0)
@@ -235,12 +235,13 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         small_slope_mask = small_slope_mask.reshape(batch_size,1,patched_height,patched_width).repeat(1,max_patches,1,1)
         x_grid_temp = x_grid*small_slope_mask + y_grid*(1 - small_slope_mask)
         y_grid = y_grid*small_slope_mask + x_grid*(1 - small_slope_mask)
-        x_gird = x_grid_temp
+        x_grid = x_grid_temp
         epipolar_grid = torch.stack([x_grid,y_grid], dim=-1)
 
         # convert patch indices into image indices
         epipolar_grid = epipolar_grid*patch_size + (half_patch_size)
         epipolar_grid = torch.where(epipolar_grid < 0, -1, epipolar_grid)
+        patch_grid = epipolar_grid.cpu().numpy()
 
         # duplicate patch center indices over entire patch
         epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=2)
@@ -272,7 +273,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         img_patches = img_patches.reshape(batch_size, 3, max_patches, height, width)
 
         #### visual
-        r,c = 10,10
+        r,c = 8,10
         for j in range(max_patches):
             x_j,y_j,_ = xy[0,r,c,:,0].cpu().numpy()
             fig = plt.figure()
@@ -284,7 +285,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
             plt.close()
 
         # plot src patches
-        ep = epipolar_grid[0,:,r,c,:].cpu().numpy()
+        ep = patch_grid[0,:,r,c,:]
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
