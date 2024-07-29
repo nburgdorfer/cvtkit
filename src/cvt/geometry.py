@@ -154,7 +154,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
 
     max_patches = patched_height+patched_width-1
 
-    for i in range(2,imgs.shape[1]):
+    for i in range(1,imgs.shape[1]):
         x_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_width).to(imgs)
         y_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_height).to(imgs)
     
@@ -242,60 +242,35 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         epipolar_grid = epipolar_grid*patch_size + (half_patch_size)
         epipolar_grid = torch.where(epipolar_grid < 0, -1, epipolar_grid)
 
-
-        patch=30
-        r,c=40,40
-        rr,cc = (r*patch_size + (half_patch_size)), (c*patch_size + (half_patch_size))
-        print(epipolar_grid[0,patch,r-1,c-1,0])
-        print(epipolar_grid[0,patch,r-1,c-1,1])
-        print(epipolar_grid[0,patch,r,c,0])
-        print(epipolar_grid[0,patch,r,c,1])
-        print(epipolar_grid[0,patch,r+1,c+1,0])
-        print(epipolar_grid[0,patch,r+1,c+1,1])
-
-        print()
-        print(epipolar_grid.shape)
+        # duplicate patch center indices over entire patch
         epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=2)
-        print(epipolar_grid.shape)
-        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc,0])
-        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc,1])
         epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=3)
-        print(epipolar_grid.shape)
-        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc-(patch_size):cc+(patch_size),0])
-        print(epipolar_grid[0,patch,rr-(patch_size):rr+(patch_size),cc-(patch_size):cc+(patch_size),1])
-        sys.exit()
-        epipolar_grid = epipolar_grid.reshape(batch_size, max_patches, -1, 1, 1, 2).repeat(1, 1, 1, patch_size, patch_size, 1)
-        print(epipolar_grid[0,100,9650,:,:,0])
-        print(epipolar_grid[0,100,9650,:,:,1])
 
-        # create center offset matrix
+        # apply center offset matrix
         valid_mask = torch.where(epipolar_grid >= 0, 1, 0)
         patch_offset = torch.arange(-half_patch_size,half_patch_size).to(imgs)
         x_offset, y_offset = torch.meshgrid([patch_offset,patch_offset], indexing="xy")
         patch_offset = torch.stack([x_offset,y_offset],dim=-1)
-        patch_offset = patch_offset.reshape(1,1,1,patch_size,patch_size,2).repeat(batch_size,max_patches,patched_height*patched_width,1,1,1)
-        print(patch_offset.shape)
-        print(patch_offset[0,100,9650,:,:,0])
-        print(patch_offset[0,100,9650,:,:,1])
+        patch_offset = torch.tile(patch_offset, (patched_height, patched_width,1))
+        patch_offset = patch_offset.reshape(1,1,height,width,2).repeat(batch_size,max_patches,1,1,1)
         epipolar_grid += patch_offset
-        print(epipolar_grid[0,100,9650,:,:,0])
-        print(epipolar_grid[0,100,9650,:,:,1])
 
-
-
-
-
-        sys.exit()
-        print(imgs[:,i].shape)
-        print(epipolar_grid.reshape(batch_size,-1,patched_width,2).shape)
+        x = int(epipolar_grid[0,20,200,200,0])
+        y = int(epipolar_grid[0,20,200,200,1])
+        print(x, y)
+        print(imgs[:,i][0,:,y,x])
         img_patches = F.grid_sample(imgs[:,i],
-                                    epipolar_grid.reshape(batch_size,-1,patched_width,2),
+                                    epipolar_grid.reshape(batch_size,max_patches,height*width,2),
                                     mode="nearest",
                                     padding_mode="zeros")
-        img_patches = img_patches.reshape(batch_size, 3, max_patches, patched_height, patched_width)
-        print(img_patches.shape)
-
+        img_patches = img_patches.reshape(batch_size, 3, max_patches, height, width)
+        print(img_patches[0,:,20,200,200])
         sys.exit()
+
+        for j in range(max_patches):
+            cv2.imwrite(f"patches/{i:02d}_{j:04d}.png", torch.movedim(img_patches[0,:,i], (0,1,2), (2,0,1)).cpu().numpy()*255 )
+            cv2.imwrite(f"patches/{i:02d}.png", torch.movedim(imgs[0,i], (0,1,2), (2,0,1)).cpu().numpy()*255 )
+
         #   #### visual
         #   # plot src patches
         #   r,c = 15,20
