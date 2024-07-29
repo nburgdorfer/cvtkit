@@ -139,9 +139,7 @@ def get_epipolar_inds_high(x0, y0, x1, y1):
     return xy[:,0], xy[:,1]
 
 def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
-    batch_size, _, _, height, width = imgs.shape
-    K = intrinsics[:,0]
-    P_src = extrinsics[:,0]
+    batch_size, v, c, height, width = imgs.shape
     half_patch_size = patch_size//2
 
     x_flat = torch.arange((half_patch_size),width+1)[::patch_size].to(imgs)
@@ -154,159 +152,170 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
 
     max_patches = patched_height+patched_width-1
 
-    for i in range(1,imgs.shape[1]):
-        x_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_width).to(imgs)
-        y_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_height).to(imgs)
-    
-        P_tgt = extrinsics[:,i]
-        Fm = fundamental_from_KP(K, P_src, P_tgt)
-        Fm = Fm.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, patched_height, patch_width, 3, 1]
-        line = torch.matmul(Fm,xy).squeeze(-1) # [batch_size, patched_height, patch_width, 3]
+    patch_volumes = []
+    for j in range(imgs.shape[1]):
+        view_patches = [imgs[:,j].unsqueeze(2)]
+
+        K = intrinsics[:,j]
+        P_src = extrinsics[:,j]
+
+        for i in range(imgs.shape[1]):
+            if i==j:
+                continue
+
+            x_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_width).to(imgs)
+            y_lim = (torch.ones((batch_size, patched_height, patched_width)) * patched_height).to(imgs)
         
-        ## Start Point ##
-        # initial x coordinate, comput y corrdinate
-        x0 = x_flat[0].reshape(1,1,1).repeat(batch_size, patched_height, patched_width)
-        y0 = (-(line[:,:,:,0]/line[:,:,:,1])*x0) - (line[:,:,:,2]/line[:,:,:,1])
-        # check for invalid y coordinates
-        y_mask_lt = torch.where(y0 < 0, 1, 0)
-        y_mask_gt = torch.where(y0 >= height, 1, 0)
-        y_mask_out = y_mask_lt+y_mask_gt
-        # adjust for invalid y coordinates
-        y0 = y0*(1-y_mask_lt) + y_flat[0]*y_mask_lt
-        y0 = y0*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
-        x0 = (x0 * (1-y_mask_out)) + (((-(line[:,:,:,1]/line[:,:,:,0])*y0) - (line[:,:,:,2]/line[:,:,:,0])) * (y_mask_out))
-        # if x coordinate is invalid
-        valid_mask = torch.where((x0 >= 0).to(torch.bool) & (x0 < width).to(torch.bool), 1, 0)
-        x0 = (x0*valid_mask) - (1-valid_mask)
-        y0 = (y0*valid_mask) - (1-valid_mask)
+            P_tgt = extrinsics[:,i]
+            Fm = fundamental_from_KP(K, P_src, P_tgt)
+            Fm = Fm.reshape(batch_size, 1, 1, 3, 3).repeat(1, xy.shape[1], xy.shape[2], 1, 1) # [batch_size, patched_height, patch_width, 3, 1]
+            line = torch.matmul(Fm,xy).squeeze(-1) # [batch_size, patched_height, patch_width, 3]
+            
+            ## Start Point ##
+            # initial x coordinate, comput y corrdinate
+            x0 = x_flat[0].reshape(1,1,1).repeat(batch_size, patched_height, patched_width)
+            y0 = (-(line[:,:,:,0]/line[:,:,:,1])*x0) - (line[:,:,:,2]/line[:,:,:,1])
+            # check for invalid y coordinates
+            y_mask_lt = torch.where(y0 < 0, 1, 0)
+            y_mask_gt = torch.where(y0 >= height, 1, 0)
+            y_mask_out = y_mask_lt+y_mask_gt
+            # adjust for invalid y coordinates
+            y0 = y0*(1-y_mask_lt) + y_flat[0]*y_mask_lt
+            y0 = y0*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
+            x0 = (x0 * (1-y_mask_out)) + (((-(line[:,:,:,1]/line[:,:,:,0])*y0) - (line[:,:,:,2]/line[:,:,:,0])) * (y_mask_out))
+            # if x coordinate is invalid
+            valid_mask = torch.where((x0 >= 0).to(torch.bool) & (x0 < width).to(torch.bool), 1, 0)
+            x0 = (x0*valid_mask) - (1-valid_mask)
+            y0 = (y0*valid_mask) - (1-valid_mask)
 
-        ## End Point ##
-        # initial x coordinate, comput y corrdinate
-        x1 = x_flat[-1].reshape(1,1,1).repeat(batch_size, patched_height, patched_width)
-        y1 = (-(line[:,:,:,0]/line[:,:,:,1])*x1) - (line[:,:,:,2]/line[:,:,:,1])
-        # check for invalid y coordinates
-        y_mask_lt = torch.where(y1 < 0, 1, 0)
-        y_mask_gt = torch.where(y1 >= height, 1, 0)
-        y_mask_out = y_mask_lt+y_mask_gt
-        # adjust for invalid y coordinates
-        y1 = y1*(1-y_mask_lt) + y_flat[0]*y_mask_lt
-        y1 = y1*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
-        x1 = (x1 * (1-y_mask_out)) + (((-(line[:,:,:,1]/line[:,:,:,0])*y1) - (line[:,:,:,2]/line[:,:,:,0])) * (y_mask_out))
-        # if x coordinate is invalid
-        valid_mask = torch.where((x1 >= 0).to(torch.bool) & (x1 < width).to(torch.bool), 1, 0)
-        x1 = (x1*valid_mask) - (1-valid_mask)
-        y1 = (y1*valid_mask) - (1-valid_mask)
+            ## End Point ##
+            # initial x coordinate, comput y corrdinate
+            x1 = x_flat[-1].reshape(1,1,1).repeat(batch_size, patched_height, patched_width)
+            y1 = (-(line[:,:,:,0]/line[:,:,:,1])*x1) - (line[:,:,:,2]/line[:,:,:,1])
+            # check for invalid y coordinates
+            y_mask_lt = torch.where(y1 < 0, 1, 0)
+            y_mask_gt = torch.where(y1 >= height, 1, 0)
+            y_mask_out = y_mask_lt+y_mask_gt
+            # adjust for invalid y coordinates
+            y1 = y1*(1-y_mask_lt) + y_flat[0]*y_mask_lt
+            y1 = y1*(1-y_mask_gt) + y_flat[-1]*y_mask_gt
+            x1 = (x1 * (1-y_mask_out)) + (((-(line[:,:,:,1]/line[:,:,:,0])*y1) - (line[:,:,:,2]/line[:,:,:,0])) * (y_mask_out))
+            # if x coordinate is invalid
+            valid_mask = torch.where((x1 >= 0).to(torch.bool) & (x1 < width).to(torch.bool), 1, 0)
+            x1 = (x1*valid_mask) - (1-valid_mask)
+            y1 = (y1*valid_mask) - (1-valid_mask)
 
-        # convert image indices into patch indices
-        x0 = torch.round((x0-(half_patch_size))/patch_size)
-        x1 = torch.round((x1-(half_patch_size))/patch_size)
-        y0 = torch.round((y0-(half_patch_size))/patch_size)
-        y1 = torch.round((y1-(half_patch_size))/patch_size)
+            # convert image indices into patch indices
+            x0 = torch.round((x0-(half_patch_size))/patch_size)
+            x1 = torch.round((x1-(half_patch_size))/patch_size)
+            y0 = torch.round((y0-(half_patch_size))/patch_size)
+            y1 = torch.round((y1-(half_patch_size))/patch_size)
 
-        # compute x and y slopes
-        slope_x = torch.abs(x1-x0)
-        slope_y = torch.abs(y1-y0)
+            # compute x and y slopes
+            slope_x = torch.abs(x1-x0)
+            slope_y = torch.abs(y1-y0)
 
-        # flip x's and y's depending on slope
-        small_slope_mask = torch.where(slope_y < slope_x, 1, 0)
-        x0_temp = x0*small_slope_mask + y0*(1 - small_slope_mask)
-        y0 = y0*small_slope_mask + x0*(1 - small_slope_mask)
-        x0 = x0_temp
-        x1_temp = x1*small_slope_mask + y1*(1 - small_slope_mask)
-        y1 = y1*small_slope_mask + x1*(1 - small_slope_mask)
-        x1 = x1_temp
-        x_lim_temp = x_lim*small_slope_mask + y_lim*(1 - small_slope_mask)
-        y_lim = y_lim*small_slope_mask + x_lim*(1 - small_slope_mask)
-        x_lim = x_lim_temp
-        
-        # flip start and end points so start is smaller
-        small_end_mask = torch.where(x1 < x0, 1, 0)
-        x0_temp = x0*(1-small_end_mask) + x1*small_end_mask
-        x1 = x1*(1-small_end_mask) + x0*small_end_mask
-        x0 = x0_temp
-        y0_temp = y0*(1-small_end_mask) + y1*small_end_mask
-        y1 = y1*(1-small_end_mask) + y0*small_end_mask
-        y0 = y0_temp
+            # flip x's and y's depending on slope
+            small_slope_mask = torch.where(slope_y < slope_x, 1, 0)
+            x0_temp = x0*small_slope_mask + y0*(1 - small_slope_mask)
+            y0 = y0*small_slope_mask + x0*(1 - small_slope_mask)
+            x0 = x0_temp
+            x1_temp = x1*small_slope_mask + y1*(1 - small_slope_mask)
+            y1 = y1*small_slope_mask + x1*(1 - small_slope_mask)
+            x1 = x1_temp
+            x_lim_temp = x_lim*small_slope_mask + y_lim*(1 - small_slope_mask)
+            y_lim = y_lim*small_slope_mask + x_lim*(1 - small_slope_mask)
+            x_lim = x_lim_temp
+            
+            # flip start and end points so start is smaller
+            small_end_mask = torch.where(x1 < x0, 1, 0)
+            x0_temp = x0*(1-small_end_mask) + x1*small_end_mask
+            x1 = x1*(1-small_end_mask) + x0*small_end_mask
+            x0 = x0_temp
+            y0_temp = y0*(1-small_end_mask) + y1*small_end_mask
+            y1 = y1*(1-small_end_mask) + y0*small_end_mask
+            y0 = y0_temp
 
-        # grab nearest patch indices
-        x_grid, y_grid = get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches)
+            # grab nearest patch indices
+            x_grid, y_grid = get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches)
 
-        # flip x and y indices back where necessary (using small_slope_mask)
-        small_slope_mask = small_slope_mask.reshape(batch_size,1,patched_height,patched_width).repeat(1,max_patches,1,1)
-        x_grid_temp = x_grid*small_slope_mask + y_grid*(1 - small_slope_mask)
-        y_grid = y_grid*small_slope_mask + x_grid*(1 - small_slope_mask)
-        x_grid = x_grid_temp
-        epipolar_grid = torch.stack([x_grid,y_grid], dim=-1)
+            # flip x and y indices back where necessary (using small_slope_mask)
+            small_slope_mask = small_slope_mask.reshape(batch_size,1,patched_height,patched_width).repeat(1,max_patches,1,1)
+            x_grid_temp = x_grid*small_slope_mask + y_grid*(1 - small_slope_mask)
+            y_grid = y_grid*small_slope_mask + x_grid*(1 - small_slope_mask)
+            x_grid = x_grid_temp
+            epipolar_grid = torch.stack([x_grid,y_grid], dim=-1)
 
-        # convert patch indices into image indices
-        epipolar_grid = epipolar_grid*patch_size + (half_patch_size)
-        epipolar_grid = torch.where(epipolar_grid < 0, -1, epipolar_grid)
-        patch_grid = epipolar_grid.cpu().numpy()
+            # convert patch indices into image indices
+            epipolar_grid = epipolar_grid*patch_size + (half_patch_size)
+            epipolar_grid = torch.where(epipolar_grid < 0, -1, epipolar_grid)
+            patch_grid = epipolar_grid.cpu().numpy()
 
-        # duplicate patch center indices over entire patch
-        epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=2)
-        epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=3)
+            # duplicate patch center indices over entire patch
+            epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=2)
+            epipolar_grid = torch.repeat_interleave(epipolar_grid, patch_size, dim=3)
 
-        # apply center offset matrix
-        valid_mask = torch.where(epipolar_grid >= 0, 1, 0)
-        patch_offset = torch.arange(-half_patch_size,half_patch_size).to(imgs)
-        x_offset, y_offset = torch.meshgrid([patch_offset,patch_offset], indexing="xy")
-        patch_offset = torch.stack([x_offset,y_offset],dim=-1)
-        patch_offset = torch.tile(patch_offset, (patched_height, patched_width,1))
-        patch_offset = patch_offset.reshape(1,1,height,width,2).repeat(batch_size,max_patches,1,1,1)
-        epipolar_grid += patch_offset
-        epipolar_grid = (epipolar_grid * valid_mask) - (1-valid_mask)
+            # apply center offset matrix
+            valid_mask = torch.where(epipolar_grid >= 0, 1, 0)
+            patch_offset = torch.arange(-half_patch_size,half_patch_size).to(imgs)
+            x_offset, y_offset = torch.meshgrid([patch_offset,patch_offset], indexing="xy")
+            patch_offset = torch.stack([x_offset,y_offset],dim=-1)
+            patch_offset = torch.tile(patch_offset, (patched_height, patched_width,1))
+            patch_offset = patch_offset.reshape(1,1,height,width,2).repeat(batch_size,max_patches,1,1,1)
+            epipolar_grid += patch_offset
+            epipolar_grid = (epipolar_grid * valid_mask) - (1-valid_mask)
 
-        # normalize coordinate grid
-        min_coord = torch.tensor([0,0]).to(imgs)
-        min_coord = min_coord.reshape(1,1,1,1,2).repeat(batch_size, max_patches, height, width, 1)
-        max_coord = torch.tensor([width-1,height-1]).to(imgs)
-        max_coord = max_coord.reshape(1,1,1,1,2).repeat(batch_size, max_patches, height, width, 1)
-        norm_grid = (epipolar_grid - min_coord) / (max_coord - min_coord)
-        norm_grid = (norm_grid * 2) - 1
+            # normalize coordinate grid
+            min_coord = torch.tensor([0,0]).to(imgs)
+            min_coord = min_coord.reshape(1,1,1,1,2).repeat(batch_size, max_patches, height, width, 1)
+            max_coord = torch.tensor([width-1,height-1]).to(imgs)
+            max_coord = max_coord.reshape(1,1,1,1,2).repeat(batch_size, max_patches, height, width, 1)
+            norm_grid = (epipolar_grid - min_coord) / (max_coord - min_coord)
+            norm_grid = (norm_grid * 2) - 1
 
-        # aggregate image patches
-        img_patches = F.grid_sample(imgs[:,i],
-                                    norm_grid.reshape(batch_size, max_patches, height*width, 2),
-                                    mode="nearest",
-                                    padding_mode="zeros")
-        img_patches = img_patches.reshape(batch_size, 3, max_patches, height, width)
+            # aggregate image patches
+            img_patches = F.grid_sample(imgs[:,i],
+                                        norm_grid.reshape(batch_size, max_patches, height*width, 2),
+                                        mode="nearest",
+                                        padding_mode="zeros")
+            img_patches = img_patches.reshape(batch_size, 3, max_patches, height, width)
+            view_patches.append(img_patches)
 
-        #### visual
-        r,c = 8,10
-        for j in range(max_patches):
-            x_j,y_j,_ = xy[0,r,c,:,0].cpu().numpy()
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
-            ax.imshow(torch.movedim(img_patches[0,:,j], (0,1,2), (2,0,1)).cpu().numpy())
-            rect_j = Rectangle((x_j-(half_patch_size),y_j-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
-            ax.add_patch(rect_j)
-            plt.savefig(f"patches/{i:02d}_{j:04d}.png")
-            plt.close()
+            #   #### visual
+            #   r,c = patched_height//2, patched_width//2
+            #   #for k in range(max_patches):
+            #   #    x_k,y_k,_ = xy[0,r,c,:,0].cpu().numpy()
+            #   #    fig = plt.figure()
+            #   #    ax = fig.add_subplot(111)
+            #   #    ax.imshow(torch.movedim(img_patches[0,:,k], (0,1,2), (2,0,1)).cpu().numpy())
+            #   #    rect_k = Rectangle((x_k-(half_patch_size),y_k-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+            #   #    ax.add_patch(rect_k)
+            #   #    plt.savefig(f"patches/ref{j:02d}_src{i:02d}_patch{k:04d}.png")
+            #   #    plt.close()
 
-        # plot src patches
-        ep = patch_grid[0,:,r,c,:]
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
-        for x_i,y_i in ep:
-            if x_i>=0 and y_i>=0:
-                rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
-                ax.add_patch(rect_i)
-        plt.savefig(f"patches/{i:02d}.png")
-        plt.close()
-        #### visual
+            #   # plot src patches
+            #   ep = patch_grid[0,:,r,c,:]
+            #   fig = plt.figure()
+            #   ax = fig.add_subplot(111)
+            #   ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+            #   for x_i,y_i in ep:
+            #       if x_i>=0 and y_i>=0:
+            #           rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+            #           ax.add_patch(rect_i)
+            #   plt.savefig(f"patches/ref{j:02d}_src{i:02d}.png")
+            #   plt.close()
+            #   #### visual
+        #   #### visual
+        #   # plot ref point
+        #   ref_pix = xy[0,r,c,:,0].cpu().numpy()
+        #   plt.imshow(torch.movedim(imgs[0,j],(0,1,2),(2,0,1)).cpu().numpy())
+        #   plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
+        #   plt.savefig(f"patches/ref{j:02d}.png")
+        #   plt.close()
+        #   #### visual
 
-    #### visual
-    # plot ref point
-    ref_pix = xy[0,r,c,:,0].cpu().numpy()
-    plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
-    plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
-    plt.savefig(f"patches/ref_img.png")
-    plt.close()
-    #### visual
-
-    sys.exit()
+        patch_volumes.append(torch.cat(view_patches, dim=2))
+    return torch.stack(patch_volumes, dim=1)
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
     """Computes the essential matrix between two images using image features.
