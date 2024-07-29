@@ -139,7 +139,7 @@ def get_epipolar_inds_high(x0, y0, x1, y1):
     return xy[:,0], xy[:,1]
 
 def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
-    batch_size, v, c, height, width = imgs.shape
+    batch_size, views, c, height, width = imgs.shape
     half_patch_size = patch_size//2
 
     x_flat = torch.arange((half_patch_size),width+1)[::patch_size].to(imgs)
@@ -315,7 +315,7 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         #   #### visual
 
         patch_volumes.append(torch.cat(view_patches, dim=2))
-    return torch.stack(patch_volumes, dim=1)
+    return torch.stack(patch_volumes, dim=1).reshape(batch_size, views, -1, height, width)
 
 def essential_from_features(src_image_file: str, tgt_image_file: str, K: np.ndarray) -> np.ndarray:
     """Computes the essential matrix between two images using image features.
