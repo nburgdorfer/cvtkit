@@ -254,47 +254,56 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         patch_offset = torch.tile(patch_offset, (patched_height, patched_width,1))
         patch_offset = patch_offset.reshape(1,1,height,width,2).repeat(batch_size,max_patches,1,1,1)
         epipolar_grid += patch_offset
+        epipolar_grid = (epipolar_grid * valid_mask) - (1-valid_mask)
 
-        x = int(epipolar_grid[0,20,200,200,0])
-        y = int(epipolar_grid[0,20,200,200,1])
-        print(x, y)
-        print(imgs[:,i][0,:,y,x])
+        # normalize coordinate grid
+        min_coord = torch.tensor([0,0]).to(imgs)
+        min_coord = min_coord.reshape(1,1,1,1,2).repeat(batch_size, max_patches, height, width, 1)
+        max_coord = torch.tensor([width-1,height-1]).to(imgs)
+        max_coord = max_coord.reshape(1,1,1,1,2).repeat(batch_size, max_patches, height, width, 1)
+        norm_grid = (epipolar_grid - min_coord) / (max_coord - min_coord)
+        norm_grid = (norm_grid * 2) - 1
+
+        # aggregate image patches
         img_patches = F.grid_sample(imgs[:,i],
-                                    epipolar_grid.reshape(batch_size,max_patches,height*width,2),
+                                    norm_grid.reshape(batch_size, max_patches, height*width, 2),
                                     mode="nearest",
                                     padding_mode="zeros")
         img_patches = img_patches.reshape(batch_size, 3, max_patches, height, width)
-        print(img_patches[0,:,20,200,200])
-        sys.exit()
 
+        #### visual
+        r,c = 10,10
         for j in range(max_patches):
-            cv2.imwrite(f"patches/{i:02d}_{j:04d}.png", torch.movedim(img_patches[0,:,i], (0,1,2), (2,0,1)).cpu().numpy()*255 )
-            cv2.imwrite(f"patches/{i:02d}.png", torch.movedim(imgs[0,i], (0,1,2), (2,0,1)).cpu().numpy()*255 )
+            x_j,y_j,_ = xy[0,r,c,:,0].cpu().numpy()
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            ax.imshow(torch.movedim(img_patches[0,:,j], (0,1,2), (2,0,1)).cpu().numpy())
+            rect_j = Rectangle((x_j-(half_patch_size),y_j-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+            ax.add_patch(rect_j)
+            plt.savefig(f"patches/{i:02d}_{j:04d}.png")
+            plt.close()
 
-        #   #### visual
-        #   # plot src patches
-        #   r,c = 15,20
-        #   ep = epipolar_grid[0,:,r,c,:].cpu().numpy()
+        # plot src patches
+        ep = epipolar_grid[0,:,r,c,:].cpu().numpy()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
+        for x_i,y_i in ep:
+            if x_i>=0 and y_i>=0:
+                rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
+                ax.add_patch(rect_i)
+        plt.savefig(f"patches/{i:02d}.png")
+        plt.close()
+        #### visual
 
-        #   fig = plt.figure()
-        #   ax = fig.add_subplot(111)
-        #   ax.imshow(torch.movedim(imgs[0,i],(0,1,2),(2,0,1)).cpu().numpy())
-        #   for x_i,y_i in ep:
-        #       if x_i>=0 and y_i>=0:
-        #           rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
-        #           ax.add_patch(rect_i)
-        #   plt.savefig(f"src_img_{i}.png")
-        #   plt.close()
-        #   #### visual
-
-    #   #### visual
-    #   # plot ref point
-    #   ref_pix = xy[0,r,c,:,0].cpu().numpy()
-    #   plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
-    #   plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
-    #   plt.savefig(f"ref_img.png")
-    #   plt.close()
-    #   #### visual
+    #### visual
+    # plot ref point
+    ref_pix = xy[0,r,c,:,0].cpu().numpy()
+    plt.imshow(torch.movedim(imgs[0,0],(0,1,2),(2,0,1)).cpu().numpy())
+    plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
+    plt.savefig(f"patches/ref_img.png")
+    plt.close()
+    #### visual
 
     sys.exit()
 
