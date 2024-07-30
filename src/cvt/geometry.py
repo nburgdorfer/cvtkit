@@ -58,11 +58,11 @@ def downsample_cloud(cloud, min_point_dist):
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
 def edge_mask(depth, near_depth, far_depth):
-    down_gt = F.interpolate(target_depth.unsqueeze(1),scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)
+    down_gt = F.interpolate(depth.unsqueeze(1),scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)
     down_up_gt = F.interpolate(down_gt,scale_factor=2,mode='bilinear',align_corners=False,recompute_scale_factor=False)
-    res = torch.abs(target_depth.unsqueeze(1)-down_up_gt)
+    res = torch.abs(depth.unsqueeze(1)-down_up_gt)
     high_frequency_mask = res>(0.001*(far_depth-near_depth)[:,None,None,None])
-    valid_gt_mask = (-F.max_pool2d(-target_depth.unsqueeze(1),kernel_size=5,stride=1,padding=2))>near_depth[:,None,None,None]
+    valid_gt_mask = (-F.max_pool2d(-depth.unsqueeze(1),kernel_size=5,stride=1,padding=2))>near_depth[:,None,None,None]
     high_frequency_mask = high_frequency_mask * valid_gt_mask
     high_frequency_mask = (1-high_frequency_mask.to(torch.int32)) * valid_gt_mask
     return high_frequency_mask
@@ -514,19 +514,19 @@ def get_uncovered_mask(data, output):
 
     uncovered_masks = torch.zeros(levels,H,W)
     for l in range(levels):
-        hypo = hypos[l].squeeze(1)
-        batch_size, planes, h, w = hypo.shape
-        interval = intervals[l].squeeze(1)
-        target_depth = tvf.resize(data["target_depth"], [h,w]).unsqueeze(1)
+        hypo = hypos[l][0].squeeze(0)
+        planes, h, w = hypo.shape
+        interval = intervals[l][0].squeeze(0)
+        target_depth = tvf.resize(data["target_depth"][0:1].unsqueeze(0), [h,w]).reshape(h,w)
 
         ### compute coverage
         diff = torch.abs(hypo - target_depth)
         min_interval = interval[:,0:1] * 0.5 # intervals are bin widths, divide by 2 for radius
-        coverage = torch.clip(torch.where(diff <= min_interval, 1, 0).sum(dim=1, keepdim=True), 0, 1)
-        uncovered = torch.clip(torch.where(coverage <= 0, 1, 0).sum(dim=1, keepdim=True), 0, 1)
+        coverage = torch.clip(torch.where(diff <= min_interval, 1, 0).sum(dim=0, keepdim=True), 0, 1)
+        uncovered = torch.clip(torch.where(coverage <= 0, 1, 0).sum(dim=0, keepdim=True), 0, 1)
         valid_targets = torch.where(target_depth > 0, 1, 0)
         uncovered *= valid_targets
-        uncovered_masks[l] = (tvf.resize(uncovered.reshape(1,h,w), [H,W], interpolation=tvt.InterpolationMode.NEAREST)).squeeze(0)
+        uncovered_masks[l] = (tvf.resize(uncovered.reshape(1,1,h,w), [H,W], interpolation=tvt.InterpolationMode.NEAREST)).reshape(H,W)
 
     return uncovered_masks
 
