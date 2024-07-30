@@ -53,6 +53,9 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
     return indices
 
+def freeze_model_weights(model):
+    model.requires_grad_(False)
+
 def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
     """Computes the Laplacian pyramid of an image.
 
