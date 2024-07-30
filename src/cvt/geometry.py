@@ -57,6 +57,16 @@ def downsample_cloud(cloud, min_point_dist):
     """
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
+def edge_mask(depth, near_depth, far_depth):
+    down_gt = F.interpolate(target_depth.unsqueeze(1),scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)
+    down_up_gt = F.interpolate(down_gt,scale_factor=2,mode='bilinear',align_corners=False,recompute_scale_factor=False)
+    res = torch.abs(target_depth.unsqueeze(1)-down_up_gt)
+    high_frequency_mask = res>(0.001*(far_depth-near_depth)[:,None,None,None])
+    valid_gt_mask = (-F.max_pool2d(-target_depth.unsqueeze(1),kernel_size=5,stride=1,padding=2))>near_depth[:,None,None,None]
+    high_frequency_mask = high_frequency_mask * valid_gt_mask
+    high_frequency_mask = (1-high_frequency_mask.to(torch.int32)) * valid_gt_mask
+    return high_frequency_mask
+
 def get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches):
     dx = x1-x0
     dy = y1-y0
