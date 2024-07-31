@@ -53,10 +53,25 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
     return indices
 
+def _build_depth_pyramid(depth, levels):
+    w,h = depth.shape
+    
+    depths = {(levels-1): depth}
+    for i in range(1,levels):
+        size = (int(h//(2**i)), int(w//(2**i)))
+        d = cv2.resize(depth, size, cv2.INTER_LINEAR)
+
+        depths[levels-1-i] = d
+
+    return depths
+
 def build_labels(depth, hypotheses):
-    print(depth.shape)
-    print(hypotheses.shape)
-    sys.exit()
+    bin_radius = (hypotheses[:,1] - hypotheses[:,0])/2.0
+    target_bin_dist = torch.abs(depth.unsqueeze(1) - hypotheses)
+    target_labels = torch.where(target_bin_dist <= bin_radius.unsqueeze(1), 1.0, 0.0)
+    mask = torch.where(target_labels.sum(dim=1) > 0, 1.0, 0.0) * torch.where(depth > 0, 1.0, 0.0)
+
+    return target_labels, mask
 
 def freeze_model_weights(model):
     model.requires_grad_(False)
@@ -338,6 +353,10 @@ def to_gpu(data: dict, device: str) -> None:
     for key,val in data.items():
         if isinstance(val, torch.Tensor):
             data[key] = val.cuda(device, non_blocking=True)
+        if isinstance(val, dict):
+            for k1,v1 in val.items():
+                if isinstance(v1, torch.Tensor):
+                    data[key][k1] = v1.cuda(device, non_blocking=True)
     return
 
 
