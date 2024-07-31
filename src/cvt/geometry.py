@@ -574,17 +574,20 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
     depth_hypos = depth_hypos.squeeze(1)
     _,planes,_,_ = depth_hypos.shape
 
-    B,fCH,H,W = features[0][level].shape
+    #B,fCH,H,W = features[0][level].shape
+    B,fCH,H,W = features[level][0].shape
     num_depth = depth_hypos.shape[1]
     nSrc = len(features)-1
 
     vis_weight_list = []
-    ref_volume = features[0][level].unsqueeze(2).repeat(1,1,num_depth,1,1)
+    #ref_volume = features[0][level].unsqueeze(2).repeat(1,1,num_depth,1,1)
+    ref_volume = features[level][0].unsqueeze(2).repeat(1,1,num_depth,1,1)
 
     if aggregation == "weighted_mean":
         cost_volume = None
     elif aggregation == "variance":
-        cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0][level])
+        #cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0][level])
+        cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[level][0])
         cost_volume[0] = ref_volume
 
     reweight_sum = None
@@ -620,7 +623,8 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
 
         
         grid = grid.type(ref_volume.dtype)
-        src_feature = features[src+1][level]
+        #src_feature = features[src+1][level]
+        src_feature = features[level][src+1]
         warped_src_fea = F.grid_sample(src_feature, grid.view(B, num_depth * H, W, 2), mode='bilinear',
                                     padding_mode='zeros',align_corners=False)
         warped_src_fea = warped_src_fea.view(B, fCH, num_depth, H, W)
@@ -1305,7 +1309,7 @@ def _soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M=1, d
 
     return hypos
 
-def resoluton_based_hypothesis(data, target_hypo, level, focal_length, min_hypo, max_hypo, delta_in=1):
+def resolution_based_hypothesis(data, target_hypo, level, focal_length, min_hypo, max_hypo, delta_in=1):
     """
     Parameters:
 
@@ -1411,7 +1415,7 @@ def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: Lis
 
     return vis_map.astype(np.float32)
 
-def uniform_hypothesis(cfg, ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, img_height, img_width, nhypothesis_init, inv_depth=False):
+def uniform_hypothesis(cfg, ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, img_height, img_width, nhypothesis_init, inv_depth=False, bin_format=False):
     """
     Parameters:
 
@@ -1422,10 +1426,17 @@ def uniform_hypothesis(cfg, ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, im
 
     depth_hypos = torch.zeros((batchSize,nhypothesis_init),device=ref_in.device)
     for b in range(0,batchSize):
-        if inv_depth:
-            depth_hypos[b] = 1/(torch.linspace(1/depth_min,1/depth_max,steps=nhypothesis_init,device=ref_in.device))
+        if bin_format:
+            spacing = depth_range/nhypothesis_init
+            start_depth = depth_min + (spacing/2)
+            end_depth = depth_min + (spacing/2) + ((nhypothesis_init-1)*spacing)
         else:
-            depth_hypos[b] = torch.linspace(depth_min, depth_max, steps=nhypothesis_init,device=ref_in.device)
+            start_depth = depth_min
+            end_depth = depth_max
+        if inv_depth:
+            depth_hypos[b] = 1/(torch.linspace(1/start_depth,1/end_depth,steps=nhypothesis_init,device=ref_in.device))
+        else:
+            depth_hypos[b] = torch.linspace(start_depth, end_depth, steps=nhypothesis_init,device=ref_in.device)
     depth_hypos = depth_hypos.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
 
     # Make coordinate for depth hypothesis, to be used by sparse convolution.

@@ -53,6 +53,11 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
     return indices
 
+def build_labels(depth, hypotheses):
+    print(depth.shape)
+    print(hypotheses.shape)
+    sys.exit()
+
 def freeze_model_weights(model):
     model.requires_grad_(False)
 
