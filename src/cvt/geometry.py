@@ -64,7 +64,7 @@ def edge_mask(depth, near_depth, far_depth):
     high_frequency_mask = res>(0.001*(far_depth-near_depth)[:,None,None,None])
     valid_gt_mask = (-F.max_pool2d(-depth.unsqueeze(1),kernel_size=5,stride=1,padding=2))>near_depth[:,None,None,None]
     high_frequency_mask = high_frequency_mask * valid_gt_mask
-    high_frequency_mask = (1-high_frequency_mask.to(torch.int32)) * valid_gt_mask
+    high_frequency_mask = ((1-high_frequency_mask.to(torch.int32)) * valid_gt_mask).to(torch.int32)
     return high_frequency_mask
 
 def get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches):
@@ -574,20 +574,23 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
     depth_hypos = depth_hypos.squeeze(1)
     _,planes,_,_ = depth_hypos.shape
 
-    B,fCH,H,W = features[0][level].shape
+    #B,fCH,H,W = features[0][level].shape
     #B,fCH,H,W = features[level][0].shape
+    B,fCH,H,W = features[0].shape
     num_depth = depth_hypos.shape[1]
     nSrc = len(features)-1
 
     vis_weight_list = []
-    ref_volume = features[0][level].unsqueeze(2).repeat(1,1,num_depth,1,1)
+    #ref_volume = features[0][level].unsqueeze(2).repeat(1,1,num_depth,1,1)
     #ref_volume = features[level][0].unsqueeze(2).repeat(1,1,num_depth,1,1)
+    ref_volume = features[0].unsqueeze(2).repeat(1,1,num_depth,1,1)
 
     if aggregation == "weighted_mean":
         cost_volume = None
     elif aggregation == "variance":
-        cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0][level])
+        #cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0][level])
         #cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[level][0])
+        cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0])
         cost_volume[0] = ref_volume
 
     reweight_sum = None
@@ -623,8 +626,9 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
 
         
         grid = grid.type(ref_volume.dtype)
-        src_feature = features[src+1][level]
+        #src_feature = features[src+1][level]
         #src_feature = features[level][src+1]
+        src_feature = features[src+1]
         warped_src_fea = F.grid_sample(src_feature, grid.view(B, num_depth * H, W, 2), mode='bilinear',
                                     padding_mode='zeros',align_corners=False)
         warped_src_fea = warped_src_fea.view(B, fCH, num_depth, H, W)

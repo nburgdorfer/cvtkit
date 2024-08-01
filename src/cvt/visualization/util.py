@@ -462,10 +462,12 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error):
     image_laplacian = data["image_laplacian"][0].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
     est_depth_laplacian = data["est_depth_laplacian"][0].detach().cpu().numpy()
-    uncovered_masks = output["uncovered_masks"].cpu().numpy()
+    #uncovered_masks = output["uncovered_masks"].cpu().numpy()
 
-    est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
+    est_depth = output["final_depth"].detach().cpu().numpy()[0]
     est_conf = output["confidence"].detach().cpu().numpy()[0]
+
+    assert(est_depth.shape == target_depth.shape)
 
     num_valid_pixels = np.where(target_depth > 0, 1, 0).sum()
 
@@ -487,21 +489,21 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error):
     depth_mae = np.mean(depth_residual)
     conf_mae = np.mean(conf_residual)
 
-    ## plot coverage
-    levels = uncovered_masks.shape[0]
-    fig, axs = plt.subplots(1, levels)
-    fig.tight_layout()
-    for i in range(levels):
-        coverage_percent = 1 - (uncovered_masks[i].sum() / num_valid_pixels)
-        axs[i].imshow(uncovered_masks[i], cmap="gray", vmin=0.0, vmax=1.0)
-        axs[i].set_title(f"Level {i}: \n{coverage_percent*100:0.2f}%")
-        axs[i].set_xticks([])
-        axs[i].set_yticks([])
-    plt.subplots_adjust(wspace=0, hspace=0.2)
-    plot_file = os.path.join(vis_path, f"{batch_ind:08d}_cov.png")
-    plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
-    plt.clf()
-    plt.close()
+    ### plot coverage
+    #levels = uncovered_masks.shape[0]
+    #fig, axs = plt.subplots(1, levels)
+    #fig.tight_layout()
+    #for i in range(levels):
+    #    coverage_percent = 1 - (uncovered_masks[i].sum() / num_valid_pixels)
+    #    axs[i].imshow(uncovered_masks[i], cmap="gray", vmin=0.0, vmax=1.0)
+    #    axs[i].set_title(f"Level {i}: \n{coverage_percent*100:0.2f}%")
+    #    axs[i].set_xticks([])
+    #    axs[i].set_yticks([])
+    #plt.subplots_adjust(wspace=0, hspace=0.2)
+    #plot_file = os.path.join(vis_path, f"{batch_ind:08d}_cov.png")
+    #plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
+    #plt.clf()
+    #plt.close()
 
 
     ## plot
