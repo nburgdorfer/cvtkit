@@ -9,6 +9,7 @@ formats.
 This module contains the following functions:
 
 - `camera_center(cam)` - Computes the center of a camera in world coordinates.
+- `intrinsic_pyramid(K, levels)` - Scales camera intrinsics for multi-resolution operations.
 - `relative_transform(cams_1, cams_2)` - Computes the relative transformation between two sets of cameras.
 - `sfm_to_trajectory(cams, log_file)` - Convert a set of cameras from SFM format to Trajectory File format.
 - `trajectory_to_sfm(log_file, camera_path, intrinsics)` - Convert a set of cameras from Trajectory File format to SFM format.
@@ -67,6 +68,19 @@ def intrinsic_pyramid(K, levels):
             k = torch.clone(K) / (2**l)
             k[:,2,2] = 1.0
         K_pyr[:,l] = k
+
+    return K_pyr
+
+def _intrinsic_pyramid(K, levels):
+    K_pyr = np.zeros((levels, 3, 3))
+
+    for l in range(levels):
+        if l==0:
+            k = K
+        else:
+            k = np.copy(K) / (2**l)
+            k[2,2] = 1.0
+        K_pyr[l] = k
 
     return K_pyr
 
