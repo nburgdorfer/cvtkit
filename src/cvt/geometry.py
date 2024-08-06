@@ -642,7 +642,7 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
                 B,C,D,H,W = warped_src_fea.shape
                 reweight = va_net(two_view_cost_volume) #B, H, W
                 vis_weight_list.append(reweight)
-                reweight = reweight.unsqueeze(1).unsqueeze(2) #B, 1, 1, H, W
+                reweight = reweight.unsqueeze(1) #B, 1, 1, H, W
                 two_view_cost_volume = reweight*two_view_cost_volume
             ## Use estimated visability weights for refine levels
             elif vis_weights is not None:

@@ -216,6 +216,14 @@ def non_zero_std(maps: torch.Tensor, device: str, dim: int = 1, keepdim: bool = 
     return std
 
 
+def _normalize_image(image, mean=None, std=None):
+    image = image / 255.0
+
+    if mean != None and std != None:
+        image = (image - mean) / std
+
+    return image
+
 def parameters_count(net, name, do_print=True):
     """
 
