@@ -70,6 +70,7 @@ def build_labels(depth, hypotheses):
     target_bin_dist = torch.abs(depth.unsqueeze(1) - hypotheses)
     target_labels = torch.where(target_bin_dist <= bin_radius.unsqueeze(1), 1.0, 0.0)
     mask = torch.where(target_labels.sum(dim=1) > 0, 1.0, 0.0) * torch.where(depth > 0, 1.0, 0.0)
+    target_labels = torch.argmax(target_labels, dim=1)
 
     return target_labels.to(torch.float32), mask.to(torch.float32)
 
