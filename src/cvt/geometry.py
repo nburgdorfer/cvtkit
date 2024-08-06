@@ -624,13 +624,15 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
                 proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, Ndepth, H*W, 2]
                 grid = proj_xy
 
-        
         grid = grid.type(ref_volume.dtype)
         #src_feature = features[src+1][level]
         #src_feature = features[level][src+1]
         src_feature = features[src+1]
-        warped_src_fea = F.grid_sample(src_feature, grid.view(B, num_depth * H, W, 2), mode='bilinear',
-                                    padding_mode='zeros',align_corners=False)
+        warped_src_fea = F.grid_sample( src_feature,
+                                        grid.view(B, num_depth * H, W, 2), 
+                                        mode='bilinear',
+                                        padding_mode='zeros',
+                                        align_corners=False)
         warped_src_fea = warped_src_fea.view(B, fCH, num_depth, H, W)
 
 
