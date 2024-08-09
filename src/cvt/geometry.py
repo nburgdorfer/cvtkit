@@ -313,7 +313,8 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
             #       if x_i>=0 and y_i>=0:
             #           rect_i = Rectangle((x_i-(half_patch_size),y_i-(half_patch_size)), patch_size, patch_size, color='red', fc = 'none', lw = 0.5)
             #           ax.add_patch(rect_i)
-            #   plt.savefig(f"patches/ref{j:02d}_src{i:02d}.png")
+            #   plt.axis('off')
+            #   plt.savefig(f"patches/ref{j:02d}_src{i:02d}.png", bbox_inches='tight', dpi=300)
             #   plt.close()
             #   #### visual
         #   #### visual
@@ -321,8 +322,10 @@ def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
         #   ref_pix = xy[0,r,c,:,0].cpu().numpy()
         #   plt.imshow(torch.movedim(imgs[0,j],(0,1,2),(2,0,1)).cpu().numpy())
         #   plt.plot(ref_pix[0].item(),ref_pix[1].item(),'ro')
-        #   plt.savefig(f"patches/ref{j:02d}.png")
+        #   plt.axis('off')
+        #   plt.savefig(f"patches/ref{j:02d}.png", bbox_inches='tight', dpi=300)
         #   plt.close()
+        #   sys.exit()
         #   #### visual
 
         patch_volumes.append(torch.cat(view_patches, dim=2))
