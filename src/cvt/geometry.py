@@ -555,7 +555,7 @@ def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
 
     return H
 
-def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_groups, va_net=None, vis_weights=None, aggregation="variance"):
+def homography_warp(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_group, va_net=None, vis_weights=None, aggregation="variance"):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
         cfg: Configuration dictionary containing configuration parameters.
@@ -577,22 +577,16 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
     depth_hypos = depth_hypos.squeeze(1)
     _,planes,_,_ = depth_hypos.shape
 
-    #B,fCH,H,W = features[0][level].shape
-    #B,fCH,H,W = features[level][0].shape
     B,fCH,H,W = features[0].shape
     num_depth = depth_hypos.shape[1]
     nSrc = len(features)-1
 
     vis_weight_list = []
-    #ref_volume = features[0][level].unsqueeze(2).repeat(1,1,num_depth,1,1)
-    #ref_volume = features[level][0].unsqueeze(2).repeat(1,1,num_depth,1,1)
     ref_volume = features[0].unsqueeze(2).repeat(1,1,num_depth,1,1)
 
     if aggregation == "weighted_mean":
         cost_volume = None
     elif aggregation == "variance":
-        #cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0][level])
-        #cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[level][0])
         cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0])
         cost_volume[0] = ref_volume
 
@@ -628,8 +622,6 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
                 grid = proj_xy
 
         grid = grid.type(ref_volume.dtype)
-        #src_feature = features[src+1][level]
-        #src_feature = features[level][src+1]
         src_feature = features[src+1]
         warped_src_fea = F.grid_sample( src_feature,
                                         grid.view(B, num_depth * H, W, 2), 
@@ -641,7 +633,7 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
 
         if aggregation == "weighted_mean":
             ########## dot prod ##########
-            two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_groups[level]) #B,C,D,H,W
+            two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_group) #B,C,D,H,W
             ## Estimate visability weight for init level
             if va_net is not None:
                 B,C,D,H,W = warped_src_fea.shape
@@ -675,7 +667,7 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
             ######## var prod ##########
             ## Estimate visability weight for init level
             if va_net is not None:
-                two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_groups[level]) #B,C,D,H,W
+                two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_group) #B,C,D,H,W
                 B,C,D,H,W = warped_src_fea.shape
                 reweight = va_net(two_view_cost_volume) #B, H, W
                 vis_weight_list.append(reweight)
@@ -703,7 +695,7 @@ def homography_warp(cfg, features, level, ref_in, src_in, ref_ex, src_ex, depth_
     elif aggregation == "variance":
         cost_volume = torch.var(cost_volume, dim=0)
         B,C,D,H,W = cost_volume.shape
-        cost_volume = cost_volume.mean(dim=1, keepdim=True)
+        #cost_volume = cost_volume.mean(dim=1, keepdim=True)
 
     return cost_volume, vis_weight_list
 
