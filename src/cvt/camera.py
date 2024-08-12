@@ -71,6 +71,14 @@ def intrinsic_pyramid(K, levels):
 
     return K_pyr
 
+def scale_intrinsic(K, s):
+    batch_size, _, _ = K.shape
+
+    Ks = torch.clone(K) / (2**(s-1))
+    Ks[:,2,2] = 1.0
+
+    return Ks
+
 def _intrinsic_pyramid(K, levels):
     K_pyr = np.zeros((levels, 3, 3))
 
