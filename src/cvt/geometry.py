@@ -100,54 +100,6 @@ def get_epipolar_inds(x0, y0, x1, y1, x_lim, y_lim, max_patches):
 
     return epipolar_grid[:,:,:,:,0], epipolar_grid[:,:,:,:,1]
 
-def get_epipolar_inds_low(x0, y0, x1, y1):
-    dx = x1-x0
-    dy = y1-y0
-    yi=1
-    if dy < 0:
-        yi=-1
-        dy=-dy
-
-    D = (2*dy) - dx
-    y=y0
-
-    xy = []
-    for x in range(x0,x1+1):
-        xy.append([x,y])
-
-        if D > 0:
-            y = y + yi
-            D = D + (2*(dy-dx))
-        else:
-            D = D + (2*dy)
-
-    xy = np.asarray(xy).astype(np.int32)
-    return xy[:,0], xy[:,1]
-
-def get_epipolar_inds_high(x0, y0, x1, y1):
-    dx = x1-x0
-    dy = y1-y0
-    xi=1
-    if dx < 0:
-        xi=-1
-        dx=-dx
-
-    D = (2*dx) - dy
-    x=x0
-
-    xy = []
-    for y in range(y0,y1+1):
-        xy.append([x,y])
-
-        if D > 0:
-            x = x + xi
-            D = D + (2*(dx-dy))
-        else:
-            D = D + (2*dx)
-
-    xy = np.asarray(xy).astype(np.int32)
-    return xy[:,0], xy[:,1]
-
 def epipolar_patch_retrieval(imgs, intrinsics, extrinsics, patch_size):
     batch_size, views, c, height, width = imgs.shape
     half_patch_size = patch_size//2
@@ -554,6 +506,63 @@ def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
     H, mask = cv2.findHomography(tgt_points, src_points, method=cv2.RANSAC)
 
     return H
+
+def psv(cfg, images, intrinsics, extrinsics, depth_hypos):
+    """Performs homography warping to create a Plane Sweeping Volume (PSV).
+    Parameters:
+        cfg: Configuration dictionary containing configuration parameters.
+        images: image maps to be warped into a PSV.
+        intrinsics: intrinsics matrices.
+        extrinsics: extrinsics matrices.
+        depth_hypos: Depth hypotheses to use for homography warping.
+
+    Returns:
+        The Plane Sweeping Volume computed via feature matching cost.
+    """
+    depth_hypos = depth_hypos.squeeze(1)
+    _,planes,_,_ = depth_hypos.shape
+    B,views,C,H,W = images.shape
+
+    pairwise_psv = []
+    for v in range(1,views):
+        with torch.no_grad():
+            src_proj = torch.matmul(intrinsics[:,v], extrinsics[:,v,0:3])
+            ref_proj = torch.matmul(intrinsics[:,0], extrinsics[:,0,0:3])
+            last = torch.tensor([[[0,0,0,1.0]]]).repeat(B,1,1).to(images.device)
+            src_proj = torch.cat((src_proj,last),1)
+            ref_proj = torch.cat((ref_proj,last),1)
+
+            proj = torch.matmul(src_proj, torch.inverse(ref_proj))
+            rot = proj[:, :3, :3]  # [B,3,3]
+            trans = proj[:, :3, 3:4]  # [B,3,1]
+
+            y, x = torch.meshgrid([torch.arange(0, H, dtype=torch.float32, device=images.device),
+                                torch.arange(0, W, dtype=torch.float32, device=images.device)],
+                                indexing='ij')
+            y, x = y.contiguous(), x.contiguous()
+            y, x = y.view(H * W), x.view(H * W)
+            xyz = torch.stack((x, y, torch.ones_like(x)))  # [3, H*W]
+            xyz = torch.unsqueeze(xyz, 0).repeat(B, 1, 1)  # [B, 3, H*W]
+            rot_xyz = torch.matmul(rot, xyz)  # [B, 3, H*W]
+
+            rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, planes, 1) * depth_hypos.view(B, 1, planes, H*W)  # [B, 3, Ndepth, H*W]
+            proj_xyz = rot_depth_xyz + trans.view(B, 3, 1, 1)  # [B, 3, Ndepth, H*W]
+            proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]  # [B, 2, Ndepth, H*W]
+            proj_x_normalized = proj_xy[:, 0, :, :] / ((W - 1) / 2) - 1
+            proj_y_normalized = proj_xy[:, 1, :, :] / ((H - 1) / 2) - 1
+            proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, Ndepth, H*W, 2]
+            grid = proj_xy
+        grid = grid.type(images.dtype)
+
+        warped_src_image = F.grid_sample( images[:,v],
+                                        grid.view(B, planes * H, W, 2), 
+                                        mode='bilinear',
+                                        padding_mode='zeros',
+                                        align_corners=False)
+        pairwise_psv.append(warped_src_image.view(B, C, planes, H, W))
+
+    return pairwise_psv
+
 
 def homography_warp(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_group, va_net=None, vis_weights=None, aggregation="variance"):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
