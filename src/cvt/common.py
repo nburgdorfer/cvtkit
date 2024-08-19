@@ -131,8 +131,7 @@ def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
     #cv2.imwrite("./log/laplace.png", (all_diff.detach().cpu().numpy()/4)*255)
     #cv2.imwrite("./log/image.png", torch.movedim(image[0].flip(dims=[0]), (0,1,2), (2,0,1)).detach().cpu().numpy()*255)
 
-    return all_diff.squeeze(-1)
-
+    return all_diff.reshape(batch_size, 1, h, w)
 
 def cosine_similarity(t1: torch.Tensor, t2: torch.Tensor) -> torch.Tensor:
     """Computes the cosine similarity between two tensors.

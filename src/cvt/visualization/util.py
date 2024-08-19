@@ -458,14 +458,14 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
 
 
 def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error):
-    target_depth = data["target_depth"].detach().cpu().numpy()[0]
-    image_laplacian = data["image_laplacian"][0].detach().cpu().numpy()
-    depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
-    est_depth_laplacian = data["est_depth_laplacian"][0].detach().cpu().numpy()
+    target_depth = data["target_depth"].detach().cpu().numpy()[0,0]
+    image_laplacian = data["image_laplacian"][0,0].detach().cpu().numpy()
+    depth_laplacian = data["depth_laplacian"][0,0].detach().cpu().numpy()
+    est_depth_laplacian = data["est_depth_laplacian"][0,0].detach().cpu().numpy()
     #uncovered_masks = output["uncovered_masks"].cpu().numpy()
 
-    est_depth = output["final_depth"].detach().cpu().numpy()[0]
-    est_conf = output["confidence"].detach().cpu().numpy()[0]
+    est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
+    est_conf = output["confidence"].detach().cpu().numpy()[0,0]
 
     assert(est_depth.shape == target_depth.shape)
 
