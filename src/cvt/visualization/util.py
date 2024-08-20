@@ -475,9 +475,8 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error):
     depth_residual = np.abs(est_depth - target_depth)
 
     ## compute confidence residual
-    target_conf = (1-depth_residual)
-    valid_conf_vals = target_conf[target_depth != 0.0]
-    target_conf = (target_conf - valid_conf_vals.min()) / (valid_conf_vals.max() - valid_conf_vals.min() + 1e-10)
+    res_temp = np.clip(depth_residual / (max_depth_error*3+1e-10), 0, 1)
+    target_conf = (1-res_temp)
     conf_residual = np.abs(est_conf - target_conf)
 
     ## mask out invalid pixels
