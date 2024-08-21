@@ -507,6 +507,60 @@ def homography(src_image_file: str, tgt_image_file: str) -> np.ndarray:
 
     return H
 
+def single_psv(cfg, images, intrinsics, extrinsics, depth_hypos, view):
+    """Performs homography warping to create a Plane Sweeping Volume (PSV).
+    Parameters:
+        cfg: Configuration dictionary containing configuration parameters.
+        images: image maps to be warped into a PSV.
+        intrinsics: intrinsics matrices.
+        extrinsics: extrinsics matrices.
+        depth_hypos: Depth hypotheses to use for homography warping.
+
+    Returns:
+        The Plane Sweeping Volume computed via feature matching cost.
+    """
+    depth_hypos = depth_hypos.squeeze(1)
+    _,planes,_,_ = depth_hypos.shape
+    B,views,C,H,W = images.shape
+
+    with torch.no_grad():
+        src_proj = torch.matmul(intrinsics[:,view], extrinsics[:,view,0:3])
+        ref_proj = torch.matmul(intrinsics[:,0], extrinsics[:,0,0:3])
+        last = torch.tensor([[[0,0,0,1.0]]]).repeat(B,1,1).to(images.device)
+        src_proj = torch.cat((src_proj,last),1)
+        ref_proj = torch.cat((ref_proj,last),1)
+
+        proj = torch.matmul(src_proj, torch.inverse(ref_proj))
+        rot = proj[:, :3, :3]  # [B,3,3]
+        trans = proj[:, :3, 3:4]  # [B,3,1]
+
+        y, x = torch.meshgrid([torch.arange(0, H, dtype=torch.float32, device=images.device),
+                            torch.arange(0, W, dtype=torch.float32, device=images.device)],
+                            indexing='ij')
+        y, x = y.contiguous(), x.contiguous()
+        y, x = y.view(H * W), x.view(H * W)
+        xyz = torch.stack((x, y, torch.ones_like(x)))  # [3, H*W]
+        xyz = torch.unsqueeze(xyz, 0).repeat(B, 1, 1)  # [B, 3, H*W]
+        rot_xyz = torch.matmul(rot, xyz)  # [B, 3, H*W]
+
+        rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, planes, 1) * depth_hypos.view(B, 1, planes, H*W)  # [B, 3, Ndepth, H*W]
+        proj_xyz = rot_depth_xyz + trans.view(B, 3, 1, 1)  # [B, 3, Ndepth, H*W]
+        proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]  # [B, 2, Ndepth, H*W]
+        proj_x_normalized = proj_xy[:, 0, :, :] / ((W - 1) / 2) - 1
+        proj_y_normalized = proj_xy[:, 1, :, :] / ((H - 1) / 2) - 1
+        proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, Ndepth, H*W, 2]
+        grid = proj_xy
+    grid = grid.type(images.dtype)
+
+    warped_src_image = F.grid_sample( images[:,view],
+                                    grid.view(B, planes * H, W, 2), 
+                                    mode='bilinear',
+                                    padding_mode='zeros',
+                                    align_corners=False)
+    pairwise_psv = warped_src_image.view(B, C, planes, H, W)
+
+    return pairwise_psv
+
 def psv(cfg, images, intrinsics, extrinsics, depth_hypos):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
