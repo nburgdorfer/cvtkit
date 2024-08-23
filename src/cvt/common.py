@@ -54,14 +54,14 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     return indices
 
 def _build_depth_pyramid(depth, levels):
-    w,h = depth.shape
+    h,w = depth.shape
     
-    depths = {(levels-1): depth}
+    depths = {(levels-1): depth.reshape(1,h,w)}
     for i in range(1,levels):
-        size = (int(h//(2**i)), int(w//(2**i)))
+        size = (int(w//(2**i)), int(h//(2**i)))
         d = cv2.resize(depth, size, cv2.INTER_LINEAR)
 
-        depths[levels-1-i] = d
+        depths[levels-1-i] = d.reshape(1, size[1], size[0])
 
     return depths
 
