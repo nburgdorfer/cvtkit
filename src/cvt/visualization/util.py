@@ -678,3 +678,13 @@ def plot_laplacian_matrix(M, plot_file, use_est_depth=False, count=False):
     plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=200)
     plt.clf()
     plt.close()
+
+
+def to_normal(ply_file, output_file, radius=5.0, max_nn=30):
+    cloud = o3d.io.read_point_cloud(ply_file)
+    cloud.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=radius, max_nn=max_nn))
+    normals = np.asarray(cloud.normals)
+    #normals = (normals-normals.min(axis=0)) / (normals.max(axis=0)-normals.min(axis=0))
+    normals = (normals-normals.min()) / (normals.max()-normals.min())
+    cloud.colors = o3d.utility.Vector3dVector(normals[:,::-1])
+    o3d.io.write_point_cloud(output_file, cloud)
