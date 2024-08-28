@@ -24,6 +24,12 @@ from scipy.spatial.transform import Rotation
 import torch
 import open3d as o3d
 
+def crop_cam(intrinsics, crop_row, crop_col):
+    intrinsics[0,2] -= crop_col
+    intrinsics[1,2] -= crop_row
+    return intrinsics
+
+
 def scale_cam(intrinsics, h=None, w=None, max_h=None, max_w=None, scale=None):
     if scale:
         new_intrinsics = intrinsics.copy()

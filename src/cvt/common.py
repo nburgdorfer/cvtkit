@@ -74,6 +74,16 @@ def build_labels(depth, hypotheses):
 
     return target_labels.to(torch.int64), mask.to(torch.float32)
 
+def crop_image(image, crop_row, crop_col, scale):
+    _, height, width = image.shape
+
+    start_row = crop_row
+    end_row = int(crop_row + (scale*height))
+    start_col = crop_col
+    end_col = int(crop_col + (scale*width))
+
+    return image[:, start_row:end_row, start_col:end_col]
+
 def freeze_model_weights(model):
     model.requires_grad_(False)
 
