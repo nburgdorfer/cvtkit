@@ -902,10 +902,11 @@ def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
     x = x.flatten()
     y = y.flatten()
     depth = depth.flatten()
+    valid_inds = np.argwhere(depth>0)[:,0]
     xyz_cam = np.matmul(np.linalg.inv(cam[1,:3,:3]), np.vstack((x, y, np.ones_like(x))) * depth)
     xyz_world = np.matmul(np.linalg.inv(cam[0,:4,:4]), np.vstack((xyz_cam, np.ones_like(x))))[:3]
     points = xyz_world.transpose((1, 0))
-    return points
+    return points, valid_inds
 
 def project_depth_map(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Projects a depth map into a list of 3D points
