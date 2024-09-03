@@ -7,10 +7,14 @@ import sys
 import json
 from tqdm import tqdm
 import yaml
+import scipy.io as sio
+
 from cvt.camera import scale_cam
 from cvt.io import read_single_cam_sfm, read_pfm, read_cluster_list
 
-from src.datasets.BaseDataset import BaseDataset
+from cvt.datasets.BaseDataset import BaseDataset
+
+
 
 class Dataset(BaseDataset):
     def __init__(self, cfg, mode, scenes):
@@ -178,3 +182,63 @@ class Dataset(BaseDataset):
             gt_depth = self.get_depth(os.path.join(self.gt_depth_path, gdf), scale=scale)
             gt_depths[ref_ind] = gt_depth
         return gt_depths
+
+def build_est_points_filter(cloud, data_path, scan_num):
+    # read in matlab bounding box, mask, and resolution
+    mask_filename = "ObsMask{}_10.mat".format(scan_num)
+    mask_path = os.path.join(data_path, "ObsMask", mask_filename)
+    data = sio.loadmat(mask_path)
+    bounds = np.asarray(data["BB"])
+    min_bound = bounds[0,:]
+    max_bound = bounds[1,:]
+    mask = np.asarray(data["ObsMask"])
+    res = int(data["Res"])
+
+    points = np.asarray(cloud.points).transpose()
+    shape = points.shape
+    mask_shape = mask.shape
+    filt = np.zeros(shape[1])
+
+    min_bound = min_bound.reshape(3,1)
+    min_bound = np.tile(min_bound, (1,shape[1]))
+
+    qv = points
+    qv = (points - min_bound) / res
+    qv = round_nearest(qv).astype(int)
+
+    # get all valid points
+    in_bounds = np.asarray(np.where( ((qv[0,:]>=0) & (qv[0,:] < mask_shape[0]) & (qv[1,:]>=0) & (qv[1,:] < mask_shape[1]) & (qv[2,:]>=0) & (qv[2,:] < mask_shape[2])))).squeeze(0)
+    valid_points = qv[:,in_bounds]
+
+    # convert 3D coords ([x,y,z]) to appropriate flattened coordinate ((x*mask_shape[1]*mask_shape[2]) + (y*mask_shape[2]) + z )
+    mask_inds = np.ravel_multi_index(valid_points, dims=mask.shape, order='C')
+
+    # further trim down valid points by mask value (keep point if mask is True)
+    mask = mask.flatten()
+    valid_mask_points = np.asarray(np.where(mask[mask_inds] == True)).squeeze(0)
+
+    # add 1 to indices where we want to keep points
+    filt[in_bounds[valid_mask_points]] = 1
+
+    return filt
+
+def build_gt_points_filter(cloud, data_path, scan_num):
+    # read in matlab gt plane 
+    mask_filename = "Plane{}.mat".format(scan_num)
+    mask_path = os.path.join(data_path, "ObsMask", mask_filename)
+    data = sio.loadmat(mask_path)
+    P = np.asarray(data["P"])
+
+    points = np.asarray(cloud.points).transpose()
+    shape = points.shape
+
+    # compute iner-product between points and the defined plane
+    Pt = P.transpose()
+
+    points = np.concatenate((points, np.ones((1,shape[1]))), axis=0)
+    plane_prod = (Pt @ points).squeeze(0)
+
+    # get all valid points
+    filt = np.asarray(np.where((plane_prod > 0), 1, 0))
+
+    return filt

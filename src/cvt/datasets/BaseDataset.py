@@ -12,7 +12,7 @@ from cvt.common import _build_depth_pyramid, _normalize_image, crop_image
 
 def build_dataset(cfg, mode, scenes):
     if cfg["dataset"] == 'DTU':
-        from cvt.datasets.DTU import DTU as Dataset
+        from cvt.datasets.DTU import Dataset
     else:
         raise Exception(f"Unknown Dataset {self.cfg['dataset']}")
 
