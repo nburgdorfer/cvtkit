@@ -884,12 +884,13 @@ def _plane_coords(K, P, near, far, H, W):
 
     return near_plane, far_plane
 
-def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
+def _points_from_depth(depth: np.ndarray, intrinsics: np.ndarray, extrinsics: np.ndarray) -> np.ndarray:
     """Creates a point array from a single depth map.
 
     Parameters:
         depth: Depth map to project to 3D.
-        cam: Camera parameters for the given depth map viewpoint.
+        intrinsics: Intrinsic camera parameters for the given depth map viewpoint.
+        extrinsics: Extrinsic camera parameters for the given depth map viewpoint.
 
     Returns:
         An array of 3D points corresponding to the input depth map.
@@ -903,8 +904,8 @@ def points_from_depth(depth: np.ndarray, cam: np.ndarray) -> np.ndarray:
     y = y.flatten()
     depth = depth.flatten()
     valid_inds = np.argwhere(depth>0)[:,0]
-    xyz_cam = np.matmul(np.linalg.inv(cam[1,:3,:3]), np.vstack((x, y, np.ones_like(x))) * depth)
-    xyz_world = np.matmul(np.linalg.inv(cam[0,:4,:4]), np.vstack((xyz_cam, np.ones_like(x))))[:3]
+    xyz_cam = np.matmul(np.linalg.inv(intrinsics[:3,:3]), np.vstack((x, y, np.ones_like(x))) * depth)
+    xyz_world = np.matmul(np.linalg.inv(extrinsics), np.vstack((xyz_cam, np.ones_like(x))))[:3]
     points = xyz_world.transpose((1, 0))
     return points, valid_inds
 
