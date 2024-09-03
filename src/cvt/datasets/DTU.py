@@ -11,10 +11,8 @@ import scipy.io as sio
 
 from cvt.camera import scale_cam
 from cvt.io import read_single_cam_sfm, read_pfm, read_cluster_list
-
 from cvt.datasets.BaseDataset import BaseDataset
-
-
+from cvt.common import round_nearest
 
 class Dataset(BaseDataset):
     def __init__(self, cfg, mode, scenes):
@@ -183,10 +181,10 @@ class Dataset(BaseDataset):
             gt_depths[ref_ind] = gt_depth
         return gt_depths
 
-def build_est_points_filter(cloud, data_path, scan_num):
+def build_est_points_filter(cloud, mask_path, scan_num):
     # read in matlab bounding box, mask, and resolution
     mask_filename = "ObsMask{}_10.mat".format(scan_num)
-    mask_path = os.path.join(data_path, "ObsMask", mask_filename)
+    mask_path = os.path.join(mask_path, mask_filename)
     data = sio.loadmat(mask_path)
     bounds = np.asarray(data["BB"])
     min_bound = bounds[0,:]
