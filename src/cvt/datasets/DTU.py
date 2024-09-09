@@ -181,7 +181,7 @@ class Dataset(BaseDataset):
             gt_depths[ref_ind] = gt_depth
         return gt_depths
 
-def build_est_points_filter(cloud, mask_path, scan_num):
+def build_est_points_filter(points, mask_path, scan_num):
     # read in matlab bounding box, mask, and resolution
     mask_filename = "ObsMask{}_10.mat".format(scan_num)
     mask_path = os.path.join(mask_path, mask_filename)
@@ -192,7 +192,7 @@ def build_est_points_filter(cloud, mask_path, scan_num):
     mask = np.asarray(data["ObsMask"])
     res = int(data["Res"])
 
-    points = np.asarray(cloud.points).transpose()
+    points = points.transpose()
     shape = points.shape
     mask_shape = mask.shape
     filt = np.zeros(shape[1])
