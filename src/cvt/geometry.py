@@ -564,7 +564,7 @@ def psv(cfg, images, intrinsics, extrinsics, depth_hypos):
     return pairwise_psv
 
 
-def homography_warp(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_group, va_net=None, vis_weights=None, aggregation="variance"):
+def homography_warp(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_group, va_net=None, vis_weights=None, aggregation="variance", virtual=False):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
         cfg: Configuration dictionary containing configuration parameters.
@@ -591,7 +591,10 @@ def homography_warp(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos, 
     nSrc = len(features)-1
 
     vis_weight_list = []
-    ref_volume = features[0].unsqueeze(2).repeat(1,1,num_depth,1,1)
+    if virtual:
+        ref_volume = torch.ones((B,fCH,num_depth,H,W)).to(features[0])
+    else:
+        ref_volume = features[0].unsqueeze(2).repeat(1,1,num_depth,1,1)
 
     if aggregation == "weighted_mean":
         cost_volume = None
