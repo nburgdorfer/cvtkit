@@ -564,150 +564,111 @@ def psv(cfg, images, intrinsics, extrinsics, depth_hypos):
     return pairwise_psv
 
 
-def homography_warp(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_group, va_net=None, vis_weights=None, aggregation="variance", virtual=False):
+def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_channels, va_net=None, vis_weights=None, virtual=False):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
         cfg: Configuration dictionary containing configuration parameters.
         features: Feature maps to be warped into a PSV.
-        level: Current feature resolution level.
-        ref_in: Reference view intrinsics matrix.
-        src_in: Source view intrinsics matrices.
-        ref_ex: Reference view extrinsics matrix.
-        src_ex: Source view extrinsics matrices.
-        depth_hypos: Depth hypotheses to use for homography warping.
-        gwc_groups: Feature channel sizes used in group-wise correlation.
+        intrinsics: Intrinsics matrices for all views.
+        extrinsics: Extrinsics matrices for all views.
+        hypotheses: Depth hypotheses to use for homography warping.
+        group_channels: Feature channel sizes used in group-wise correlation (GWC).
         va_net: Network used for visibility weighting.
         vis_weights: Pre-computed visibility weights.
-        aggregation: Aggregation method to be used.
 
     Returns:
         The Plane Sweeping Volume computed via feature matching cost.
     """
-    depth_hypos = depth_hypos.squeeze(1)
-    _,planes,_,_ = depth_hypos.shape
+    hypotheses = hypotheses.squeeze(1)
+    _,planes,_,_ = hypotheses.shape
+    batch_size, C, height, width = features[0].shape
+    num_views = len(features)
+    device = features[0].device
 
-    B,fCH,H,W = features[0].shape
-    num_depth = depth_hypos.shape[1]
-    nSrc = len(features)-1
+    if not virtual:
+        ref_volume = features[0].unsqueeze(2).repeat(1,1,planes,1,1)
 
     vis_weight_list = []
-    if virtual:
-        ref_volume = torch.ones((B,fCH,num_depth,H,W)).to(features[0])
-    else:
-        ref_volume = features[0].unsqueeze(2).repeat(1,1,num_depth,1,1)
+    cost_volume = torch.zeros((batch_size,group_channels,planes,height,width), dtype=torch.float32, device=device)
+    reweight_sum = torch.zeros((batch_size,1,planes,height,width), dtype=torch.float32, device=device)
 
-    if aggregation == "weighted_mean":
-        cost_volume = None
-    elif aggregation == "variance":
-        cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0])
-        cost_volume[0] = ref_volume
+    # build reference projection matrix
+    ref_proj = torch.matmul(intrinsics[:,0], extrinsics[:,0,0:3])
+    last = torch.tensor([[[0,0,0,1.0]]]).repeat(batch_size, 1, 1).cuda()
+    ref_proj = torch.cat((ref_proj, last), 1)
+    
+    # build coordinates grid
+    y, x = torch.meshgrid([torch.arange(0, height, dtype=torch.float32, device=device),
+                        torch.arange(0, width, dtype=torch.float32, device=device)],
+                        indexing='ij')
+    y, x = y.contiguous(), x.contiguous()
+    y, x = y.view(height * width), x.view(height * width)
+    xyz = torch.stack((x, y, torch.ones_like(x)))
+    xyz = torch.unsqueeze(xyz, 0).repeat(batch_size, 1, 1)
 
-    reweight_sum = None
-    for src in range(nSrc):
+    for v in range(1,num_views):
         with torch.no_grad():
-            with autocast(enabled=False):
-                src_proj = torch.matmul(src_in[:,src,:,:],src_ex[:,src,0:3,:])
-                ref_proj = torch.matmul(ref_in,ref_ex[:,0:3,:])
-                last = torch.tensor([[[0,0,0,1.0]]]).repeat(len(src_in),1,1).cuda()
-                src_proj = torch.cat((src_proj,last),1)
-                ref_proj = torch.cat((ref_proj,last),1)
+            # build source projection matrix
+            src_proj = torch.matmul(intrinsics[:,v], extrinsics[:,v,0:3])
+            src_proj = torch.cat((src_proj, last), 1)
 
-                proj = torch.matmul(src_proj, torch.inverse(ref_proj))
-                rot = proj[:, :3, :3]  # [B,3,3]
-                trans = proj[:, :3, 3:4]  # [B,3,1]
+            # compute full projection matrix between views
+            proj = torch.matmul(src_proj, torch.inverse(ref_proj))
+            rot = proj[:, :3, :3]
+            trans = proj[:, :3, 3:4]
 
-                y, x = torch.meshgrid([torch.arange(0, H, dtype=torch.float32, device=ref_volume.device),
-                                    torch.arange(0, W, dtype=torch.float32, device=ref_volume.device)],
-                                    indexing='ij')
-                y, x = y.contiguous(), x.contiguous()
-                y, x = y.view(H * W), x.view(H * W)
-                xyz = torch.stack((x, y, torch.ones_like(x)))  # [3, H*W]
-                xyz = torch.unsqueeze(xyz, 0).repeat(B, 1, 1)  # [B, 3, H*W]
-                rot_xyz = torch.matmul(rot, xyz)  # [B, 3, H*W]
+            # Build plane-sweeping coordinates grid between views
+            rot_xyz = torch.matmul(rot, xyz)
+            rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, planes, 1) * hypotheses.view(batch_size, 1, planes, height*width)
+            proj_xyz = rot_depth_xyz + trans.view(batch_size, 3, 1, 1)
+            proj_xy = proj_xyz[:, :2] / proj_xyz[:, 2:3]
+            proj_x_normalized = proj_xy[:, 0] / ((width - 1) / 2) - 1
+            proj_y_normalized = proj_xy[:, 1] / ((height - 1) / 2) - 1
+            proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)
+            grid = proj_xy
+            grid = grid.type(torch.float32)
 
-                rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, num_depth, 1) * depth_hypos.view(B, 1, num_depth,H*W)  # [B, 3, Ndepth, H*W]
-                proj_xyz = rot_depth_xyz + trans.view(B, 3, 1, 1)  # [B, 3, Ndepth, H*W]
-                proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]  # [B, 2, Ndepth, H*W]
-                proj_x_normalized = proj_xy[:, 0, :, :] / ((W - 1) / 2) - 1
-                proj_y_normalized = proj_xy[:, 1, :, :] / ((H - 1) / 2) - 1
-                proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, Ndepth, H*W, 2]
-                grid = proj_xy
-
-        grid = grid.type(ref_volume.dtype)
-        src_feature = features[src+1]
-        warped_src_fea = F.grid_sample( src_feature,
-                                        grid.view(B, num_depth * H, W, 2), 
+        src_feature = features[v]
+        warped_features = F.grid_sample( src_feature,
+                                        grid.view(batch_size, planes * height, width, 2), 
                                         mode='bilinear',
                                         padding_mode='zeros',
                                         align_corners=False)
-        warped_src_fea = warped_src_fea.view(B, fCH, num_depth, H, W)
+        warped_features = warped_features.view(batch_size, C, planes, height, width)
 
+        if virtual:
+            if v==1:
+                # We continue to the next source view to compute inner product
+                # using the first source view is used as reference
+                ref_volume = warped_features
+                continue
 
-        if aggregation == "weighted_mean":
-            ########## dot prod ##########
-            two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_group) #B,C,D,H,W
-            ## Estimate visability weight for init level
-            if va_net is not None:
-                B,C,D,H,W = warped_src_fea.shape
-                reweight = va_net(two_view_cost_volume) #B, H, W
-                vis_weight_list.append(reweight)
-                reweight = reweight.unsqueeze(1) #B, 1, 1, H, W
-                two_view_cost_volume = reweight*two_view_cost_volume
-            ## Use estimated visability weights for refine levels
-            elif vis_weights is not None:
-                reweight = vis_weights[src].unsqueeze(1)
-                if reweight.shape[2] < two_view_cost_volume.shape[3]:
-                    reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
-                vis_weight_list.append(reweight.squeeze(1))
-                reweight = reweight.unsqueeze(2)
-                two_view_cost_volume = reweight*two_view_cost_volume
-            if cost_volume == None:
-                cost_volume = two_view_cost_volume
-                reweight_sum = reweight
-            else:
-                cost_volume = cost_volume + two_view_cost_volume
-                reweight_sum = reweight_sum + reweight
+        # compute Pairwise Plane-Sweeping Volume using GWC
+        ppsv = groupwise_correlation(warped_features, ref_volume, group_channels)
+        if va_net is not None:
+            reweight = va_net(ppsv)
+            vis_weight_list.append(reweight)
+            reweight = reweight.unsqueeze(1)
+            ppsv = reweight*ppsv
+        elif vis_weights is not None:
+            reweight = vis_weights[v].unsqueeze(1)
+            if reweight.shape[2] < ppsv.shape[3]:
+                reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
+            vis_weight_list.append(reweight.squeeze(1))
+            reweight = reweight.unsqueeze(2)
+            ppsv = reweight*ppsv
 
-            if cfg["mode"]=="inference":
-                del src_feature
-                del two_view_cost_volume
-                del warped_src_fea
-                del reweight
-                torch.cuda.empty_cache()
-            ########### dot prod ##########
-        elif aggregation == "variance":
-            ######## var prod ##########
-            ## Estimate visability weight for init level
-            if va_net is not None:
-                two_view_cost_volume = groupwise_correlation(warped_src_fea, ref_volume, gwc_group) #B,C,D,H,W
-                B,C,D,H,W = warped_src_fea.shape
-                reweight = va_net(two_view_cost_volume) #B, H, W
-                vis_weight_list.append(reweight)
-                reweight = reweight.unsqueeze(1).unsqueeze(2) #B, 1, 1, H, W
-                warped_src_fea = reweight*warped_src_fea
-            ## Use estimated visability weights for refine levels
-            elif vis_weights is not None:
-                reweight = vis_weights[src].unsqueeze(1)
-                if reweight.shape[2] < cost_volume[src+1].shape[3]:
-                    reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
-                vis_weight_list.append(reweight.squeeze(1))
-                reweight = reweight.unsqueeze(2)
-                warped_src_fea = reweight*warped_src_fea
+        cost_volume = cost_volume + ppsv
+        reweight_sum = reweight_sum + reweight
 
-            cost_volume[src+1] = warped_src_fea
+        if cfg["mode"]=="inference":
+            del src_feature
+            del ppsv
+            del warped_features
+            del reweight
+            torch.cuda.empty_cache()
 
-            if cfg["mode"]=="inference":
-                del src_feature
-                del warped_src_fea
-                torch.cuda.empty_cache()
-            ########## var prod ##########
-
-    if aggregation == "weighted_mean":
-        cost_volume = cost_volume/(reweight_sum+0.00001)
-    elif aggregation == "variance":
-        cost_volume = torch.var(cost_volume, dim=0)
-        B,C,D,H,W = cost_volume.shape
-        #cost_volume = cost_volume.mean(dim=1, keepdim=True)
+    cost_volume = cost_volume/(reweight_sum+1e-10)
 
     return cost_volume, vis_weight_list
 
@@ -1430,38 +1391,37 @@ def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: Lis
 
     return vis_map.astype(np.float32)
 
-def uniform_hypothesis(cfg, ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, img_height, img_width, nhypothesis_init, inv_depth=False, bin_format=False):
+def uniform_hypothesis(cfg, device, batch_size, depth_near, depth_far, height, width, planes, inv_depth=False, bin_format=False):
     """
     Parameters:
 
     Returns:
     """
-    batchSize = ref_in.shape[0]
-    depth_range = depth_max-depth_min
+    depth_range = depth_near-depth_far
 
-    depth_hypos = torch.zeros((batchSize,nhypothesis_init),device=ref_in.device)
-    for b in range(0,batchSize):
+    hypotheses = torch.zeros((batch_size, planes), device=device)
+    for b in range(0,batch_size):
         if bin_format:
-            spacing = depth_range/nhypothesis_init
-            start_depth = depth_min + (spacing/2)
-            end_depth = depth_min + (spacing/2) + ((nhypothesis_init-1)*spacing)
+            spacing = depth_range/planes
+            start_depth = depth_near + (spacing/2)
+            end_depth = depth_near + (spacing/2) + ((planes-1)*spacing)
         else:
-            start_depth = depth_min
-            end_depth = depth_max
+            start_depth = depth_near
+            end_depth = depth_near
         if inv_depth:
-            depth_hypos[b] = 1/(torch.linspace(1/start_depth,1/end_depth,steps=nhypothesis_init,device=ref_in.device))
+            hypotheses[b] = 1/(torch.linspace(1/start_depth,1/end_depth,steps=planes, device=device))
         else:
-            depth_hypos[b] = torch.linspace(start_depth, end_depth, steps=nhypothesis_init,device=ref_in.device)
-    depth_hypos = depth_hypos.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
+            hypotheses[b] = torch.linspace(start_depth, end_depth, steps=planes, device=device)
+    hypotheses = hypotheses.unsqueeze(2).unsqueeze(3).repeat(1, 1, height, width)
 
     # Make coordinate for depth hypothesis, to be used by sparse convolution.
-    depth_hypo_coords = torch.zeros((batchSize,nhypothesis_init),device=ref_in.device)
-    for b in range(0,batchSize):
-        depth_hypo_coords[b] = torch.linspace(0,nhypothesis_init-1,steps=nhypothesis_init,device=ref_in.device)
-    depth_hypo_coords = depth_hypo_coords.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
+    depth_hypo_coords = torch.zeros((batch_size,planes), device=device)
+    for b in range(0,batch_size):
+        depth_hypo_coords[b] = torch.linspace(0,planes-1, steps=planes,device=device)
+    depth_hypo_coords = depth_hypo_coords.unsqueeze(2).unsqueeze(3).repeat(1,1, height, width)
 
     # Calculate hypothesis interval
-    hypo_intervals = depth_hypos[:,1:]-depth_hypos[:,:-1]
+    hypo_intervals = hypotheses[:,1:]-hypotheses[:,:-1]
     hypo_intervals = torch.cat((hypo_intervals,hypo_intervals[:,-1].unsqueeze(1)),dim=1)
 
-    return depth_hypos.unsqueeze(1), depth_hypo_coords.unsqueeze(1), hypo_intervals.unsqueeze(1)
+    return hypotheses.unsqueeze(1), depth_hypo_coords.unsqueeze(1), hypo_intervals.unsqueeze(1)
