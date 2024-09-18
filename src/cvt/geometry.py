@@ -11,7 +11,7 @@ This module contains the following functions:
 - `geometric_consistency_error(src_depth, src_cam, tgt_depth, tgt_cam)` - .
 - `geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)` - Computes the geometric consistency mask between a source and target depth map.
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
-- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, gwc_groups, va_net, vis_weights, aggregation)` - Performs homography warping to create a Plane Sweeping Volume (PSV).
+- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, group_channels, va_net, vis_weights, aggregation)` - Performs homography warping to create a Plane Sweeping Volume (PSV).
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `plane_coords(K, P, depth_hypos, H, W)` - .
 - `points_from_depth(depth, cam)` - Creates a point array from a single depth map.
@@ -671,7 +671,6 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
     cost_volume = cost_volume/(reweight_sum+1e-10)
 
     return cost_volume, vis_weight_list
-
 
 #   def homography_warp_coords(cfg, features, level, ref_in, src_in, ref_pose, src_pose, depth_hypos, coords, H, W, gwc_groups, va_net=None, vis_weights=None):
 #       batch_size, c, h, w = features[0][level].shape
@@ -1391,34 +1390,34 @@ def visibility_mask(src_depth: np.ndarray, src_cam: np.ndarray, depth_files: Lis
 
     return vis_map.astype(np.float32)
 
-def uniform_hypothesis(cfg, device, batch_size, depth_near, depth_far, height, width, planes, inv_depth=False, bin_format=False):
+def uniform_hypothesis(cfg, device, batch_size, depth_min, depth_max, img_height, img_width, planes, inv_depth=False, bin_format=False):
     """
     Parameters:
 
     Returns:
     """
-    depth_range = depth_near-depth_far
+    depth_range = depth_max-depth_min
 
-    hypotheses = torch.zeros((batch_size, planes), device=device)
+    hypotheses = torch.zeros((batch_size,planes),device=device)
     for b in range(0,batch_size):
         if bin_format:
             spacing = depth_range/planes
-            start_depth = depth_near + (spacing/2)
-            end_depth = depth_near + (spacing/2) + ((planes-1)*spacing)
+            start_depth = depth_min + (spacing/2)
+            end_depth = depth_min + (spacing/2) + ((planes-1)*spacing)
         else:
-            start_depth = depth_near
-            end_depth = depth_near
+            start_depth = depth_min
+            end_depth = depth_max
         if inv_depth:
-            hypotheses[b] = 1/(torch.linspace(1/start_depth,1/end_depth,steps=planes, device=device))
+            hypotheses[b] = 1/(torch.linspace(1/start_depth,1/end_depth,steps=planes,device=device))
         else:
-            hypotheses[b] = torch.linspace(start_depth, end_depth, steps=planes, device=device)
-    hypotheses = hypotheses.unsqueeze(2).unsqueeze(3).repeat(1, 1, height, width)
+            hypotheses[b] = torch.linspace(start_depth, end_depth, steps=planes,device=device)
+    hypotheses = hypotheses.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
 
     # Make coordinate for depth hypothesis, to be used by sparse convolution.
-    depth_hypo_coords = torch.zeros((batch_size,planes), device=device)
+    depth_hypo_coords = torch.zeros((batch_size,planes),device=device)
     for b in range(0,batch_size):
-        depth_hypo_coords[b] = torch.linspace(0,planes-1, steps=planes,device=device)
-    depth_hypo_coords = depth_hypo_coords.unsqueeze(2).unsqueeze(3).repeat(1,1, height, width)
+        depth_hypo_coords[b] = torch.linspace(0,planes-1,steps=planes,device=device)
+    depth_hypo_coords = depth_hypo_coords.unsqueeze(2).unsqueeze(3).repeat(1,1,img_height,img_width)
 
     # Calculate hypothesis interval
     hypo_intervals = hypotheses[:,1:]-hypotheses[:,:-1]
