@@ -457,7 +457,7 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
             of.write(f"{ind+3} {ind+7} {edge_color}\n")
 
 
-def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error):
+def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoch=None):
     target_depth = data["target_depth"].detach().cpu().numpy()[0,0]
     image_laplacian = output["image_laplacian"][0,0].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"][0,0].detach().cpu().numpy()
@@ -550,7 +550,10 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error):
     axs[2, 2].set_yticks([])
     plt.subplots_adjust(wspace=0, hspace=0.2)
 
-    plot_file = os.path.join(vis_path, f"{batch_ind:08d}.png")
+    if epoch!=None:
+        plot_file = os.path.join(vis_path, f"{mode}_{epoch:03d}_{batch_ind:08d}.png")
+    else:
+        plot_file = os.path.join(vis_path, f"{batch_ind:08d}.png")
     plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
     plt.clf()
     plt.close()
