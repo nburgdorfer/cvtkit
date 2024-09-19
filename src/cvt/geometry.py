@@ -563,6 +563,79 @@ def psv(cfg, images, intrinsics, extrinsics, depth_hypos):
 
     return pairwise_psv
 
+def homography_warp_var(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hypos):
+    """Performs homography warping to create a Plane Sweeping Volume (PSV).
+    Parameters:
+        cfg: Configuration dictionary containing configuration parameters.
+        features: Feature maps to be warped into a PSV.
+        level: Current feature resolution level.
+        ref_in: Reference view intrinsics matrix.
+        src_in: Source view intrinsics matrices.
+        ref_ex: Reference view extrinsics matrix.
+        src_ex: Source view extrinsics matrices.
+        depth_hypos: Depth hypotheses to use for homography warping.
+
+    Returns:
+        The Plane Sweeping Volume computed via feature matching cost.
+    """
+    depth_hypos = depth_hypos.squeeze(1)
+    _,planes,_,_ = depth_hypos.shape
+
+    B,fCH,H,W = features[0].shape
+    num_depth = depth_hypos.shape[1]
+    nSrc = len(features)-1
+
+    vis_weight_list = []
+    ref_volume = features[0].unsqueeze(2).repeat(1,1,num_depth,1,1)
+
+    cost_volume = torch.zeros((nSrc+1,B,fCH,planes,H,W)).to(features[0])
+    cost_volume[0] = ref_volume
+    reweight_sum = None
+    for src in range(nSrc):
+        with torch.no_grad():
+            with autocast(enabled=False):
+                src_proj = torch.matmul(src_in[:,src,:,:],src_ex[:,src,0:3,:])
+                ref_proj = torch.matmul(ref_in,ref_ex[:,0:3,:])
+                last = torch.tensor([[[0,0,0,1.0]]]).repeat(len(src_in),1,1).cuda()
+                src_proj = torch.cat((src_proj,last),1)
+                ref_proj = torch.cat((ref_proj,last),1)
+
+                proj = torch.matmul(src_proj, torch.inverse(ref_proj))
+                rot = proj[:, :3, :3]  # [B,3,3]
+                trans = proj[:, :3, 3:4]  # [B,3,1]
+
+                y, x = torch.meshgrid([torch.arange(0, H, dtype=torch.float32, device=ref_volume.device),
+                                    torch.arange(0, W, dtype=torch.float32, device=ref_volume.device)],
+                                    indexing='ij')
+                y, x = y.contiguous(), x.contiguous()
+                y, x = y.view(H * W), x.view(H * W)
+                xyz = torch.stack((x, y, torch.ones_like(x)))  # [3, H*W]
+                xyz = torch.unsqueeze(xyz, 0).repeat(B, 1, 1)  # [B, 3, H*W]
+                rot_xyz = torch.matmul(rot, xyz)  # [B, 3, H*W]
+
+                rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, num_depth, 1) * depth_hypos.view(B, 1, num_depth,H*W)  # [B, 3, Ndepth, H*W]
+                proj_xyz = rot_depth_xyz + trans.view(B, 3, 1, 1)  # [B, 3, Ndepth, H*W]
+                proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]  # [B, 2, Ndepth, H*W]
+                proj_x_normalized = proj_xy[:, 0, :, :] / ((W - 1) / 2) - 1
+                proj_y_normalized = proj_xy[:, 1, :, :] / ((H - 1) / 2) - 1
+                proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)  # [B, Ndepth, H*W, 2]
+                grid = proj_xy
+
+        grid = grid.type(ref_volume.dtype)
+        warped_src_fea = F.grid_sample( features[src+1],
+                                        grid.view(B, num_depth * H, W, 2), 
+                                        mode='bilinear',
+                                        padding_mode='zeros',
+                                        align_corners=False)
+        cost_volume[src+1] = warped_src_fea.view(B, fCH, num_depth, H, W)
+
+        torch.cuda.empty_cache()
+
+    cost_volume = torch.var(cost_volume, dim=0)
+    B,C,D,H,W = cost_volume.shape
+
+    return cost_volume
+
 
 def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_channels, va_net=None, vis_weights=None, virtual=False):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).

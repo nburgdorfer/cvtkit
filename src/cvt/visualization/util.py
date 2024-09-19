@@ -561,9 +561,9 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
 
 def laplacian_count(data, output, plot_file=None, use_est_depth=False):
     target_depth = data["target_depth"].detach().cpu().numpy()[0]
-    image_laplacian = data["image_laplacian"][0].detach().cpu().numpy()
+    image_laplacian = output["image_laplacian"][0].detach().cpu().numpy()
     if use_est_depth:
-        depth_laplacian = data["est_depth_laplacian"][0].detach().cpu().numpy()
+        depth_laplacian = output["est_depth_laplacian"][0].detach().cpu().numpy()
     else:
         depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
 
@@ -595,7 +595,7 @@ def laplacian_count(data, output, plot_file=None, use_est_depth=False):
 
 
 def laplacian_uncovered_count(data, output, plot_file=None):
-    image_laplacian = data["image_laplacian"][0].detach().cpu().numpy()
+    image_laplacian = output["image_laplacian"][0].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
     uncovered_masks = output["uncovered_masks"]
 
@@ -629,9 +629,9 @@ def laplacian_uncovered_count(data, output, plot_file=None):
 def laplacian_depth_error(data, output, plot_file=None, use_est_depth=False):
     target_depth = data["target_depth"].detach().cpu().numpy()[0,0]
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
-    image_laplacian = data["image_laplacian"][0].detach().cpu().numpy()
+    image_laplacian = output["image_laplacian"][0].detach().cpu().numpy()
     if use_est_depth:
-        depth_laplacian = data["est_depth_laplacian"][0].detach().cpu().numpy()
+        depth_laplacian = output["est_depth_laplacian"][0].detach().cpu().numpy()
     else:
         depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
 
