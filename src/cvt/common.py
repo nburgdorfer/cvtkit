@@ -87,7 +87,7 @@ def crop_image(image, crop_row, crop_col, scale):
 def freeze_model_weights(model):
     model.requires_grad_(False)
 
-def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
+def laplacian_pyramid_th(image: torch.Tensor, tau: float) -> torch.Tensor:
     """Computes the Laplacian pyramid of an image.
 
     Parameters:
@@ -113,17 +113,47 @@ def laplacian_pyramid(image: torch.Tensor, tau: float) -> torch.Tensor:
         diff = F.interpolate(diff, size=(h, w), mode="bilinear")
         diff_mask = torch.where(diff > tau, 1, 0)
 
-        diff = diff.reshape(batch_size,h,w,1)
         diff_mask = diff_mask.reshape(batch_size,h,w,1)
 
         if l==levels:
-            all_diff = diff
             all_diff_mask = diff_mask*region_id
         else:
-            all_diff += diff
             all_diff_mask = torch.where(diff_mask==1, region_id, all_diff_mask)
 
-    return all_diff.reshape(batch_size, 1, h, w), all_diff_mask.reshape(batch_size, 1, h, w)
+    return all_diff_mask.reshape(batch_size, 1, h, w)
+
+def laplacian_pyramid(image: torch.Tensor) -> torch.Tensor:
+    """Computes the Laplacian pyramid of an image.
+
+    Parameters:
+        image: 2D map to compute Laplacian over.
+        tau: Laplacian region threshold.
+
+    Returns:
+        The map of the Laplacian regions.
+    """
+    batch_size, c, h, w = image.shape
+    levels = 4
+
+    # build gaussian pyramid
+    pyr = [image]
+    for l in range(levels):
+        pyr.append(F.interpolate(pyr[-1], scale_factor=0.5, mode="bilinear"))
+
+    # compute laplacian pyramid (differance between gaussian pyramid levels)
+    for l in range(levels, 0, -1):
+        region_id = (levels-l+1)
+
+        diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True)
+        diff = F.interpolate(diff, size=(h, w), mode="bilinear")
+        diff = diff.reshape(batch_size,h,w,1)
+
+        if l==levels:
+            all_diff = diff
+        else:
+            all_diff += diff
+
+    return all_diff.reshape(batch_size, 1, h, w)
 
 def cosine_similarity(t1: torch.Tensor, t2: torch.Tensor) -> torch.Tensor:
     """Computes the cosine similarity between two tensors.
