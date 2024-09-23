@@ -458,6 +458,9 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
 
 
 def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoch=-1):
+    image = torch.movedim(data["images"][0,0], (0,1,2), (2,0,1)).detach().cpu().numpy()
+    image = ((image-image.min()) / (image.max()-image.min()+1e-10))
+
     target_depth = data["target_depth"].detach().cpu().numpy()[0,0]
     image_laplacian = output["image_laplacian"][0,0].detach().cpu().numpy()
     depth_laplacian = data["depth_laplacian"][0,0].detach().cpu().numpy()
@@ -473,20 +476,12 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
 
     ## compute depth residual
     depth_residual = np.abs(est_depth - target_depth)
-
-    ## compute confidence residual
     res_temp = np.clip(depth_residual / (max_depth_error*3+1e-10), 0, 1)
-    target_conf = (1-res_temp)
-    conf_residual = np.abs(est_conf - target_conf)
-
-    ## mask out invalid pixels
     depth_residual[target_depth == 0.0] = 0.0
-    conf_residual[target_depth == 0.0] = 0.0
-    target_conf[target_depth == 0.0] = 0.0
-
-    ## compute residual means
     depth_mae = np.mean(depth_residual)
-    conf_mae = np.mean(conf_residual)
+
+    ## compute ROC and AUC
+    perc, oracle_roc, est_roc, rel_auc = auc_score(data, output)
 
     ### plot coverage
     #levels = uncovered_masks.shape[0]
@@ -503,7 +498,6 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     #plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
     #plt.clf()
     #plt.close()
-
 
     ## plot
     fig, axs = plt.subplots(3, 3)
@@ -523,18 +517,20 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     axs[0, 2].set_xticks([])
     axs[0, 2].set_yticks([])
     # Row #2: Confidence
-    axs[1, 0].imshow(target_conf, cmap="gray", vmin=0, vmax=1.0)
-    axs[1, 0].set_title('Target Confidence')
+    axs[1, 0].imshow(image)
+    axs[1, 0].set_title('Image')
     axs[1, 0].set_xticks([])
     axs[1, 0].set_yticks([])
     axs[1, 1].imshow(est_conf, cmap="gray", vmin=0, vmax=1.0)
     axs[1, 1].set_title('Est. Confidence')
     axs[1, 1].set_xticks([])
     axs[1, 1].set_yticks([])
-    axs[1, 2].imshow(conf_residual, cmap="hot", vmin=0, vmax=0.2)
-    axs[1, 2].set_title(f'Residual (mae: {conf_mae*100:0.3f}%)')
+    axs[1, 2].plot(perc, oracle_roc, label="Oracle")
+    axs[1, 2].plot(perc, est_roc, label="Confidence")
+    axs[1, 2].set_title(f'ROC (rel. auc: {rel_auc:0.2f})')
     axs[1, 2].set_xticks([])
     axs[1, 2].set_yticks([])
+    axs[1, 2].legend()
     # Row #3: Laplacian
     axs[2, 0].imshow(image_laplacian, cmap="hot")
     axs[2, 0].set_title('Image Laplacian')
@@ -557,6 +553,59 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     plt.savefig(plot_file, bbox_inches='tight', pad_inches=0.4, dpi=400)
     plt.clf()
     plt.close()
+
+def auc_score(data, output):
+    est_depth = output["final_depth"][0,0]
+    est_conf = output["confidence"][0,0]
+    target_depth = data["target_depth"][0,0]
+
+    mask = torch.where(target_depth > 0, 1.0, 0.0)
+    pixel_count = int(torch.sum(mask).item())
+
+    inds = torch.where(mask==1)
+    target_depth = target_depth[inds].detach().cpu().numpy()
+    est_depth = est_depth[inds].detach().cpu().numpy()
+    est_conf = est_conf[inds].detach().cpu().numpy()
+
+    # flatten to 1D tensor
+    target_depth = target_depth.flatten()
+    est_depth = est_depth.flatten()
+    est_conf = est_conf.flatten()
+
+    # compute error
+    error = np.abs(est_depth - target_depth)
+    
+    # sort orcale curves by error
+    oracle_indices = np.argsort(error)
+    oracle_error = np.take(error, indices=oracle_indices, axis=0)
+
+    # sort all tensors by confidence value
+    est_indices_conf = np.argsort(est_conf)
+    est_indices_conf = est_indices_conf[::-1]
+    est_error_conf = np.take(error, indices=est_indices_conf, axis=0)
+
+    # build density vector
+    perc = np.array(list(range(5,105,5)))
+    density = np.array((perc/100) * (pixel_count), dtype=np.int32)
+
+    oracle_roc = np.zeros(density.shape)
+    est_roc = np.zeros(density.shape)
+    for i,k in enumerate(density):
+        oe = oracle_error[:k]
+        ee = est_error_conf[:k]
+
+        if (oe.shape[0] == 0):
+            oracle_roc[i] = 0.0
+            est_roc[i] = 0.0
+        else:
+            oracle_roc[i] = np.mean(oe)
+            est_roc[i] = np.mean(ee)
+
+    # comput AUC
+    oracle_auc = np.trapz(oracle_roc, dx=1)
+    est_auc = np.trapz(est_roc, dx=1)
+
+    return perc, oracle_roc, est_roc, (est_auc/oracle_auc)
 
 
 def laplacian_count(data, output, plot_file=None, use_est_depth=False):
