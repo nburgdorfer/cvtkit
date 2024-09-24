@@ -14,6 +14,36 @@ import numpy as np
 import open3d as o3d
 from sklearn.neighbors import KDTree
 from typing import Tuple, Optional
+import torch
+
+def MAE(estimate, target, reduction_dims, mask=None, relative=False):
+    assert(estimate.shape==target.shape)
+    error = estimate - target
+    if relative:
+        error /= target
+    error = torch.abs(error)
+
+    if mask != None:
+        assert(error.shape==mask.shape)
+        error *= mask
+        error = (error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims)+1e-10)).sum()
+    else:
+        error =  error.mean()
+    return error
+
+def RMSE(estimate, target, mask=None, relative=False):
+    assert(estimate.shape==target.shape)
+    error = estimate - target
+    if relative:
+        error /= target
+    error = torch.square(error)
+
+    assert(error.shape==mask.shape)
+    error *= mask
+
+    reduction_dims = tuple(range(1,len(target.shape)))
+    error = (error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims)+1e-10)).sum()
+    return torch.sqrt(error)
 
 def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
     """Computes the absolute error between an estimated and groun-truth depth map.

@@ -11,7 +11,7 @@ This module contains the following functions:
 - `geometric_consistency_error(src_depth, src_cam, tgt_depth, tgt_cam)` - .
 - `geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)` - Computes the geometric consistency mask between a source and target depth map.
 - `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
-- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, group_channels, va_net, vis_weights, aggregation)` - Performs homography warping to create a Plane Sweeping Volume (PSV).
+- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, group_channels, vwa_net, vis_weights, aggregation)` - Performs homography warping to create a Plane Sweeping Volume (PSV).
 - `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
 - `plane_coords(K, P, depth_hypos, H, W)` - .
 - `points_from_depth(depth, cam)` - Creates a point array from a single depth map.
@@ -58,11 +58,11 @@ def downsample_cloud(cloud, min_point_dist):
     return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
 def edge_mask(depth, near_depth, far_depth):
-    down_gt = F.interpolate(depth.unsqueeze(1),scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)
+    down_gt = F.interpolate(depth,scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)
     down_up_gt = F.interpolate(down_gt,scale_factor=2,mode='bilinear',align_corners=False,recompute_scale_factor=False)
-    res = torch.abs(depth.unsqueeze(1)-down_up_gt)
+    res = torch.abs(depth-down_up_gt)
     high_frequency_mask = res>(0.001*(far_depth-near_depth)[:,None,None,None])
-    valid_gt_mask = (-F.max_pool2d(-depth.unsqueeze(1),kernel_size=5,stride=1,padding=2))>near_depth[:,None,None,None]
+    valid_gt_mask = (-F.max_pool2d(-depth,kernel_size=5,stride=1,padding=2))>near_depth[:,None,None,None]
     high_frequency_mask = high_frequency_mask * valid_gt_mask
     high_frequency_mask = ((1-high_frequency_mask.to(torch.int32)) * valid_gt_mask).to(torch.int32)
     return high_frequency_mask
@@ -637,7 +637,7 @@ def homography_warp_var(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hyp
     return cost_volume
 
 
-def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_channels, va_net=None, vis_weights=None, virtual=False):
+def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_channels, vwa_net=None, vis_weights=None, virtual=False):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
         cfg: Configuration dictionary containing configuration parameters.
@@ -646,7 +646,7 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
         extrinsics: Extrinsics matrices for all views.
         hypotheses: Depth hypotheses to use for homography warping.
         group_channels: Feature channel sizes used in group-wise correlation (GWC).
-        va_net: Network used for visibility weighting.
+        vwa_net: Network used for visibility weighting.
         vis_weights: Pre-computed visibility weights.
 
     Returns:
@@ -718,16 +718,16 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
 
         # compute Pairwise Plane-Sweeping Volume using GWC
         ppsv = groupwise_correlation(warped_features, ref_volume, group_channels)
-        if va_net is not None:
-            reweight = va_net(ppsv)
+        if vwa_net is not None:
+            reweight = vwa_net(ppsv)
             vis_weight_list.append(reweight)
             reweight = reweight.unsqueeze(1)
             ppsv = reweight*ppsv
         elif vis_weights is not None:
-            reweight = vis_weights[v].unsqueeze(1)
+            reweight = vis_weights[v-1]
             if reweight.shape[2] < ppsv.shape[3]:
                 reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
-            vis_weight_list.append(reweight.squeeze(1))
+            vis_weight_list.append(reweight)
             reweight = reweight.unsqueeze(2)
             ppsv = reweight*ppsv
 
@@ -745,7 +745,7 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
 
     return cost_volume, vis_weight_list
 
-#   def homography_warp_coords(cfg, features, level, ref_in, src_in, ref_pose, src_pose, depth_hypos, coords, H, W, gwc_groups, va_net=None, vis_weights=None):
+#   def homography_warp_coords(cfg, features, level, ref_in, src_in, ref_pose, src_pose, depth_hypos, coords, H, W, gwc_groups, vwa_net=None, vis_weights=None):
 #       batch_size, c, h, w = features[0][level].shape
 #       _, _, num_planes, _, _ = depth_hypos.shape
 #       _, num_pixels, _ = coords.shape
@@ -816,8 +816,8 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
 #           two_view_cost_volume = two_view_cost_volume.reshape(batch_size, gwc_groups[level], num_planes, H, W)
 #   
 #           # Estimate visability weight for init level
-#           if va_net is not None:
-#               reweight = va_net(two_view_cost_volume) #B, H, W
+#           if vwa_net is not None:
+#               reweight = vwa_net(two_view_cost_volume) #B, H, W
 #               vis_weight_list.append(reweight)
 #               reweight = reweight.unsqueeze(1).unsqueeze(2) #B, 1, 1, H, W
 #               two_view_cost_volume = reweight*two_view_cost_volume
