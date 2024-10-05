@@ -246,6 +246,14 @@ def _normalize_image(image, mean=None, std=None):
 
     return image
 
+def normalize(image, mean=None, std=None):
+    image = (image-image.min()) / (image.max()-image.min()+1e-10)
+
+    if mean != None and std != None:
+        image = (image - mean) / std
+
+    return image
+
 def parameters_count(net, name, do_print=True):
     """
 

@@ -456,6 +456,49 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
             of.write(f"{ind+2} {ind+6} {edge_color}\n")
             of.write(f"{ind+3} {ind+7} {edge_color}\n")
 
+def visualize_bounding_box(min_bounds, max_bounds, output_file, edge_color="255 0 0"):
+
+    num_verts = 8
+    num_edges = 12
+    with open(out_file, "w") as of:
+        of.write("ply\n")
+        of.write("format ascii 1.0\n")
+        of.write("comment VCGLIB generated\n")
+        of.write(f"element vertex {num_verts}\n")
+        of.write("property float x\n")
+        of.write("property float y\n")
+        of.write("property float z\n")
+        of.write("property uchar red\n")
+        of.write("property uchar green\n")
+        of.write("property uchar blue\n")
+        of.write(f"element edge {num_edges}\n")
+        of.write("property int vertex1\n")
+        of.write("property int vertex2\n")
+        of.write("property uchar red\n")
+        of.write("property uchar green\n")
+        of.write("property uchar blue\n")
+        of.write("end_header\n")
+        for p in range(num_planes):
+            for i in range(4):
+                of.write(f"{planes[p,0,i]:0.3f} {planes[p,1,i]:0.3f} {planes[p,2,i]:0.3f} 0 0 0\n")
+
+        # draw plane border
+        for p in range(num_planes):
+            ind = p*4
+            of.write(f"{ind} {ind+1} {edge_color}\n")
+            of.write(f"{ind} {ind+2} {edge_color}\n")
+            of.write(f"{ind+1} {ind+3} {edge_color}\n")
+            of.write(f"{ind+2} {ind+3} {edge_color}\n")
+
+        # draw plane connections
+        for p in range(num_planes-1):
+            ind = p*4
+            of.write(f"{ind} {ind+4} {edge_color}\n")
+            of.write(f"{ind+1} {ind+5} {edge_color}\n")
+            of.write(f"{ind+2} {ind+6} {edge_color}\n")
+            of.write(f"{ind+3} {ind+7} {edge_color}\n")
+
+
 
 def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoch=-1):
     image = torch.movedim(data["images"][0,0], (0,1,2), (2,0,1)).detach().cpu().numpy()
