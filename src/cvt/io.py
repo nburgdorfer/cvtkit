@@ -335,28 +335,27 @@ def read_stereo_intrinsics_yaml(intrinsics_file: str) -> Tuple[ np.ndarray, \
 
     return [K_left, D_left, K_right, D_right, R, T]
 
-def write_cam_sfm(cam_file: str, cam: np.ndarray) -> None:
+def write_cam_sfm(cam_file: str, intrinsics: np.ndarray, extrinsics: np.ndarray) -> None:
     """Writes intrinsic and extrinsic camera parameters to a file in sfm format.
 
     Parameters:
         cam_file: The file to be writen to.
-        cam: Camera extrinsic and intrinsic data to be written.
+        intrinsics: Camera intrinsic data to be written.
+        extrinsics: Camera extrinsic data to be written.
     """
     with open(cam_file, "w") as f:
         f.write('extrinsic\n')
         for i in range(0, 4):
             for j in range(0, 4):
-                f.write(str(cam[0][i][j]) + ' ')
+                f.write(str(extrinsics[i][j]) + ' ')
             f.write('\n')
         f.write('\n')
 
         f.write('intrinsic\n')
         for i in range(0, 3):
             for j in range(0, 3):
-                f.write(str(cam[1][i][j]) + ' ')
+                f.write(str(intrinsics[i][j]) + ' ')
             f.write('\n')
-
-        f.write('\n' + str(cam[1][3][0]) + ' ' + str(cam[1][3][1]) + ' ' + str(cam[1][3][2]) + ' ' + str(cam[1][3][3]) + '\n')
 
 def write_matrix(M: np.ndarray, mat_file: str) -> None:
     """Writes a single matrix to a file.
