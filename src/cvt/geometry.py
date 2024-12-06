@@ -45,7 +45,6 @@ from camera import intrinsic_pyramid, Z_from_disp
 from common import groupwise_correlation
 from io import *
 
-
 def downsample_cloud(cloud, min_point_dist):
     """Downsamples a point cloud enforcing a minumum point spacing.
     Parameters:
