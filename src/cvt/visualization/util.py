@@ -757,7 +757,7 @@ def plot_laplacian_matrix(M, plot_file, use_est_depth=False, count=False):
     plt.close()
 
 
-def to_normal(ply_file, output_file, radius=5.0, max_nn=30):
+def to_normal(ply_file, output_file, radius=15.0, max_nn=100):
     cloud = o3d.io.read_point_cloud(ply_file)
     cloud.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=radius, max_nn=max_nn))
     normals = np.asarray(cloud.normals)
