@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cvtkit"
-version = "0.0.11"
+version = "0.0.14"
 description = "A Python library including general functions and operations on various computer vision related structures."
 authors = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
 maintainers = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
@@ -34,7 +34,7 @@ classifiers=[
 
 requires-python = ">= 3.9"
 dependencies = [
-	"numpy",
+	"numpy<=1.26.4",
 	"scipy"
 ]
 
