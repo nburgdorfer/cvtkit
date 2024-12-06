@@ -19,6 +19,7 @@ from typing import Tuple
 from tqdm import tqdm
 import cv2
 from PIL import Image
+from plyfile import PlyData, PlyElement
 
 from cvt.geometry import reproject
 from cvt.io import read_cluster_list, write_pfm, read_pfm
