@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cvtkit"
-version = "0.0.17"
+version = "0.0.18"
 description = "A Python library including general functions and operations on various computer vision related structures."
 authors = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
 maintainers = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
