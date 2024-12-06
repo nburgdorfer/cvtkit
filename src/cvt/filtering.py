@@ -14,6 +14,7 @@ This module contains the following functions:
 
 import numpy as np
 import torch
+import os
 from typing import Tuple
 
 from cvt.geometry import reproject
