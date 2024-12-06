@@ -226,7 +226,7 @@ def check_geometric_consistency(depth_ref, intrinsics_ref, extrinsics_ref, depth
 
     return mask, depth_reprojected, x2d_src, y2d_src
 
-def consensus_filter(cfg, est_depth_path, est_conf_path, rgb_path, filtered_depth_path, output_path, dataset, scene):
+def consensus_filter(cfg, est_depth_path, est_conf_path, rgb_path, output_path, dataset, scene):
     K = dataset.K[scene]
     poses = dataset.get_all_poses(scene)
     pix_th = cfg["point_cloud"]["pix_th"]
