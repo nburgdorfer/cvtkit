@@ -505,11 +505,6 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     image = ((image-image.min()) / (image.max()-image.min()+1e-10))
 
     target_depth = data["target_depth"].detach().cpu().numpy()[0,0]
-    image_laplacian = output["image_laplacian"][0,0].detach().cpu().numpy()
-    depth_laplacian = data["depth_laplacian"][0,0].detach().cpu().numpy()
-    est_depth_laplacian = output["est_depth_laplacian"][0,0].detach().cpu().numpy()
-    #uncovered_masks = output["uncovered_masks"].cpu().numpy()
-
     est_depth = output["final_depth"].detach().cpu().numpy()[0,0]
     est_conf = output["confidence"].detach().cpu().numpy()[0,0]
 
@@ -543,7 +538,7 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     #plt.close()
 
     ## plot
-    fig, axs = plt.subplots(3, 3)
+    fig, axs = plt.subplots(2, 3)
     fig.tight_layout()
     max_depth = np.max(target_depth)
     # Row #1: Depth
@@ -574,19 +569,6 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     axs[1, 2].set_xticks([])
     axs[1, 2].set_yticks([])
     axs[1, 2].legend()
-    # Row #3: Laplacian
-    axs[2, 0].imshow(image_laplacian, cmap="hot")
-    axs[2, 0].set_title('Image Laplacian')
-    axs[2, 0].set_xticks([])
-    axs[2, 0].set_yticks([])
-    axs[2, 1].imshow(depth_laplacian, cmap="hot")
-    axs[2, 1].set_title("Depth Laplacian")
-    axs[2, 1].set_xticks([])
-    axs[2, 1].set_yticks([])
-    axs[2, 2].imshow(est_depth_laplacian, cmap="hot")
-    axs[2, 2].set_title("Est. Depth Laplacian")
-    axs[2, 2].set_xticks([])
-    axs[2, 2].set_yticks([])
     plt.subplots_adjust(wspace=0, hspace=0.2)
 
     if epoch!=None and epoch >= 0:
