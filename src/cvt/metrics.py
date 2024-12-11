@@ -3,13 +3,6 @@
 """Module including routines computing metrics.
 
 This module includes the following functions:
-
-- `abs_error(est_depth, gt_depth)` - Computes the absolute error between an estimated and groun-truth depth map.
-- `accuracy_eval(est_ply, gt_ply, mask_th, est_filt=None, gt_filt=None)` - Computes the accuracy of an estimated point cloud against the provided ground-truth.
-- `completeness_eval(est_ply, gt_ply, mask_th=20.0, est_filt=None, gt_filt=None)` - Computes the completeness of an estimated point cloud against the provided ground-truth.
-- `MAE(estimate, target, reduction_dims, mask=None, relative=False)` - Mean Absolute Error.
-- `RMSE(estimate, target, mask=None, relative=False)` - Root Mean Squared Error.
-- `filter_outlier_points(est_ply, gt_ply, outlier_th)` - Filters out points from an estimated point cloud that are farther than some threshold to the ground-truth point cloud.
 """
 
 import numpy as np

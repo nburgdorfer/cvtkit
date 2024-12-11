@@ -3,13 +3,6 @@
 """A suite of common filtering utilities.
 
 This module includes several functions for filtering depth maps.
-
-This module contains the following functions:
-
-- `conf_filter(depth_map, conf_map, device, min_conf)` - Filters a map by confidence values above a minimum threshold.
-- `geometric_filter(src_depth, src_cam, tgt_depth, tgt_cam, pix_th, depth_th)` - Computes a geometric filter based off of pixel and depth reprojection error.
-- `topk_filter(depth_map, conf_map, device, percent)` - Filters a map by the top percentage of confidence values.
-- `topk_strict_filter(depth_map, filter_prob, device, percent)` - Filters a map by the top percentage of confidence values.
 """
 
 import numpy as np

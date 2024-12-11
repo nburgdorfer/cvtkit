@@ -5,15 +5,6 @@
 This module includes several functions for manipulating and extracting information
 from camera intrinsics and extrinsics, as well as converting between specific
 formats.
-
-This module contains the following functions:
-
-- `camera_center(cam)` - Computes the center of a camera in world coordinates.
-- `intrinsic_pyramid(K, levels)` - Scales camera intrinsics for multi-resolution operations.
-- `relative_transform(cams_1, cams_2)` - Computes the relative transformation between two sets of cameras.
-- `sfm_to_trajectory(cams, log_file)` - Convert a set of cameras from SFM format to Trajectory File format.
-- `trajectory_to_sfm(log_file, camera_path, intrinsics)` - Convert a set of cameras from Trajectory File format to SFM format.
-- `y_axis_rotation(P, theta)` - Applies a rotation to the given camera extrinsics matrix along the y-axis.
 """
 
 import os

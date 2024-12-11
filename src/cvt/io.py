@@ -4,23 +4,6 @@
 
 This module includes several functions for reading and writing
 different types of data useful for computer vision applications.
-
-This module contains the following functions:
-
-- `read_cams_sfm(camera_path, extension)` - Reads an entire directory of camera files in SFM format.
-- `read_cams_trajectory(log_file)` - Reads camera file in Trajectory File format.
-- `read_extrinsics_tum(tum_file, key_frames)` - Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].
-- `read_matrix(mat_file)` - Reads a single matrix of float values from a file.
-- `read_mesh(mesh_file)` - Reads a mesh from a file.
-- `read_cluster_list(filename)` - Reads a cluster list file encoding supporting camera viewpoints.
-- `read_pfm(pfm_file)` - Reads a file in *.pfm format.
-- `read_point_cloud(point_cloud_file)` - Reads a point cloud from a file.
-- `read_single_cam_sfm(cam_file, depth_planes)` - Reads a single camera file in SFM format.
-- `read_stereo_intrinsics_yaml(intrinsics_file)` - Reads intrinsics information for a stereo camera pair from a *.yaml file.
-- `write_cam_sfm()` -
-- `write_matrix(M, mat_file)` - Writes a single matrix to a file.
-- `write_mesh(mesh_file, mesh)` - Writes a mesh to a file.
-- `write_pfm(pfm_file, data_map, scale)` - Writes a data map to a file in *.pfm format.
 """
 
 import os

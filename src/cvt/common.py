@@ -4,23 +4,6 @@
 
 This module includes general utility functions used
 by the sub-packages of the CVTkit library.
-
-This module contains the following functions:
-
-- 'build_coords_list(H, W, batch_size, device)' - Constructs an batched index list of pixel coordinates.
-- 'compute_laplacian_pyr(image, levels=4)' - Computes the Laplacian pyramid of an image.
-- 'cosine_similarity(v1, v2)' - Computes the cosine similarity between two vectors.
-- 'groupwise_correlation(v1, v2, num_groups)' - 
-- `non_zero_std(maps, device, dim, keepdim)` - Computes the standard deviation of all non-zero values in an input Tensor along the given dimension.
-- 'parameters_count(net, name, do_print=True)' - 
-- `print_gpu_mem()` - Prints the current unallocated memory of the GPU.
-- `round_nearest(num, decimal=0)` - Rounds a floating point number to the nearest decimal place.
-- 'scale_camera(cam, scale)' - 
-- `scale_image(image, scale, interpolation)` - Scales an input pixel grid.
-- 'scale_mvs_data(depths, confs, cams, scale, interpolation)' - 
-- 'set_random_seed(seed)' - 
-- 'to_gpu(data, device)' - 
-- 'top_k_hypothesis_selection(grid, k, prev_hypos, prev_hypo_coords, prev_intervals)' - 
 """
 
 import torch

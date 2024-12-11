@@ -1,5 +1,9 @@
 # cvt/geometry.py
 
+"""Module including geometric routines.
+
+"""
+
 import numpy as np
 import sys
 import cv2
