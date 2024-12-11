@@ -11,20 +11,20 @@ nav:
         - Point Cloud To GIF: tutorials/cloud_to_gif.md
         - Point Cloud To Video: tutorials/cloud_to_vid.md
     - API Reference: 
-        - Camera: api/camera.md
-        - Common: api/common.md
-        - IO: api/io.md
-        - Datasets:
+        - cvt.camera: api/camera.md
+        - cvt.common: api/common.md
+        - cvt.io: api/io.md
+        - cvt.datasets:
             #- BlendedMVS: api/datasets_blended.md
-            - DTU: api/datasets_dtu.md
+            - cvt.datasets.dtu: api/datasets_dtu.md
             #- Tanks \& Temples: api/datasets_tanks.md
-        - Geometry: api/geometry.md
-        - Filtering: api/filtering.md
-        - Metrics: api/metrics.md
-        - Visualization:
-            - Latex: api/visualization_latex.md
-            - Utilities: api/visualization_util.md
-            - Video: api/visualization_video.md
+        - cvt.geometry: api/geometry.md
+        - cvt.filtering: api/filtering.md
+        - cvt.metrics: api/metrics.md
+        - cvt.visualization:
+            - cvt.visualization.latex: api/visualization_latex.md
+            - cvt.visualization.util: api/visualization_util.md
+            - cvt.visualization.video: api/visualization_video.md
     - Resources:
         - Pose File Formats: resources/pose_file_formats.md
     - Development:
@@ -63,11 +63,16 @@ markdown_extensions:
     - attr_list
     - footnotes
     - pymdownx.emoji:
-        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_index: !!python/name:material.extensions.emoji.twemoji
         emoji_generator: !!python/name:materialx.emoji.to_svg
 
 repo_name: nbugdorfer/cvtkit
 repo_url: https://github.com/nburgdorfer/cvtkit
 
 plugins:
-    - mkdocstrings:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["./src"]
+          options:
+            docstring_style: google

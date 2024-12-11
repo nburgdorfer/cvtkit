@@ -1,32 +1,5 @@
 # cvt/geometry.py
 
-"""Module including geometric routines.
-
-This module contains the following functions:
-
-- `downsample_cloud(cloud, min_point_dist)` - Downsamples a point cloud enforcing a minumum point spacing.
-- `essential_from_features(src_image_file, tgt_image_file, K)` - Computes the essential matrix between two images using image features.
-- `fundamental_from_KP(K, P_src, P_tgt)` - Computes the fundamental matrix between two images using camera parameters.
-- `fundamental_from_features(src_image_file, tgt_image_file)` - Computes the fundamental matrix between two images using image features.
-- `geometric_consistency_error(src_depth, src_cam, tgt_depth, tgt_cam)` - .
-- `geometric_consistency_mask(src_depth, src_cam, tgt_depth, tgt_cam, pixel_th)` - Computes the geometric consistency mask between a source and target depth map.
-- `homography(src_image_file, tgt_image_file)` - Computes a homography transformation between two images using image features.
-- `homography_warp(cfg,features, level, ref_in, src_in, ref_ex, src_ex, depth_hypos, group_channels, vwa_net, vis_weights, aggregation)` - Performs homography warping to create a Plane Sweeping Volume (PSV).
-- `match_features(src_image, tgt_image, max_features)` - Computer matching ORB features between a pair of images.
-- `plane_coords(K, P, depth_hypos, H, W)` - .
-- `points_from_depth(depth, cam)` - Creates a point array from a single depth map.
-- `project_depth_map(depth, cam, mask)` - Projects a depth map into a list of 3D points.
-- `project_renderer(renderer, K, P, width, height)` - Projects the scene in an Open3D Offscreen Renderer to the 2D image plane.
-- `render_custom_values(points, values, image_shape, cam)` - Renders a point cloud into a 2D camera plane using custom values for each pixel.
-- `render_point_cloud(cloud, cam, width, height)` - Renders a point cloud into a 2D image plane.
-- `reproject(src_depth, src_cam, tgt_depth, tgt_cam)` - Computes the re-projection depth values and pixel indices between two depth maps.
-- `sample_volume(volume, z_vals, coords, H, W, near_depth, far_depth, inv_depth)` - .
-- `soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M, delta_in)` - .
-- `visibility(depths, K, Ps, vis_th, levels)` - .
-- `visibility_mask(src_depth, src_cam, depth_files, cam_files, src_ind, pixel_th)` - Computes a visibility mask between a provided source depth map and list of target depth maps.
-- `uniform_hypothesis(cfg, ref_in, src_in, ref_ex, src_ex, depth_min, depth_max, img_height, img_width, nhypothesis_init, inv_depth)` - .
-"""
-
 import numpy as np
 import sys
 import cv2
@@ -44,17 +17,6 @@ from matplotlib.patches import Rectangle
 from camera import intrinsic_pyramid, Z_from_disp
 from common import groupwise_correlation
 from io import *
-
-def downsample_cloud(cloud, min_point_dist):
-    """Downsamples a point cloud enforcing a minumum point spacing.
-    Parameters:
-        cloud: Point cloud to be decimated.
-        min_point_dist: minimum point spacing to enforce.
-
-    Returns:
-        The downsampled point cloud.
-    """
-    return cloud.voxel_down_sample(voxel_size=min_point_dist)
 
 def edge_mask(depth, near_depth, far_depth):
     down_gt = F.interpolate(depth,scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)

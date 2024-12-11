@@ -35,7 +35,8 @@ classifiers=[
 requires-python = ">= 3.9"
 dependencies = [
 	"numpy<=1.26.4",
-	"scipy"
+	"scipy",
+	"mkdocstrings-python"
 ]
 
 [project.urls]
