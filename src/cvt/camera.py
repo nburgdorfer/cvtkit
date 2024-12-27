@@ -14,6 +14,7 @@ from scipy.linalg import null_space
 from scipy.spatial.transform import Rotation
 import torch
 import open3d as o3d
+from typing import Tuple
 
 
 def build_o3d_traj(poses: np.ndarray, K: np.ndarray, width: int, height: int) -> o3d.camera.PinholeCameraTrajectory:
