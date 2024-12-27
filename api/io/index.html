@@ -14,23 +14,27 @@
       
         <link rel="next" href="../datasets_dtu/">
       
+      
       <link rel="icon" href="../../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
-        <title>IO - Computer Vision Toolkit</title>
+        <title>cvt.io - Computer Vision Toolkit</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.3bd4f189.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -44,7 +48,7 @@
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -63,9 +67,6 @@
     
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple">
   
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -87,7 +88,7 @@
 
   
 
-<header class="md-header md-header--lifted" data-md-component="header">
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Computer Vision Toolkit" class="md-header__button md-logo" aria-label="Computer Vision Toolkit" data-md-component="logo">
       
@@ -95,7 +96,8 @@
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -107,32 +109,41 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              IO
+              cvt.io
             
           </span>
         </div>
       </div>
     </div>
     
-      <form class="md-header__option" data-md-component="palette">
-        
-          
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
-          
-            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
-            </label>
-          
-        
-          
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
-          
-            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
-            </label>
-          
-        
-      </form>
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -141,7 +152,7 @@
         <a href="https://github.com/nburgdorfer/cvtkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
     nbugdorfer/cvtkit
@@ -154,38 +165,42 @@
     
       
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
+  <div class="md-grid">
     <ul class="md-tabs__list">
       
         
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  Home
 
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
-        Home
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
         
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/gen_vis_maps/" class="md-tabs__link">
+          
+  
+  Tutorials
 
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../tutorials/gen_vis_maps/" class="md-tabs__link">
-        Tutorials
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -194,48 +209,54 @@
   
     
   
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../camera/" class="md-tabs__link">
+          
+  
+  API Reference
 
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../camera/" class="md-tabs__link md-tabs__link--active">
-        API Reference
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../resources/pose_file_formats/" class="md-tabs__link">
-        Resources
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
         
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../resources/pose_file_formats/" class="md-tabs__link">
+          
+  
+  Resources
 
+        </a>
+      </li>
+    
+  
 
+      
+        
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../development/contrib/" class="md-tabs__link">
-        Development
-      </a>
-    </li>
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/contrib/" class="md-tabs__link">
+          
+  
+  Development
+
+        </a>
+      </li>
+    
   
 
       
@@ -261,6 +282,7 @@
                   <div class="md-sidebar__inner">
                     
 
+
   
 
 
@@ -278,7 +300,7 @@
       <a href="https://github.com/nburgdorfer/cvtkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
     nbugdorfer/cvtkit
@@ -290,234 +312,338 @@
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_1">
-          Home
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Home" data-md-level="1">
-        <label class="md-nav__title" for="__nav_1">
-          <span class="md-nav__icon md-icon"></span>
-          Home
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
           
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Computer Vision Toolkit
+        
+  
+  <span class="md-ellipsis">
+    Computer Vision Toolkit
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Tutorials
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Tutorials
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
           
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/gen_vis_maps/" class="md-nav__link">
-        Generate Visibility Maps
+        
+  
+  <span class="md-ellipsis">
+    Generate Visibility Maps
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/mesh_to_gif/" class="md-nav__link">
-        Mesh To GIF
+        
+  
+  <span class="md-ellipsis">
+    Mesh To GIF
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/mesh_to_vid/" class="md-nav__link">
-        Mesh To Video
+        
+  
+  <span class="md-ellipsis">
+    Mesh To Video
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/cloud_to_gif/" class="md-nav__link">
-        Point Cloud To GIF
+        
+  
+  <span class="md-ellipsis">
+    Point Cloud To GIF
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/cloud_to_vid/" class="md-nav__link">
-        Point Cloud To Video
+        
+  
+  <span class="md-ellipsis">
+    Point Cloud To Video
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
   
   
     
   
   
+  
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      
+        
+        
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3">
-          API Reference
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          API Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
           
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../camera/" class="md-nav__link">
-        Camera
+        
+  
+  <span class="md-ellipsis">
+    cvt.camera
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../common/" class="md-nav__link">
-        Common
+        
+  
+  <span class="md-ellipsis">
+    cvt.common
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          IO
+          
+  
+  <span class="md-ellipsis">
+    cvt.io
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        IO
+        
+  
+  <span class="md-ellipsis">
+    cvt.io
+  </span>
+  
+
       </a>
       
         
@@ -535,119 +661,153 @@
       
         <li class="md-nav__item">
   <a href="#cvt.io" class="md-nav__link">
-    cvt.io
+    <span class="md-ellipsis">
+      io
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.load_pretrained_model" class="md-nav__link">
-    load_pretrained_model()
+    <span class="md-ellipsis">
+      load_pretrained_model
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_cams_sfm" class="md-nav__link">
-    read_cams_sfm()
+    <span class="md-ellipsis">
+      read_cams_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_cams_trajectory" class="md-nav__link">
-    read_cams_trajectory()
+    <span class="md-ellipsis">
+      read_cams_trajectory
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_cluster_list" class="md-nav__link">
-    read_cluster_list()
+    <span class="md-ellipsis">
+      read_cluster_list
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_extrinsics_tum" class="md-nav__link">
-    read_extrinsics_tum()
+    <span class="md-ellipsis">
+      read_extrinsics_tum
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_matrix" class="md-nav__link">
-    read_matrix()
+    <span class="md-ellipsis">
+      read_matrix
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_mesh" class="md-nav__link">
-    read_mesh()
+    <span class="md-ellipsis">
+      read_mesh
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_pfm" class="md-nav__link">
-    read_pfm()
+    <span class="md-ellipsis">
+      read_pfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_point_cloud" class="md-nav__link">
-    read_point_cloud()
+    <span class="md-ellipsis">
+      read_point_cloud
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_single_cam_sfm" class="md-nav__link">
-    read_single_cam_sfm()
+    <span class="md-ellipsis">
+      read_single_cam_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_stereo_intrinsics_yaml" class="md-nav__link">
-    read_stereo_intrinsics_yaml()
+    <span class="md-ellipsis">
+      read_stereo_intrinsics_yaml
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.save_model" class="md-nav__link">
-    save_model()
+    <span class="md-ellipsis">
+      save_model
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_cam_sfm" class="md-nav__link">
-    write_cam_sfm()
+    <span class="md-ellipsis">
+      write_cam_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_matrix" class="md-nav__link">
-    write_matrix()
+    <span class="md-ellipsis">
+      write_matrix
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_mesh" class="md-nav__link">
-    write_mesh()
+    <span class="md-ellipsis">
+      write_mesh
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_pfm" class="md-nav__link">
-    write_pfm()
+    <span class="md-ellipsis">
+      write_pfm
+    </span>
   </a>
   
 </li>
@@ -659,284 +819,403 @@
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_4">
-          Datasets
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Datasets" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_4">
-          <span class="md-nav__icon md-icon"></span>
-          Datasets
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
           
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    cvt.datasets
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            cvt.datasets
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../datasets_dtu/" class="md-nav__link">
-        DTU
+        
+  
+  <span class="md-ellipsis">
+    cvt.datasets.dtu
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../geometry/" class="md-nav__link">
-        Geometry
+        
+  
+  <span class="md-ellipsis">
+    cvt.geometry
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../filtering/" class="md-nav__link">
-        Filtering
+        
+  
+  <span class="md-ellipsis">
+    cvt.filtering
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../metrics/" class="md-nav__link">
-        Metrics
+        
+  
+  <span class="md-ellipsis">
+    cvt.metrics
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_8" type="checkbox" id="__nav_3_8" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_8">
-          Visualization
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Visualization" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_8">
-          <span class="md-nav__icon md-icon"></span>
-          Visualization
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+        
           
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    cvt.visualization
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            cvt.visualization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../visualization_latex/" class="md-nav__link">
-        Latex
+        
+  
+  <span class="md-ellipsis">
+    cvt.visualization.latex
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../visualization_util/" class="md-nav__link">
-        Utilities
+        
+  
+  <span class="md-ellipsis">
+    cvt.visualization.util
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../visualization_video/" class="md-nav__link">
-        Video
+        
+  
+  <span class="md-ellipsis">
+    cvt.visualization.video
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+  
+  
+    
+    
+    
       
-
-  
-  
-  
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_4">
-          Resources
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Resources" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          Resources
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
           
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Resources
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Resources
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../resources/pose_file_formats/" class="md-nav__link">
-        Pose File Formats
+        
+  
+  <span class="md-ellipsis">
+    Pose File Formats
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5">
-          Development
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Development" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
-          <span class="md-nav__icon md-icon"></span>
-          Development
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
           
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Development
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../development/contrib/" class="md-nav__link">
-        Contributing
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../development/conduct/" class="md-nav__link">
-        Code of Conduct
+        
+  
+  <span class="md-ellipsis">
+    Code of Conduct
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -967,119 +1246,153 @@
       
         <li class="md-nav__item">
   <a href="#cvt.io" class="md-nav__link">
-    cvt.io
+    <span class="md-ellipsis">
+      io
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.load_pretrained_model" class="md-nav__link">
-    load_pretrained_model()
+    <span class="md-ellipsis">
+      load_pretrained_model
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_cams_sfm" class="md-nav__link">
-    read_cams_sfm()
+    <span class="md-ellipsis">
+      read_cams_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_cams_trajectory" class="md-nav__link">
-    read_cams_trajectory()
+    <span class="md-ellipsis">
+      read_cams_trajectory
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_cluster_list" class="md-nav__link">
-    read_cluster_list()
+    <span class="md-ellipsis">
+      read_cluster_list
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_extrinsics_tum" class="md-nav__link">
-    read_extrinsics_tum()
+    <span class="md-ellipsis">
+      read_extrinsics_tum
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_matrix" class="md-nav__link">
-    read_matrix()
+    <span class="md-ellipsis">
+      read_matrix
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_mesh" class="md-nav__link">
-    read_mesh()
+    <span class="md-ellipsis">
+      read_mesh
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_pfm" class="md-nav__link">
-    read_pfm()
+    <span class="md-ellipsis">
+      read_pfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_point_cloud" class="md-nav__link">
-    read_point_cloud()
+    <span class="md-ellipsis">
+      read_point_cloud
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_single_cam_sfm" class="md-nav__link">
-    read_single_cam_sfm()
+    <span class="md-ellipsis">
+      read_single_cam_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.read_stereo_intrinsics_yaml" class="md-nav__link">
-    read_stereo_intrinsics_yaml()
+    <span class="md-ellipsis">
+      read_stereo_intrinsics_yaml
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.save_model" class="md-nav__link">
-    save_model()
+    <span class="md-ellipsis">
+      save_model
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_cam_sfm" class="md-nav__link">
-    write_cam_sfm()
+    <span class="md-ellipsis">
+      write_cam_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_matrix" class="md-nav__link">
-    write_matrix()
+    <span class="md-ellipsis">
+      write_matrix
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_mesh" class="md-nav__link">
-    write_mesh()
+    <span class="md-ellipsis">
+      write_mesh
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.io.write_pfm" class="md-nav__link">
-    write_pfm()
+    <span class="md-ellipsis">
+      write_pfm
+    </span>
   </a>
   
 </li>
@@ -1102,8 +1415,7 @@
   
 
 
-
-  <h1>IO</h1>
+  <h1>cvt.io</h1>
 
 <details class="note" open="open">
 <summary>Pose File Formats</summary>
@@ -1114,31 +1426,20 @@
 <div class="doc doc-object doc-module">
 
 
+
 <a id="cvt.io"></a>
-  <div class="doc doc-contents first">
-  
-      <p>A suite of common input/output functions.</p>
+    <div class="doc doc-contents first">
+
+        <p>A suite of common input/output functions.</p>
 <p>This module includes several functions for reading and writing
 different types of data useful for computer vision applications.</p>
-<p>This module contains the following functions:</p>
-<ul>
-<li><code>read_cams_sfm(camera_path, extension)</code> - Reads an entire directory of camera files in SFM format.</li>
-<li><code>read_cams_trajectory(log_file)</code> - Reads camera file in Trajectory File format.</li>
-<li><code>read_extrinsics_tum(tum_file, key_frames)</code> - Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].</li>
-<li><code>read_matrix(mat_file)</code> - Reads a single matrix of float values from a file.</li>
-<li><code>read_mesh(mesh_file)</code> - Reads a mesh from a file.</li>
-<li><code>read_cluster_list(filename)</code> - Reads a cluster list file encoding supporting camera viewpoints.</li>
-<li><code>read_pfm(pfm_file)</code> - Reads a file in *.pfm format.</li>
-<li><code>read_point_cloud(point_cloud_file)</code> - Reads a point cloud from a file.</li>
-<li><code>read_single_cam_sfm(cam_file, depth_planes)</code> - Reads a single camera file in SFM format.</li>
-<li><code>read_stereo_intrinsics_yaml(intrinsics_file)</code> - Reads intrinsics information for a stereo camera pair from a *.yaml file.</li>
-<li><code>write_cam_sfm()</code> -</li>
-<li><code>write_matrix(M, mat_file)</code> - Writes a single matrix to a file.</li>
-<li><code>write_mesh(mesh_file, mesh)</code> - Writes a mesh to a file.</li>
-<li><code>write_pfm(pfm_file, data_map, scale)</code> - Writes a data map to a file in *.pfm format.</li>
-</ul>
 
-  
+
+
+
+
+
+
 
   <div class="doc doc-children">
 
@@ -1153,29 +1454,28 @@ different types of data useful for computer vision applications.</p>
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.load_pretrained_model" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_pretrained_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">load_pretrained_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Loads model weights from disk.</p>
+    <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_pretrained_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">):</span>
+        <p>Loads model weights from disk.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_pretrained_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads model weights from disk.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading model from: </span><span class="si">{</span><span class="n">ckpt</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
@@ -1186,104 +1486,121 @@ different types of data useful for computer vision applications.</p>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed loading network weights...&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_cams_sfm" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_cams_sfm</span><span class="p">(</span><span class="n">camera_path</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;cam.txt&#39;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_cams_sfm</span><span class="p">(</span><span class="n">camera_path</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;cam.txt&#39;</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads an entire directory of camera files in SFM format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>camera_path</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Path to the directory of camera files.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>extension</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>File extension being used for the camera files.</p></td>
-          <td>
-                <code>&#39;cam.txt&#39;</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Reads an entire directory of camera files in SFM format.</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>camera_path</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Path to the directory of camera files.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>extension</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>File extension being used for the camera files.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;cam.txt&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_sfm</span><span class="p">(</span><span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cam.txt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_sfm</span><span class="p">(</span><span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cam.txt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads an entire directory of camera files in SFM format.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1309,93 +1626,104 @@ different types of data useful for computer vision applications.</p>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cams</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_cams_trajectory" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_cams_trajectory</span><span class="p">(</span><span class="n">log_file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_cams_trajectory</span><span class="p">(</span><span class="n">log_file</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads camera file in Trajectory File format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Reads camera file in Trajectory File format.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>log_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input *.log file to be read.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>log_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input *.log file to be read.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of camera extrinsics, intrinsics, and view metadata (Nx2x4x4).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_trajectory</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cams_trajectory</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads camera file in Trajectory File format.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1420,90 +1748,101 @@ different types of data useful for computer vision applications.</p>
 
     <span class="k">return</span> <span class="n">cams</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_cluster_list" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_cluster_list</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_cluster_list</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads a cluster list file encoding supporting camera viewpoints.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Reads a cluster list file encoding supporting camera viewpoints.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>filename</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input file encoding per-camera viewpoints.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>filename</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input file encoding per-camera viewpoints.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="typing.List">List</span>[<span title="typing.Tuple">Tuple</span>[int, <span title="typing.List">List</span>[int]]]</code>
-          </td>
-          <td><p>An array of tuples encoding (ref_view, [src_1,src_2,..])</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="typing.Tuple">Tuple</span>[int, <span title="typing.List">List</span>[int]]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An array of tuples encoding (ref_view, [src_1,src_2,..])</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cluster_list</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_cluster_list</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a cluster list file encoding supporting camera viewpoints.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1525,80 +1864,114 @@ different types of data useful for computer vision applications.</p>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ref_view</span><span class="p">,</span> <span class="n">src_views</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">data</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_extrinsics_tum" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_extrinsics_tum</span><span class="p">(</span><span class="n">tum_file</span><span class="p">,</span> <span class="n">key_frames</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_extrinsics_tum</span><span class="p">(</span><span class="n">tum_file</span><span class="p">,</span> <span class="n">key_frames</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>tum_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input extrinsics file.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>key_frames</code></td>
-          <td>
-                <code><span title="typing.List">List</span>[int]</code>
-          </td>
-          <td><p>Indices corresponding to the desired keyframes.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of camera extrinsics (Nx4x4).</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>tum_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input extrinsics file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>key_frames</code>
+            </td>
+            <td>
+                  <code><span title="typing.List">List</span>[int]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Indices corresponding to the desired keyframes.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of camera extrinsics (Nx4x4).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
 <span class="normal"> 93</span>
 <span class="normal"> 94</span>
 <span class="normal"> 95</span>
@@ -1624,24 +1997,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_extrinsics_tum</span><span class="p">(</span><span class="n">tum_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key_frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_extrinsics_tum</span><span class="p">(</span><span class="n">tum_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key_frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads extrinsic camera trajectories in TUM format [timestamp tx ty tz qx qy qz qw].</span>
 
 <span class="sd">    Parameters:</span>
@@ -1686,89 +2042,100 @@ different types of data useful for computer vision applications.</p>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">extrinsics</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_matrix" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_matrix</span><span class="p">(</span><span class="n">mat_file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_matrix</span><span class="p">(</span><span class="n">mat_file</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads a single matrix of float values from a file.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Reads a single matrix of float values from a file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>mat_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input file for the matrix to be read.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>mat_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input file for the matrix to be read.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The matrix stored in the given file.</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The matrix stored in the given file.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
 <span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_matrix</span><span class="p">(</span><span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_matrix</span><span class="p">(</span><span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a single matrix of float values from a file.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1789,79 +2156,90 @@ different types of data useful for computer vision applications.</p>
 
     <span class="k">return</span> <span class="n">M</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_mesh" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads a mesh from a file.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Reads a mesh from a file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>mesh_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input mesh file.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>mesh_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input mesh file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="open3d">o3d</span>.<span title="open3d.geometry">geometry</span>.<span title="o3d.geometry.TriangleMesh">TriangleMesh</span></code>
-          </td>
-          <td><p>The mesh stored in the given file.</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="open3d.geometry.TriangleMesh">TriangleMesh</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The mesh stored in the given file.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TriangleMesh</span><span class="p">:</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TriangleMesh</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a mesh from a file.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1872,70 +2250,98 @@ different types of data useful for computer vision applications.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_triangle_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_pfm" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads a file in *.pfm format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Reads a file in *.pfm format.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>pfm_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input *.pfm file to be read.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>pfm_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input *.pfm file to be read.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Data map that was stored in the *.pfm file.</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Data map that was stored in the *.pfm file.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span>
@@ -1957,24 +2363,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a file in *.pfm format.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2015,79 +2404,90 @@ different types of data useful for computer vision applications.</p>
         <span class="n">data</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_point_cloud" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads a point cloud from a file.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Reads a point cloud from a file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>point_cloud_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input point cloud file.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>point_cloud_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input point cloud file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="open3d">o3d</span>.<span title="open3d.geometry">geometry</span>.<span title="o3d.geometry.PointCloud">PointCloud</span></code>
-          </td>
-          <td><p>The point cloud stored in the given file.</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="open3d.geometry.PointCloud">PointCloud</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The point cloud stored in the given file.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a point cloud from a file.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2098,80 +2498,114 @@ different types of data useful for computer vision applications.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_point_cloud</span><span class="p">(</span><span class="n">point_cloud_file</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_single_cam_sfm" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_single_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">,</span> <span class="n">depth_planes</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_single_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">,</span> <span class="n">depth_planes</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads a single camera file in SFM format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>cam_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input camera file to be read.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>depth_planes</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>Number of depth planes to store in the view metadata.</p></td>
-          <td>
-                <code>256</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Reads a single camera file in SFM format.</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Camera extrinsics, intrinsics, and view metadata (2x4x4).</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>cam_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input camera file to be read.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>depth_planes</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of depth planes to store in the view metadata.</p>
+              </div>
+            </td>
+            <td>
+                  <code>256</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera extrinsics, intrinsics, and view metadata (2x4x4).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span>
@@ -2204,24 +2638,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_single_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">depth_planes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_single_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">depth_planes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a single camera file in SFM format.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2273,100 +2690,148 @@ different types of data useful for computer vision applications.</p>
 
     <span class="k">return</span> <span class="n">cam</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.read_stereo_intrinsics_yaml" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">read_stereo_intrinsics_yaml</span><span class="p">(</span><span class="n">intrinsics_file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">read_stereo_intrinsics_yaml</span><span class="p">(</span><span class="n">intrinsics_file</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Reads intrinsics information for a stereo camera pair from a *.yaml file.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>intrinsics_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input *.yaml file storing the intrinsics information.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Reads intrinsics information for a stereo camera pair from a *.yaml file.</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>K_left</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Intrinsics matrix (3x3) of left camera.</p></td>
-        </tr>
-        <tr>
-<td><code>D_left</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Distortion coefficients vector (1x4) of left camera.</p></td>
-        </tr>
-        <tr>
-<td><code>K_right</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Intrinsics matrix (3x3) of right camera.</p></td>
-        </tr>
-        <tr>
-<td><code>D_right</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Distortion coefficients vector (1x4) of right camera.</p></td>
-        </tr>
-        <tr>
-<td><code>R</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Relative rotation matrix (3x3) from left -&gt; right cameras.</p></td>
-        </tr>
-        <tr>
-<td><code>T</code></td>          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Relative translation vector (1x3) from left -&gt; right cameras.</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">295</span>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>intrinsics_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input *.yaml file storing the intrinsics information.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>K_left</code></td>            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Intrinsics matrix (3x3) of left camera.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>D_left</code></td>            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Distortion coefficients vector (1x4) of left camera.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>K_right</code></td>            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Intrinsics matrix (3x3) of right camera.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>D_right</code></td>            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Distortion coefficients vector (1x4) of right camera.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>R</code></td>            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Relative rotation matrix (3x3) from left -&gt; right cameras.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>T</code></td>            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Relative translation vector (1x3) from left -&gt; right cameras.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
@@ -2390,24 +2855,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">316</span>
 <span class="normal">317</span>
 <span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span>
-<span class="normal">329</span>
-<span class="normal">330</span>
-<span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_stereo_intrinsics_yaml</span><span class="p">(</span><span class="n">intrinsics_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
+<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">read_stereo_intrinsics_yaml</span><span class="p">(</span><span class="n">intrinsics_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
                                                                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> \
@@ -2450,36 +2898,35 @@ different types of data useful for computer vision applications.</p>
 
     <span class="k">return</span> <span class="p">[</span><span class="n">K_left</span><span class="p">,</span> <span class="n">D_left</span><span class="p">,</span> <span class="n">K_right</span><span class="p">,</span> <span class="n">D_right</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">T</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.save_model" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ckpt_model.pth&#39;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ckpt_model.pth&#39;</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Saves model weights to disk.</p>
+    <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">440</span>
-<span class="normal">441</span>
-<span class="normal">442</span>
-<span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ckpt_model.pth&quot;</span><span class="p">):</span>
+        <p>Saves model weights to disk.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ckpt_model.pth&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves model weights to disk.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s2">&quot;ckpt&quot;</span><span class="p">]</span>
@@ -2489,67 +2936,199 @@ different types of data useful for computer vision applications.</p>
     <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_folder</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">model_path</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.write_cam_sfm" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">write_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">,</span> <span class="n">cam</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">write_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Writes intrinsic and extrinsic camera parameters to a file in sfm format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>cam_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>The file to be writen to.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>cam</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Camera extrinsic and intrinsic data to be written.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Writes intrinsic and extrinsic camera parameters to a file in sfm format.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">338</span>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>cam_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The file to be writen to.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>intrinsics</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera intrinsic data to be written.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>extrinsics</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera extrinsic data to be written.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
-<span class="normal">341</span>
-<span class="normal">342</span>
-<span class="normal">343</span>
+<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes intrinsic and extrinsic camera parameters to a file in sfm format.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        cam_file: The file to be writen to.</span>
+<span class="sd">        intrinsics: Camera intrinsic data to be written.</span>
+<span class="sd">        extrinsics: Camera extrinsic data to be written.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cam_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;extrinsic</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">extrinsics</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;intrinsic</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">intrinsics</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.io.write_matrix" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">write_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">mat_file</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Writes a single matrix to a file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>M</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Matrix to be stored.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>mat_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Output file where the given matrix is to be writen.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
@@ -2560,101 +3139,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">351</span>
 <span class="normal">352</span>
 <span class="normal">353</span>
-<span class="normal">354</span>
-<span class="normal">355</span>
-<span class="normal">356</span>
-<span class="normal">357</span>
-<span class="normal">358</span>
-<span class="normal">359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_cam_sfm</span><span class="p">(</span><span class="n">cam_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes intrinsic and extrinsic camera parameters to a file in sfm format.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        cam_file: The file to be writen to.</span>
-<span class="sd">        cam: Camera extrinsic and intrinsic data to be written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cam_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;extrinsic</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cam</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;intrinsic</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cam</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cam</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cam</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cam</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cam</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="cvt.io.write_matrix" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">write_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">mat_file</span><span class="p">)</span></code>
-
-</h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Writes a single matrix to a file.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>M</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Matrix to be stored.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>mat_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Output file where the given matrix is to be writen.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">361</span>
-<span class="normal">362</span>
-<span class="normal">363</span>
-<span class="normal">364</span>
-<span class="normal">365</span>
-<span class="normal">366</span>
-<span class="normal">367</span>
-<span class="normal">368</span>
-<span class="normal">369</span>
-<span class="normal">370</span>
-<span class="normal">371</span>
-<span class="normal">372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mat_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a single matrix to a file.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2667,69 +3152,81 @@ different types of data useful for computer vision applications.</p>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.write_mesh" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Writes a mesh to a file.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>mesh_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Output mesh file.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>mesh</code></td>
-          <td>
-                <code><span title="open3d">o3d</span>.<span title="open3d.geometry">geometry</span>.<span title="o3d.geometry.TriangleMesh">TriangleMesh</span></code>
-          </td>
-          <td><p>Mesh to be stored.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Writes a mesh to a file.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">374</span>
-<span class="normal">375</span>
-<span class="normal">376</span>
-<span class="normal">377</span>
-<span class="normal">378</span>
-<span class="normal">379</span>
-<span class="normal">380</span>
-<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TriangleMesh</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>mesh_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Output mesh file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>mesh</code>
+            </td>
+            <td>
+                  <code><span title="open3d.geometry.TriangleMesh">TriangleMesh</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mesh to be stored.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">o3d</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TriangleMesh</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a mesh to a file.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2738,72 +3235,108 @@ different types of data useful for computer vision applications.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">o3d</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">write_triangle_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.io.write_pfm" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">write_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">,</span> <span class="n">data_map</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">write_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">,</span> <span class="n">data_map</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Writes a data map to a file in *.pfm format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>pfm_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Output *.pfm file to store the data map.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>data_map</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Data map to be stored.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>scale</code></td>
-          <td>
-                <code>float</code>
-          </td>
-          <td><p>Value used to scale the data map.</p></td>
-          <td>
-                <code>1.0</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Writes a data map to a file in *.pfm format.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/io.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">383</span>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>pfm_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Output *.pfm file to store the data map.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>data_map</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Data map to be stored.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>scale</code>
+            </td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value used to scale the data map.</p>
+              </div>
+            </td>
+            <td>
+                  <code>1.0</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/io.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
 <span class="normal">384</span>
 <span class="normal">385</span>
 <span class="normal">386</span>
@@ -2823,25 +3356,7 @@ different types of data useful for computer vision applications.</p>
 <span class="normal">400</span>
 <span class="normal">401</span>
 <span class="normal">402</span>
-<span class="normal">403</span>
-<span class="normal">404</span>
-<span class="normal">405</span>
-<span class="normal">406</span>
-<span class="normal">407</span>
-<span class="normal">408</span>
-<span class="normal">409</span>
-<span class="normal">410</span>
-<span class="normal">411</span>
-<span class="normal">412</span>
-<span class="normal">413</span>
-<span class="normal">414</span>
-<span class="normal">415</span>
-<span class="normal">416</span>
-<span class="normal">417</span>
-<span class="normal">418</span>
-<span class="normal">419</span>
-<span class="normal">420</span>
-<span class="normal">421</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_pfm</span><span class="p">(</span><span class="n">pfm_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a data map to a file in *.pfm format.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2881,8 +3396,8 @@ different types of data useful for computer vision applications.</p>
         <span class="n">data_map_string</span> <span class="o">=</span> <span class="n">data_map</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
         <span class="n">pfm_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_map_string</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -2890,9 +3405,16 @@ different types of data useful for computer vision applications.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
+
+
+
+
+
+
+
 
 
 
@@ -2903,12 +3425,14 @@ different types of data useful for computer vision applications.</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
-          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
-            Back to top
-          </a>
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -2935,10 +3459,11 @@ different types of data useful for computer vision applications.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>

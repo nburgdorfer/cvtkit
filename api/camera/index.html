@@ -14,23 +14,27 @@
       
         <link rel="next" href="../common/">
       
+      
       <link rel="icon" href="../../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
-        <title>Camera - Computer Vision Toolkit</title>
+        <title>cvt.camera - Computer Vision Toolkit</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.3bd4f189.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -44,7 +48,7 @@
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -63,9 +67,6 @@
     
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple">
   
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -87,7 +88,7 @@
 
   
 
-<header class="md-header md-header--lifted" data-md-component="header">
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Computer Vision Toolkit" class="md-header__button md-logo" aria-label="Computer Vision Toolkit" data-md-component="logo">
       
@@ -95,7 +96,8 @@
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -107,32 +109,41 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Camera
+              cvt.camera
             
           </span>
         </div>
       </div>
     </div>
     
-      <form class="md-header__option" data-md-component="palette">
-        
-          
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
-          
-            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
-            </label>
-          
-        
-          
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
-          
-            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
-            </label>
-          
-        
-      </form>
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -141,7 +152,7 @@
         <a href="https://github.com/nburgdorfer/cvtkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
     nbugdorfer/cvtkit
@@ -154,38 +165,42 @@
     
       
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
+  <div class="md-grid">
     <ul class="md-tabs__list">
       
         
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  Home
 
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
-        Home
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
         
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/gen_vis_maps/" class="md-tabs__link">
+          
+  
+  Tutorials
 
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../tutorials/gen_vis_maps/" class="md-tabs__link">
-        Tutorials
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -194,48 +209,54 @@
   
     
   
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  API Reference
 
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="./" class="md-tabs__link md-tabs__link--active">
-        API Reference
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../resources/pose_file_formats/" class="md-tabs__link">
-        Resources
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
         
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../resources/pose_file_formats/" class="md-tabs__link">
+          
+  
+  Resources
 
+        </a>
+      </li>
+    
+  
 
+      
+        
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../development/contrib/" class="md-tabs__link">
-        Development
-      </a>
-    </li>
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/contrib/" class="md-tabs__link">
+          
+  
+  Development
+
+        </a>
+      </li>
+    
   
 
       
@@ -261,6 +282,7 @@
                   <div class="md-sidebar__inner">
                     
 
+
   
 
 
@@ -278,7 +300,7 @@
       <a href="https://github.com/nburgdorfer/cvtkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
     nbugdorfer/cvtkit
@@ -290,206 +312,296 @@
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_1">
-          Home
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Home" data-md-level="1">
-        <label class="md-nav__title" for="__nav_1">
-          <span class="md-nav__icon md-icon"></span>
-          Home
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
           
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Computer Vision Toolkit
+        
+  
+  <span class="md-ellipsis">
+    Computer Vision Toolkit
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Tutorials
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Tutorials
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
           
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/gen_vis_maps/" class="md-nav__link">
-        Generate Visibility Maps
+        
+  
+  <span class="md-ellipsis">
+    Generate Visibility Maps
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/mesh_to_gif/" class="md-nav__link">
-        Mesh To GIF
+        
+  
+  <span class="md-ellipsis">
+    Mesh To GIF
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/mesh_to_vid/" class="md-nav__link">
-        Mesh To Video
+        
+  
+  <span class="md-ellipsis">
+    Mesh To Video
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/cloud_to_gif/" class="md-nav__link">
-        Point Cloud To GIF
+        
+  
+  <span class="md-ellipsis">
+    Point Cloud To GIF
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../tutorials/cloud_to_vid/" class="md-nav__link">
-        Point Cloud To Video
+        
+  
+  <span class="md-ellipsis">
+    Point Cloud To Video
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
   
   
     
   
   
+  
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      
+        
+        
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3">
-          API Reference
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          API Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
           
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
   
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Camera
+          
+  
+  <span class="md-ellipsis">
+    cvt.camera
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Camera
+        
+  
+  <span class="md-ellipsis">
+    cvt.camera
+  </span>
+  
+
       </a>
       
         
@@ -507,49 +619,144 @@
       
         <li class="md-nav__item">
   <a href="#cvt.camera" class="md-nav__link">
-    cvt.camera
+    <span class="md-ellipsis">
+      camera
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.camera.camera_center" class="md-nav__link">
-    camera_center()
+  <a href="#cvt.camera.build_o3d_traj" class="md-nav__link">
+    <span class="md-ellipsis">
+      build_o3d_traj
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.camera.relative_transform" class="md-nav__link">
-    relative_transform()
+  <a href="#cvt.camera.camera_center_" class="md-nav__link">
+    <span class="md-ellipsis">
+      camera_center_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.compute_baselines_" class="md-nav__link">
+    <span class="md-ellipsis">
+      compute_baselines_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.crop_intrinsics_" class="md-nav__link">
+    <span class="md-ellipsis">
+      crop_intrinsics_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.intrinsic_pyramid" class="md-nav__link">
+    <span class="md-ellipsis">
+      intrinsic_pyramid
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.intrinsic_pyramid_" class="md-nav__link">
+    <span class="md-ellipsis">
+      intrinsic_pyramid_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.relative_transform_" class="md-nav__link">
+    <span class="md-ellipsis">
+      relative_transform_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.scale_intrinsics" class="md-nav__link">
+    <span class="md-ellipsis">
+      scale_intrinsics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.scale_intrinsics_" class="md-nav__link">
+    <span class="md-ellipsis">
+      scale_intrinsics_
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.sfm_to_trajectory" class="md-nav__link">
-    sfm_to_trajectory()
+    <span class="md-ellipsis">
+      sfm_to_trajectory
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.to_opengl_pose" class="md-nav__link">
-    to_opengl_pose()
+    <span class="md-ellipsis">
+      to_opengl_pose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.to_opengl_pose_" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_opengl_pose_
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.trajectory_to_sfm" class="md-nav__link">
-    trajectory_to_sfm()
+    <span class="md-ellipsis">
+      trajectory_to_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.y_axis_rotation" class="md-nav__link">
-    y_axis_rotation()
+    <span class="md-ellipsis">
+      y_axis_rotation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.z_planes_from_disp" class="md-nav__link">
+    <span class="md-ellipsis">
+      z_planes_from_disp
+    </span>
   </a>
   
 </li>
@@ -561,312 +768,445 @@
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../common/" class="md-nav__link">
-        Common
+        
+  
+  <span class="md-ellipsis">
+    cvt.common
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../io/" class="md-nav__link">
-        IO
+        
+  
+  <span class="md-ellipsis">
+    cvt.io
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_4">
-          Datasets
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Datasets" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_4">
-          <span class="md-nav__icon md-icon"></span>
-          Datasets
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
           
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    cvt.datasets
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            cvt.datasets
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../datasets_dtu/" class="md-nav__link">
-        DTU
+        
+  
+  <span class="md-ellipsis">
+    cvt.datasets.dtu
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../geometry/" class="md-nav__link">
-        Geometry
+        
+  
+  <span class="md-ellipsis">
+    cvt.geometry
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../filtering/" class="md-nav__link">
-        Filtering
+        
+  
+  <span class="md-ellipsis">
+    cvt.filtering
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../metrics/" class="md-nav__link">
-        Metrics
+        
+  
+  <span class="md-ellipsis">
+    cvt.metrics
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_8" type="checkbox" id="__nav_3_8" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_8">
-          Visualization
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Visualization" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_8">
-          <span class="md-nav__icon md-icon"></span>
-          Visualization
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+        
           
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    cvt.visualization
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            cvt.visualization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../visualization_latex/" class="md-nav__link">
-        Latex
+        
+  
+  <span class="md-ellipsis">
+    cvt.visualization.latex
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../visualization_util/" class="md-nav__link">
-        Utilities
+        
+  
+  <span class="md-ellipsis">
+    cvt.visualization.util
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../visualization_video/" class="md-nav__link">
-        Video
+        
+  
+  <span class="md-ellipsis">
+    cvt.visualization.video
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+  
+  
+    
+    
+    
       
-
-  
-  
-  
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_4">
-          Resources
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Resources" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          Resources
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
           
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Resources
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Resources
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../resources/pose_file_formats/" class="md-nav__link">
-        Pose File Formats
+        
+  
+  <span class="md-ellipsis">
+    Pose File Formats
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+      
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5">
-          Development
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Development" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
-          <span class="md-nav__icon md-icon"></span>
-          Development
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
           
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Development
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../development/contrib/" class="md-nav__link">
-        Contributing
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../development/conduct/" class="md-nav__link">
-        Code of Conduct
+        
+  
+  <span class="md-ellipsis">
+    Code of Conduct
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -897,49 +1237,144 @@
       
         <li class="md-nav__item">
   <a href="#cvt.camera" class="md-nav__link">
-    cvt.camera
+    <span class="md-ellipsis">
+      camera
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.camera.camera_center" class="md-nav__link">
-    camera_center()
+  <a href="#cvt.camera.build_o3d_traj" class="md-nav__link">
+    <span class="md-ellipsis">
+      build_o3d_traj
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvt.camera.relative_transform" class="md-nav__link">
-    relative_transform()
+  <a href="#cvt.camera.camera_center_" class="md-nav__link">
+    <span class="md-ellipsis">
+      camera_center_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.compute_baselines_" class="md-nav__link">
+    <span class="md-ellipsis">
+      compute_baselines_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.crop_intrinsics_" class="md-nav__link">
+    <span class="md-ellipsis">
+      crop_intrinsics_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.intrinsic_pyramid" class="md-nav__link">
+    <span class="md-ellipsis">
+      intrinsic_pyramid
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.intrinsic_pyramid_" class="md-nav__link">
+    <span class="md-ellipsis">
+      intrinsic_pyramid_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.relative_transform_" class="md-nav__link">
+    <span class="md-ellipsis">
+      relative_transform_
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.scale_intrinsics" class="md-nav__link">
+    <span class="md-ellipsis">
+      scale_intrinsics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.scale_intrinsics_" class="md-nav__link">
+    <span class="md-ellipsis">
+      scale_intrinsics_
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.sfm_to_trajectory" class="md-nav__link">
-    sfm_to_trajectory()
+    <span class="md-ellipsis">
+      sfm_to_trajectory
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.to_opengl_pose" class="md-nav__link">
-    to_opengl_pose()
+    <span class="md-ellipsis">
+      to_opengl_pose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.to_opengl_pose_" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_opengl_pose_
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.trajectory_to_sfm" class="md-nav__link">
-    trajectory_to_sfm()
+    <span class="md-ellipsis">
+      trajectory_to_sfm
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#cvt.camera.y_axis_rotation" class="md-nav__link">
-    y_axis_rotation()
+    <span class="md-ellipsis">
+      y_axis_rotation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvt.camera.z_planes_from_disp" class="md-nav__link">
+    <span class="md-ellipsis">
+      z_planes_from_disp
+    </span>
   </a>
   
 </li>
@@ -962,8 +1397,7 @@
   
 
 
-
-  <h1>Camera</h1>
+  <h1>cvt.camera</h1>
 
 <details class="note" open="open">
 <summary>Pose File Formats</summary>
@@ -974,23 +1408,21 @@
 <div class="doc doc-object doc-module">
 
 
+
 <a id="cvt.camera"></a>
-  <div class="doc doc-contents first">
-  
-      <p>A suite of common camera utilities.</p>
+    <div class="doc doc-contents first">
+
+        <p>A suite of common camera utilities.</p>
 <p>This module includes several functions for manipulating and extracting information
 from camera intrinsics and extrinsics, as well as converting between specific
 formats.</p>
-<p>This module contains the following functions:</p>
-<ul>
-<li><code>camera_center(cam)</code> - Computes the center of a camera in world coordinates.</li>
-<li><code>relative_transform(cams_1, cams_2)</code> - Computes the relative transformation between two sets of cameras.</li>
-<li><code>sfm_to_trajectory(cams, log_file)</code> - Convert a set of cameras from SFM format to Trajectory File format.</li>
-<li><code>trajectory_to_sfm(log_file, camera_path, intrinsics)</code> - Convert a set of cameras from Trajectory File format to SFM format.</li>
-<li><code>y_axis_rotation(P, theta)</code> - Applies a rotation to the given camera extrinsics matrix along the y-axis.</li>
-</ul>
 
-  
+
+
+
+
+
+
 
   <div class="doc doc-children">
 
@@ -1005,62 +1437,614 @@ formats.</p>
 <div class="doc doc-object doc-function">
 
 
-
-<h2 id="cvt.camera.camera_center" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">camera_center</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span></code>
+<h2 id="cvt.camera.build_o3d_traj" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_o3d_traj</span><span class="p">(</span><span class="n">poses</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Computes the center of a camera in world coordinates.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>Converts an array of camera poses and an intrinsics matrix into Open3D trajectory format.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>cam</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The extrinsics matrix (4x4) of a given camera.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>poses</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Nx4x4 array of camera pose in world-to-camera format.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>K</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>3x3 camera intrinsics matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>width</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Expected image width.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>height</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Expected image height.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The camera center vector (3x1) in world coordinates.</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="open3d.camera.PinholeCameraTrajectory">PinholeCameraTrajectory</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Open3D camera trajectory model.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_o3d_traj</span><span class="p">(</span><span class="n">poses</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraTrajectory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts an array of camera poses and an intrinsics matrix into Open3D trajectory format.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        poses: Nx4x4 array of camera pose in world-to-camera format.</span>
+<span class="sd">        K: 3x3 camera intrinsics matrix.</span>
+<span class="sd">        width: Expected image width.</span>
+<span class="sd">        height: Expected image height.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Open3D camera trajectory model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraTrajectory</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">pose</span> <span class="ow">in</span> <span class="n">poses</span><span class="p">:</span>
+        <span class="n">camera_params</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraParameters</span><span class="p">()</span>
+        <span class="n">camera_params</span><span class="o">.</span><span class="n">intrinsic</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraIntrinsic</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">camera_params</span><span class="o">.</span><span class="n">extrinsic</span> <span class="o">=</span> <span class="n">pose</span>
+        <span class="n">trajectory</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">camera_params</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">trajectory</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.camera_center_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">camera_center_</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the center of a camera in world coordinates.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>pose</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The extrinsics matrix (4x4) of a given camera in world-to-camera format.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The camera center vector (3x1) in world coordinates.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">camera_center_</span><span class="p">(</span><span class="n">pose</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the center of a camera in world coordinates.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        pose: The extrinsics matrix (4x4) of a given camera in world-to-camera format.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The camera center vector (3x1) in world coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">null_space</span><span class="p">(</span><span class="n">cam</span><span class="p">[:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">C</span> <span class="o">/=</span> <span class="n">C</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span>
+
+    <span class="k">return</span> <span class="n">C</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.compute_baselines_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">compute_baselines_</span><span class="p">(</span><span class="n">poses</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the minimum and maximum baseline between a reference camera pose (poses[0]) and a cluster of supporting camera poses (poses[1:]).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>poses</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of camera poses (Nx4x4)</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>Tuple[float, float]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A tuple of baselines where the first element is the minimum baseline and the second element is the maximum baseline.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compute_baselines_</span><span class="p">(</span><span class="n">poses</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the minimum and maximum baseline between a reference camera pose (poses[0]) and a cluster of supporting camera poses (poses[1:]).</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        poses: Array of camera poses (Nx4x4)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple of baselines where the first element is the minimum baseline and the second element is the maximum baseline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ref_pose</span> <span class="o">=</span> <span class="n">poses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ref_camera_center</span> <span class="o">=</span> <span class="n">null_space</span><span class="p">(</span><span class="n">ref_pose</span><span class="p">[:</span><span class="mi">3</span><span class="p">,:])</span>
+    <span class="n">ref_camera_center</span> <span class="o">=</span> <span class="n">ref_camera_center</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">ref_camera_center</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">min_baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+    <span class="n">max_baseline</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">num_views</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">poses</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_views</span><span class="p">):</span>
+        <span class="n">sup_pose</span> <span class="o">=</span> <span class="n">poses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">sup_camera_center</span> <span class="o">=</span> <span class="n">null_space</span><span class="p">(</span><span class="n">sup_pose</span><span class="p">[:</span><span class="mi">3</span><span class="p">,:])</span>
+        <span class="n">sup_camera_center</span> <span class="o">=</span> <span class="n">sup_camera_center</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">sup_camera_center</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ref_camera_center</span> <span class="o">-</span> <span class="n">sup_camera_center</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">min_baseline</span><span class="p">:</span>
+            <span class="n">min_baseline</span> <span class="o">=</span> <span class="n">b</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="n">max_baseline</span><span class="p">:</span>
+            <span class="n">max_baseline</span> <span class="o">=</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">min_baseline</span><span class="p">,</span> <span class="n">max_baseline</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.crop_intrinsics_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">crop_intrinsics_</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">crop_row</span><span class="p">,</span> <span class="n">crop_col</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Adjusts intrinsics matrix principle point coordinates corresponding to image cropping.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>K</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>3x3 camera intrinsics matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>crop_row</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Offset for cy (corresponding to cropping the left and right side of an image by 'crop_row').</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>crop_col</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Offset for cx (corresponding to cropping the top and bottom side of an image by 'crop_col').</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The updated 3x3 intrinsics matrix</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">crop_intrinsics_</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">crop_row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">crop_col</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjusts intrinsics matrix principle point coordinates corresponding to image cropping.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        K: 3x3 camera intrinsics matrix.</span>
+<span class="sd">        crop_row: Offset for cy (corresponding to cropping the left and right side of an image by &#39;crop_row&#39;).</span>
+<span class="sd">        crop_col: Offset for cx (corresponding to cropping the top and bottom side of an image by &#39;crop_col&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated 3x3 intrinsics matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">crop_col</span>
+    <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">crop_row</span>
+    <span class="k">return</span> <span class="n">K</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.intrinsic_pyramid" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">intrinsic_pyramid</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes camera intrinsics pyramid corresonding to several levels of image downsampling.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>K</code>
+            </td>
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>[Batch x 3 x 3] camera intrinsics matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>levels</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of pyramid levels to compute.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The intrinsics pyramid of shape [Batch x L x 3 x 3].</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
@@ -1072,101 +2056,126 @@ formats.</p>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
-<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">camera_center</span><span class="p">(</span><span class="n">cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the center of a camera in world coordinates.</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">intrinsic_pyramid</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes camera intrinsics pyramid corresonding to several levels of image downsampling.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        cam: The extrinsics matrix (4x4) of a given camera.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        K: [Batch x 3 x 3] camera intrinsics matrix.</span>
+<span class="sd">        levels: The number of pyramid levels to compute.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The camera center vector (3x1) in world coordinates.</span>
+<span class="sd">        The intrinsics pyramid of shape [Batch x L x 3 x 3].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">C</span> <span class="o">=</span> <span class="n">null_space</span><span class="p">(</span><span class="n">cam</span><span class="p">[:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">4</span><span class="p">])</span>
-    <span class="n">C</span> <span class="o">/=</span> <span class="n">C</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">K_pyr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">C</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">levels</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">K</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">l</span><span class="p">)</span>
+            <span class="n">k</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">K_pyr</span><span class="p">[:,</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+
+    <span class="k">return</span> <span class="n">K_pyr</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
-<h2 id="cvt.camera.relative_transform" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">relative_transform</span><span class="p">(</span><span class="n">cams_1</span><span class="p">,</span> <span class="n">cams_2</span><span class="p">)</span></code>
+<h2 id="cvt.camera.intrinsic_pyramid_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">intrinsic_pyramid_</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Computes the relative transformation between two sets of cameras.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>cams_1</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of the first set of cameras (Nx4x4).</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>cams_2</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of the second set of cameras (Nx4x4).</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Computes camera intrinsics pyramid corresonding to several levels of image downsampling.</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The relative transformation matrix (4x4) between the two trajectories.</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>K</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>[3 x 3] camera intrinsics matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>levels</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of pyramid levels to compute.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The intrinsics pyramid of shape [L x 3 x 3].</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
@@ -1186,10 +2195,119 @@ formats.</p>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
+<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">intrinsic_pyramid_</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes camera intrinsics pyramid corresonding to several levels of image downsampling.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        K: [3 x 3] camera intrinsics matrix.</span>
+<span class="sd">        levels: The number of pyramid levels to compute.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The intrinsics pyramid of shape [L x 3 x 3].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">K_pyr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">levels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">levels</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">K</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">l</span><span class="p">)</span>
+            <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">K_pyr</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+
+    <span class="k">return</span> <span class="n">K_pyr</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.relative_transform_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">relative_transform_</span><span class="p">(</span><span class="n">poses_1</span><span class="p">,</span> <span class="n">poses_2</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the approximate relative transformation between two sets of camera trajectories.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>poses_1</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of the first set of cameras (Nx4x4).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>poses_2</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of the second set of cameras (Nx4x4).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The relative transformation matrix (4x4) between the two trajectories.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
@@ -1206,27 +2324,57 @@ formats.</p>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
-<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">relative_transform</span><span class="p">(</span><span class="n">cams_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cams_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the relative transformation between two sets of cameras.</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">relative_transform_</span><span class="p">(</span><span class="n">poses_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">poses_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the approximate relative transformation between two sets of camera trajectories.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cams_1: Array of the first set of cameras (Nx4x4).</span>
-<span class="sd">        cams_2: Array of the second set of cameras (Nx4x4).</span>
+<span class="sd">        poses_1: Array of the first set of cameras (Nx4x4).</span>
+<span class="sd">        poses_2: Array of the second set of cameras (Nx4x4).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The relative transformation matrix (4x4) between the two trajectories.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">centers_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">camera_center</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cams_1</span> <span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">centers_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">camera_center</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cams_2</span> <span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">centers_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">camera_center</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poses_1</span> <span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">centers_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">camera_center</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poses_2</span> <span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1">### determine scale</span>
     <span class="c1"># grab first camera pair</span>
     <span class="n">c1_0</span> <span class="o">=</span> <span class="n">centers_1</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">c2_0</span> <span class="o">=</span> <span class="n">centers_2</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
 
-    <span class="c1"># grab one-hundreth camera pair</span>
-    <span class="n">c1_1</span> <span class="o">=</span> <span class="n">centers_1</span><span class="p">[</span><span class="mi">99</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
-    <span class="n">c2_1</span> <span class="o">=</span> <span class="n">centers_2</span><span class="p">[</span><span class="mi">99</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="c1"># grab last camera pair</span>
+    <span class="n">c1_1</span> <span class="o">=</span> <span class="n">centers_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">c2_1</span> <span class="o">=</span> <span class="n">centers_2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="c1"># calculate the baseline between both sets of cameras</span>
     <span class="n">baseline_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">c1_0</span> <span class="o">-</span> <span class="n">c1_1</span><span class="p">)</span>
@@ -1246,7 +2394,7 @@ formats.</p>
     <span class="n">M</span><span class="p">[:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span>
 
     <span class="c1">### determine 1-&gt;2 Translation</span>
-    <span class="n">num_cams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cams_1</span><span class="p">)</span>
+    <span class="n">num_cams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">poses_1</span><span class="p">)</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">c2</span><span class="o">-</span><span class="p">(</span><span class="n">M</span><span class="nd">@c1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c1</span><span class="p">,</span><span class="n">c2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">centers_1</span><span class="p">,</span><span class="n">centers_2</span><span class="p">)</span> <span class="p">])</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
@@ -1255,83 +2403,333 @@ formats.</p>
 
     <span class="k">return</span> <span class="n">M</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
-<h2 id="cvt.camera.sfm_to_trajectory" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">,</span> <span class="n">log_file</span><span class="p">)</span></code>
+<h2 id="cvt.camera.scale_intrinsics" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">scale_intrinsics</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Convert a set of cameras from SFM format to Trajectory File format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>cams</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of camera extrinsics (Nx4x4) to be converted.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>log_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Output path to the *.log file that is to be created.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Adjust intrinsics matrix focal length and principle point corresponding to image scaling.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>K</code>
+            </td>
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Batchx3x3 camera intrinsics matrices.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>scale</code>
+            </td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The updated 3x3 intrinsics matrix.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_intrinsics</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjust intrinsics matrix focal length and principle point corresponding to image scaling.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        K: Batchx3x3 camera intrinsics matrices.</span>
+<span class="sd">        scale: Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated 3x3 intrinsics matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">K_clone</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">K_clone</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">K_clone</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">scale</span>
+
+    <span class="k">return</span> <span class="n">K_clone</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.scale_intrinsics_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">scale_intrinsics_</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Adjust intrinsics matrix focal length and principle point corresponding to image scaling.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>K</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>3x3 camera intrinsics matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>scale</code>
+            </td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The updated 3x3 intrinsics matrix.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">scale_intrinsics_</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjust intrinsics matrix focal length and principle point corresponding to image scaling.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        K: 3x3 camera intrinsics matrix.</span>
+<span class="sd">        scale: Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated 3x3 intrinsics matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">K_copy</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">K_copy</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">K_copy</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">scale</span>
+
+    <span class="k">return</span> <span class="n">K_copy</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.sfm_to_trajectory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">,</span> <span class="n">log_file</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert a set of cameras from SFM format to Trajectory File format.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>cams</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of camera extrinsics (Nx4x4) to be converted.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>log_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Output path to the *.log file that is to be created.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sfm_to_trajectory</span><span class="p">(</span><span class="n">cams</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a set of cameras from SFM format to Trajectory File format.</span>
 
-<span class="sd">    Args:</span>
+<span class="sd">    Parameters:</span>
 <span class="sd">        cams: Array of camera extrinsics (Nx4x4) to be converted.</span>
 <span class="sd">        log_file: Output path to the *.log file that is to be created.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1348,141 +2746,320 @@ formats.</p>
 
     <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.camera.to_opengl_pose" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">to_opengl_pose</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">to_opengl_pose</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>OpenGL pose: (right-up-back) (cam-to-world)</p>
+    <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_opengl_pose</span><span class="p">(</span><span class="n">pose</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    OpenGL pose: (right-up-back) (cam-to-world)</span>
+        <p>OpenGL pose: (right-up-back) (cam-to-world)</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>pose</code>
+            </td>
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The pose in non-OpenGL format</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera pose in OpenGL format.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_opengl_pose</span><span class="p">(</span><span class="n">pose</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;OpenGL pose: (right-up-back) (cam-to-world)</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        pose: The pose in non-OpenGL format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Camera pose in OpenGL format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1">#pose = torch.linalg.inv(pose)</span>
+    <span class="n">pose</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
+    <span class="n">pose</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">pose</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">return</span> <span class="n">pose</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.to_opengl_pose_" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_opengl_pose_</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>OpenGL pose: (right-up-back) (cam-to-world)</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>pose</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The pose in non-OpenGL format</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera pose in OpenGL format.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_opengl_pose_</span><span class="p">(</span><span class="n">pose</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;OpenGL pose: (right-up-back) (cam-to-world)</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        pose: The pose in non-OpenGL format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Camera pose in OpenGL format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pose</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
     <span class="n">pose</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">pose</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="k">return</span> <span class="n">pose</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.camera.trajectory_to_sfm" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Convert a set of cameras from Trajectory File format to SFM format.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>log_file</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Input *.log file that stores the trajectory information.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>camera_path</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>Output path where the SFM camera files will be written.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>intrinsics</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Array of intrinsics matrices (Nx3x3) for each camera.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Convert a set of cameras from Trajectory File format to SFM format.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>log_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input *.log file that stores the trajectory information.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>camera_path</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Output path where the SFM camera files will be written.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>intrinsics</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of intrinsics matrices (Nx3x3) for each camera.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">trajectory_to_sfm</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">camera_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a set of cameras from Trajectory File format to SFM format.</span>
 
 <span class="sd">    Args:</span>
@@ -1514,98 +3091,115 @@ formats.</p>
             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">5</span>
     <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="cvt.camera.y_axis_rotation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">y_axis_rotation</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">y_axis_rotation</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></code>
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Applies a rotation to the given camera extrinsics matrix along the y-axis.</p>
+    <div class="doc doc-contents ">
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>P</code></td>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>Initial extrinsics camera matrix.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>theta</code></td>
-          <td>
-                <code>float</code>
-          </td>
-          <td><p>Angle (in radians) to rotate the camera.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+        <p>Applies a rotation to the given camera extrinsics matrix along the y-axis.</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td><p>The rotated extrinsics matrix for the camera.</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cvt/camera.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">y_axis_rotation</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>P</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Initial extrinsics camera matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>theta</code>
+            </td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Angle (in radians) to rotate the camera.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The rotated extrinsics matrix for the camera.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">y_axis_rotation</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a rotation to the given camera extrinsics matrix along the y-axis.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1625,8 +3219,170 @@ formats.</p>
 
     <span class="k">return</span> <span class="n">P_rot</span>
 </code></pre></div></td></tr></table></div>
-      </details>
-  </div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvt.camera.z_planes_from_disp" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">z_planes_from_disp</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the near and far Z planes corresponding to 'delta' disparity steps between two cameras.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>Z</code>
+            </td>
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Z buffer storing D depth plane hypotheses [B x C x D x H x W]. (shape resembles a typical PSV).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>b</code>
+            </td>
+            <td>
+                  <code><span title="torch.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The baseline between cameras [B].</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>f</code>
+            </td>
+            <td>
+                  <code><span title="torc.tensor">tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The focal length of camera [B].</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>delta</code>
+            </td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The disparity delta for the near and far planes.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>Tuple[<span title="torch.tensor">tensor</span>, <span title="torch.tensor">tensor</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The tuple of near and far Z planes corresponding to 'delta' disparity steps.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>src/cvt/camera.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">z_planes_from_disp</span><span class="p">(</span><span class="n">Z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">torc</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the near and far Z planes corresponding to &#39;delta&#39; disparity steps between two cameras.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        Z: Z buffer storing D depth plane hypotheses [B x C x D x H x W]. (shape resembles a typical PSV).</span>
+<span class="sd">        b: The baseline between cameras [B].</span>
+<span class="sd">        f: The focal length of camera [B].</span>
+<span class="sd">        delta: The disparity delta for the near and far planes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The tuple of near and far Z planes corresponding to &#39;delta&#39; disparity steps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">H</span><span class="p">,</span><span class="n">W</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">H</span><span class="p">,</span><span class="n">W</span><span class="p">)</span>
+
+    <span class="n">near</span> <span class="o">=</span> <span class="n">Z</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">f</span><span class="o">/</span><span class="p">((</span><span class="n">b</span><span class="o">*</span><span class="n">f</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">delta</span><span class="o">*</span><span class="n">Z</span><span class="p">)))</span>
+    <span class="n">far</span> <span class="o">=</span> <span class="n">Z</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">f</span><span class="o">/</span><span class="p">((</span><span class="n">b</span><span class="o">*</span><span class="n">f</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">delta</span><span class="o">*</span><span class="n">Z</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">near</span><span class="p">,</span> <span class="n">far</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
 
 </div>
 
@@ -1634,9 +3390,16 @@ formats.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
+
+
+
+
+
+
+
 
 
 
@@ -1647,12 +3410,14 @@ formats.</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
-          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
-            Back to top
-          </a>
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -1679,10 +3444,11 @@ formats.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>
