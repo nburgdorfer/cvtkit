@@ -12,5 +12,11 @@ python -m build --sdist
 
 publishing to Pypi:
 ```bash
-twine upload dist/*
+twine upload dist/cvtkit-<VERSION>.tar.gz 
+```
+
+publishing documentation using Mkdocs and Github Pages:
+```bash
+mkdocs build
+mkdocs gh-deploy
 ```
