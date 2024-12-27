@@ -15,27 +15,19 @@ from scipy.spatial.transform import Rotation
 import torch
 import open3d as o3d
 
-def crop_cam(intrinsics, crop_row, crop_col):
-    intrinsics[0,2] -= crop_col
-    intrinsics[1,2] -= crop_row
-    return intrinsics
 
+def build_o3d_traj(poses: np.ndarray, K: np.ndarray, width: int, height: int) -> o3d.camera.PinholeCameraTrajectory:
+    """Converts an array of camera poses and an intrinsics matrix into Open3D trajectory format.
 
-def scale_cam(intrinsics, h=None, w=None, max_h=None, max_w=None, scale=None):
-    if scale:
-        new_intrinsics = intrinsics.copy()
-        new_intrinsics[0, :] *= scale
-        new_intrinsics[1, :] *= scale
-    elif h > max_h or w > max_w:
-        scale = 1.0 * max_h / h
-        if scale * w > max_w:
-            scale = 1.0 * max_w / w
-        new_intrinsics = intrinsics.copy()
-        new_intrinsics[0, :] *= scale
-        new_intrinsics[1, :] *= scale
-    return new_intrinsics
+    Parameters:
+        poses: Nx4x4 array of camera pose in world-to-camera format.
+        K: 3x3 camera intrinsics matrix.
+        width: Expected image width.
+        height: Expected image height.
 
-def build_o3d_traj(poses, K, width, height):
+    Returns:
+        Open3D camera trajectory model.
+    """
     trajectory = o3d.camera.PinholeCameraTrajectory()
     for pose in poses:
         camera_params = o3d.camera.PinholeCameraParameters()
@@ -44,17 +36,75 @@ def build_o3d_traj(poses, K, width, height):
         trajectory.parameters += [(camera_params)]
     return trajectory
 
-def to_opengl_pose(pose):
-    """
-    OpenGL pose: (right-up-back) (cam-to-world)
-    """
-    #pose = torch.linalg.inv(pose)
-    pose = np.linalg.inv(pose)
-    pose[:3,1] *= -1
-    pose[:3,2] *= -1
-    return pose
+def camera_center_(pose: np.ndarray) -> np.ndarray:
+    """Computes the center of a camera in world coordinates.
 
-def intrinsic_pyramid(K, levels):
+    Parameters:
+        pose: The extrinsics matrix (4x4) of a given camera in world-to-camera format.
+
+    Returns:
+        The camera center vector (3x1) in world coordinates.
+    """
+    C = null_space(cam[:3,:4])
+    C /= C[3,:]
+
+    return C
+
+def compute_baselines_(poses: np.ndarray) -> Tuple[float, float]:
+    """Computes the minimum and maximum baseline between a reference camera pose (poses[0]) and a cluster of supporting camera poses (poses[1:]).
+
+    Parameters:
+        poses: Array of camera poses (Nx4x4)
+
+    Returns:
+        A tuple of baselines where the first element is the minimum baseline and the second element is the maximum baseline.
+    """
+    ref_pose = poses[0]
+    ref_camera_center = null_space(ref_pose[:3,:])
+    ref_camera_center = ref_camera_center[:3,0] / ref_camera_center[3,0]
+    min_baseline = np.Inf
+    max_baseline = 0.0
+
+    num_views = len(poses)
+    for i in range(1, num_views):
+        sup_pose = poses[i]
+        sup_camera_center = null_space(sup_pose[:3,:])
+        sup_camera_center = sup_camera_center[:3,0] / sup_camera_center[3,0]
+        b = np.linalg.norm(ref_camera_center - sup_camera_center)
+        if b < min_baseline:
+            min_baseline = b
+        if b > max_baseline:
+            max_baseline = b
+    return min_baseline, max_baseline
+
+
+def crop_intrinsics_(K: np.ndarray, crop_row: int, crop_col: int) -> np.ndarray:
+    """Adjusts intrinsics matrix principle point coordinates corresponding to image cropping.
+
+    Parameters:
+        K: 3x3 camera intrinsics matrix.
+        crop_row: Offset for cy (corresponding to cropping the left and right side of an image by 'crop_row').
+        crop_col: Offset for cx (corresponding to cropping the top and bottom side of an image by 'crop_col').
+
+    Returns:
+        The updated 3x3 intrinsics matrix
+    """
+
+    K[0,2] -= crop_col
+    K[1,2] -= crop_row
+    return K
+
+
+def intrinsic_pyramid(K: torch.tensor, levels: int) -> torch.tensor:
+    """Computes camera intrinsics pyramid corresonding to several levels of image downsampling.
+
+    Parameters:
+        K: [Batch x 3 x 3] camera intrinsics matrix.
+        levels: The number of pyramid levels to compute.
+
+    Returns:
+        The intrinsics pyramid of shape [Batch x L x 3 x 3].
+    """
     batch_size, _, _ = K.shape
     K_pyr = torch.zeros((batch_size, levels, 3, 3)).to(K)
 
@@ -68,15 +118,17 @@ def intrinsic_pyramid(K, levels):
 
     return K_pyr
 
-def scale_intrinsic(K, s):
-    batch_size, _, _ = K.shape
 
-    Ks = torch.clone(K) / (2**(s-1))
-    Ks[:,2,2] = 1.0
+def intrinsic_pyramid_(K: np.ndarray, levels: int) -> np.ndarray:
+    """Computes camera intrinsics pyramid corresonding to several levels of image downsampling.
 
-    return Ks
+    Parameters:
+        K: [3 x 3] camera intrinsics matrix.
+        levels: The number of pyramid levels to compute.
 
-def _intrinsic_pyramid(K, levels):
+    Returns:
+        The intrinsics pyramid of shape [L x 3 x 3].
+    """
     K_pyr = np.zeros((levels, 3, 3))
 
     for l in range(levels):
@@ -89,69 +141,28 @@ def _intrinsic_pyramid(K, levels):
 
     return K_pyr
 
-def Z_from_disp(Z, b, f, delta):
-    B, C, D, H, W = Z.shape
-    b = b.reshape(B,1,1,1,1).repeat(1,C,D,H,W)
-    f = f.reshape(B,1,1,1,1).repeat(1,C,D,H,W)
 
-    near = Z*(b*f/((b*f) + (delta*Z)))
-    far = Z*(b*f/((b*f) - (delta*Z)))
-
-    return near, far
-
-def compute_baselines(poses):
-    src_pose = poses[0]
-    src_camera_center = null_space(src_pose[:3,:])
-    src_camera_center = src_camera_center[:3,0] / src_camera_center[3,0]
-    min_baseline = np.Inf
-    max_baseline = 0.0
-
-    for i in range(1,len(poses)):
-        tgt_pose = poses[i]
-        tgt_camera_center = null_space(tgt_pose[:3,:])
-        tgt_camera_center = tgt_camera_center[:3,0] / tgt_camera_center[3,0]
-        b = np.linalg.norm(src_camera_center - tgt_camera_center)
-        if b < min_baseline:
-            min_baseline = b
-        if b > max_baseline:
-            max_baseline = b
-    return min_baseline, max_baseline
-
-def camera_center(cam: np.ndarray) -> np.ndarray:
-    """Computes the center of a camera in world coordinates.
+def relative_transform_(poses_1: np.ndarray, poses_2: np.ndarray) -> np.ndarray:
+    """Computes the approximate relative transformation between two sets of camera trajectories.
 
     Args:
-        cam: The extrinsics matrix (4x4) of a given camera.
-
-    Returns:
-        The camera center vector (3x1) in world coordinates.
-    """
-    C = null_space(cam[:3,:4])
-    C /= C[3,:]
-
-    return C
-
-def relative_transform(cams_1: np.ndarray, cams_2: np.ndarray) -> np.ndarray:
-    """Computes the relative transformation between two sets of cameras.
-
-    Args:
-        cams_1: Array of the first set of cameras (Nx4x4).
-        cams_2: Array of the second set of cameras (Nx4x4).
+        poses_1: Array of the first set of cameras (Nx4x4).
+        poses_2: Array of the second set of cameras (Nx4x4).
 
     Returns:
         The relative transformation matrix (4x4) between the two trajectories.
     """
-    centers_1 = np.squeeze(np.array([ camera_center(c) for c in cams_1 ]), axis=2)
-    centers_2 = np.squeeze(np.array([ camera_center(c) for c in cams_2 ]), axis=2)
+    centers_1 = np.squeeze(np.array([ camera_center(p) for p in poses_1 ]), axis=2)
+    centers_2 = np.squeeze(np.array([ camera_center(p) for p in poses_2 ]), axis=2)
 
     ### determine scale
     # grab first camera pair
     c1_0 = centers_1[0][:3]
     c2_0 = centers_2[0][:3]
 
-    # grab one-hundreth camera pair
-    c1_1 = centers_1[99][:3]
-    c2_1 = centers_2[99][:3]
+    # grab last camera pair
+    c1_1 = centers_1[-1][:3]
+    c2_1 = centers_2[-1][:3]
 
     # calculate the baseline between both sets of cameras
     baseline_1 = np.linalg.norm(c1_0 - c1_1)
@@ -171,7 +182,7 @@ def relative_transform(cams_1: np.ndarray, cams_2: np.ndarray) -> np.ndarray:
     M[:3,:3] = R
 
     ### determine 1->2 Translation
-    num_cams = len(cams_1)
+    num_cams = len(poses_1)
     t = np.array([ c2-(M@c1) for c1,c2 in zip(centers_1,centers_2) ])
     t = np.mean(t, axis=0)
 
@@ -180,11 +191,41 @@ def relative_transform(cams_1: np.ndarray, cams_2: np.ndarray) -> np.ndarray:
 
     return M
 
+def scale_intrinsics(K: torch.tensor, scale: float) -> torch.tensor:
+    """Adjust intrinsics matrix focal length and principle point corresponding to image scaling.
+
+    Parameters:
+        K: Batchx3x3 camera intrinsics matrices.
+        scale: Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).
+
+    Returns:
+        The updated 3x3 intrinsics matrix.
+    """
+    K_clone = torch.clone(K)
+    K_clone[:,:2,:] = K_clone[:,:2,:] * scale
+
+    return K_clone
+
+def scale_intrinsics_(K: np.ndarray, scale: float) -> np.ndarray :
+    """Adjust intrinsics matrix focal length and principle point corresponding to image scaling.
+
+    Parameters:
+        K: 3x3 camera intrinsics matrix.
+        scale: Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).
+
+
+    Returns:
+        The updated 3x3 intrinsics matrix.
+    """
+    K_copy = K.copy()
+    K_copy[:2, :] = K_copy[:2, :] * scale
+
+    return K_copy
 
 def sfm_to_trajectory(cams: np.ndarray, log_file: str) -> None:
     """Convert a set of cameras from SFM format to Trajectory File format.
 
-    Args:
+    Parameters:
         cams: Array of camera extrinsics (Nx4x4) to be converted.
         log_file: Output path to the *.log file that is to be created.
     """
@@ -200,6 +241,34 @@ def sfm_to_trajectory(cams: np.ndarray, log_file: str) -> None:
                 f.write("\n")
         
     return
+
+def to_opengl_pose(pose: torch.tensor) -> torch.tensor:
+    """OpenGL pose: (right-up-back) (cam-to-world)
+
+    Parameters:
+        pose: The pose in non-OpenGL format
+
+    Returns:
+        Camera pose in OpenGL format.
+    """
+    pose = torch.linalg.inv(pose)
+    pose[:3,1] *= -1
+    pose[:3,2] *= -1
+    return pose
+
+def to_opengl_pose_(pose: np.ndarray) -> np.ndarray:
+    """OpenGL pose: (right-up-back) (cam-to-world)
+
+    Parameters:
+        pose: The pose in non-OpenGL format
+
+    Returns:
+        Camera pose in OpenGL format.
+    """
+    pose = np.linalg.inv(pose)
+    pose[:3,1] *= -1
+    pose[:3,2] *= -1
+    return pose
 
 def trajectory_to_sfm(log_file: str, camera_path: str, intrinsics: np.ndarray) -> None:
     """Convert a set of cameras from Trajectory File format to SFM format.
@@ -253,7 +322,23 @@ def y_axis_rotation(P: np.ndarray, theta: float) -> np.ndarray:
 
     return P_rot
 
+def z_planes_from_disp(Z: torch.tensor, b: torch.tensor, f: torc.tensor, delta: float) -> Tuple[torch.tensor, torch.tensor]:
+    """Computes the near and far Z planes corresponding to 'delta' disparity steps between two cameras.
 
+    Parameters:
+        Z: Z buffer storing D depth plane hypotheses [B x C x D x H x W]. (shape resembles a typical PSV).
+        b: The baseline between cameras [B].
+        f: The focal length of camera [B].
+        delta: The disparity delta for the near and far planes.
 
+    Returns:
+        The tuple of near and far Z planes corresponding to 'delta' disparity steps.
+    """
+    B, C, D, H, W = Z.shape
+    b = b.reshape(B,1,1,1,1).repeat(1,C,D,H,W)
+    f = f.reshape(B,1,1,1,1).repeat(1,C,D,H,W)
 
+    near = Z*(b*f/((b*f) + (delta*Z)))
+    far = Z*(b*f/((b*f) - (delta*Z)))
 
+    return (near, far)

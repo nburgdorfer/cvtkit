@@ -14,7 +14,7 @@ import cv2
 from PIL import Image
 from plyfile import PlyData, PlyElement
 
-from cvt.geometry import reproject
+from cvt.geometry import reproject, _points_from_depth
 from cvt.io import read_cluster_list, write_pfm, read_pfm
 
 def conf_filter(depth_map: torch.Tensor, conf_map: torch.Tensor, device: str = 'cuda:0', min_conf: float = 0.8) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -378,7 +378,6 @@ def reprojection_error(cfg, est_depth_path, rgb_path, out_error_path, dataset, s
         cv2.imwrite(os.path.join(out_error_path, f"{ref_frame:08d}_sum.png"), (e-e.min())/(e.max()-e.min())*255)
 
 def laplacians(cfg, paths):
-
     # get depth map filenames
     est_depth_files = os.listdir(paths["depth"])
     est_depth_files = [edf for edf in est_depth_files if edf[-3:] == "pfm" ]
@@ -402,3 +401,50 @@ def laplacians(cfg, paths):
         depth_lap = est_depth_laplacian[0,0].detach().cpu().numpy()
         depth_lap_filename = os.path.join(paths["laplacian"], f"{ref_ind:08d}_depth.pfm")
         write_pfm(depth_lap_filename, depth_lap)
+
+
+def project_points(cfg, est_depth_path, est_conf_path, rgb_path, output_path, dataset, scene, voxel_size=0.2):
+    cameras = dataset.get_cameras()
+    K = cameras[0,1,:3,:3]
+    poses = cameras[:,0]
+
+    points = []
+    colors = []
+    confidence = []
+    view_inds = []
+
+    # for each reference view and the corresponding source views
+    image_files = os.listdir(rgb_path)
+    image_files.sort()
+    for image_file in tqdm(image_files, desc="Building point cloud", unit="view"):
+        view_num = int(image_file[:8])
+        image = cv2.imread(os.path.join(rgb_path, image_file))
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB ) 
+        est_depth = read_pfm(os.path.join(est_depth_path, f"{view_num:08d}.pfm"))
+        est_conf = read_pfm(os.path.join(est_conf_path, f"{view_num:08d}.pfm"))
+        pose = poses[view_num]
+        
+        est_points, valid_inds = _points_from_depth(est_depth, K, pose)
+        est_points = est_points[valid_inds]
+        image = image.reshape(-1,3)[valid_inds]
+        est_conf = est_conf.flatten()[valid_inds]
+        view = np.ones((est_points.shape[0])) * view_num
+
+        points.append(est_points)
+        colors.append(image)
+        confidence.append(est_conf)
+        view_inds.append(view)
+
+    points = np.concatenate(points, axis=0).astype(np.float32)
+    colors = np.concatenate(colors, axis=0).astype(np.float32) / 255
+    confidence = np.concatenate(confidence, axis=0).astype(np.float32)
+    view_inds = np.concatenate(view_inds, axis=0).astype(np.float32)
+
+    os.makedirs(output_path, exist_ok=True)
+
+    cloud = o3d.geometry.PointCloud()
+    cloud.points = o3d.utility.Vector3dVector(points)
+    cloud.colors = o3d.utility.Vector3dVector(colors)
+    o3d.io.write_point_cloud(os.path.join(output_path, f"{scene}_unfilt.ply"), cloud)
+    cloud = cloud.voxel_down_sample(voxel_size)
+    o3d.io.write_point_cloud(os.path.join(output_path, f"{scene}.ply"), cloud)

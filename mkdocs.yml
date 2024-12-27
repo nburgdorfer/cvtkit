@@ -1,6 +1,5 @@
 site_name: Computer Vision Toolkit
 
-
 nav:
     - Home:
         - Computer Vision Toolkit: index.md

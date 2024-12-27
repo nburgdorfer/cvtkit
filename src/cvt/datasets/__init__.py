@@ -14,4 +14,4 @@ PYTHON_ROOT=os.path.abspath(os.path.dirname(FILE_ROOT))
 
 sys.path.append(PYTHON_ROOT)
 
-from .DTU import *
+from .dtu import *
