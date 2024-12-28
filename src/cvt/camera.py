@@ -96,6 +96,13 @@ def crop_intrinsics_(K: np.ndarray, crop_row: int, crop_col: int) -> np.ndarray:
     return K
 
 
+def fov2focal(fov, pixels):
+    return pixels / (2 * math.tan(fov / 2))
+
+def focal2fov(focal, pixels):
+    return 2*math.atan(pixels/(2*focal))
+
+
 def intrinsic_pyramid(K: torch.tensor, levels: int) -> torch.tensor:
     """Computes camera intrinsics pyramid corresonding to several levels of image downsampling.
 
@@ -323,7 +330,7 @@ def y_axis_rotation(P: np.ndarray, theta: float) -> np.ndarray:
 
     return P_rot
 
-def z_planes_from_disp(Z: torch.tensor, b: torch.tensor, f: torc.tensor, delta: float) -> Tuple[torch.tensor, torch.tensor]:
+def z_planes_from_disp(Z: torch.tensor, b: torch.tensor, f: torch.tensor, delta: float) -> Tuple[torch.tensor, torch.tensor]:
     """Computes the near and far Z planes corresponding to 'delta' disparity steps between two cameras.
 
     Parameters:

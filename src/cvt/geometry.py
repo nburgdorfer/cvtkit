@@ -18,9 +18,40 @@ from torch.cuda.amp import autocast
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-from camera import intrinsic_pyramid, Z_from_disp
+from camera import intrinsic_pyramid, z_planes_from_disp
 from common import groupwise_correlation
 from io import *
+
+
+def depths_to_points(view, depthmap):
+    c2w = (view.world_view_transform.T).inverse()
+    W, H = view.image_width, view.image_height
+    ndc2pix = torch.tensor([
+        [W / 2, 0, 0, (W) / 2],
+        [0, H / 2, 0, (H) / 2],
+        [0, 0, 0, 1]]).float().cuda().T
+    projection_matrix = c2w.T @ view.full_proj_transform
+    intrins = (projection_matrix @ ndc2pix)[:3,:3].T
+    
+    grid_x, grid_y = torch.meshgrid(torch.arange(W, device='cuda').float(), torch.arange(H, device='cuda').float(), indexing='xy')
+    points = torch.stack([grid_x, grid_y, torch.ones_like(grid_x)], dim=-1).reshape(-1, 3)
+    rays_d = points @ intrins.inverse().T @ c2w[:3,:3].T
+    rays_o = c2w[:3,3]
+    points = depthmap.reshape(-1, 1) * rays_d + rays_o
+    return points
+
+def depth_to_normal(view, depth):
+    """
+        view: view camera
+        depth: depthmap 
+    """
+    points = depths_to_points(view, depth).reshape(*depth.shape[1:], 3)
+    output = torch.zeros_like(points)
+    dx = torch.cat([points[2:, 1:-1] - points[:-2, 1:-1]], dim=0)
+    dy = torch.cat([points[1:-1, 2:] - points[1:-1, :-2]], dim=1)
+    normal_map = torch.nn.functional.normalize(torch.cross(dx, dy, dim=-1), dim=-1)
+    output[1:-1, 1:-1, :] = normal_map
+    return output
 
 def edge_mask(depth, near_depth, far_depth):
     down_gt = F.interpolate(depth,scale_factor=0.5,mode='bilinear',align_corners=False,recompute_scale_factor=False)
@@ -1286,7 +1317,7 @@ def soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M, delt
     """
     B, _, D, H, W = target_hypo.shape
     rand_match_offset = torch.rand(B,1,M,H,W).to(target_hypo)
-    near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
+    near, far = z_planes_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
     target_range = torch.abs(far - near).repeat(1,1,M,1,1)
 
     target_samples = (rand_match_offset * target_range) + near
@@ -1306,7 +1337,7 @@ def _soft_hypothesis(data, target_hypo, focal_length, min_hypo, max_hypo, M=1, d
     rand_near_offset = torch.rand(B,1,M,H,W).to(target_hypo)
     rand_far_offset = torch.rand(B,1,M,H,W).to(target_hypo)
 
-    near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
+    near, far = z_planes_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
     target_range = torch.abs(far - near).repeat(1,1,M,1,1)
     near_range = torch.abs(near - min_hypo).repeat(1,1,M,1,1)
     far_range = torch.abs(max_hypo - far).repeat(1,1,M,1,1)
@@ -1333,7 +1364,7 @@ def resolution_based_hypothesis(data, target_hypo, level, focal_length, min_hypo
     rand_near_offset = torch.rand(B,1,M,H,W).to(target_hypo)
     rand_far_offset = torch.rand(B,1,M,H,W).to(target_hypo)
 
-    near, far = Z_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
+    near, far = z_planes_from_disp(target_hypo, data["baseline"], focal_length, delta=delta_in)
     target_range = torch.abs(far - near).repeat(1,1,M,1,1)
     near_range = torch.abs(near - min_hypo).repeat(1,1,M,1,1)
     far_range = torch.abs(max_hypo - far).repeat(1,1,M,1,1)

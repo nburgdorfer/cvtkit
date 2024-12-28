@@ -19,6 +19,7 @@ from typing import List, Tuple
 from scipy.spatial.transform import Rotation as rot
 
 from camera import y_axis_rotation
+from camera import fov2focal
 
 
 def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:
@@ -439,3 +440,26 @@ def load_pretrained_model(model, ckpt):
         print(e)
         print("Failed loading network weights...")
         sys.exit()
+
+
+def camera_to_JSON(id, camera):
+    Rt = np.zeros((4, 4))
+    Rt[:3, :3] = camera["R"].transpose()
+    Rt[:3, 3] = camera["T"]
+    Rt[3, 3] = 1.0
+
+    W2C = np.linalg.inv(Rt)
+    pos = W2C[:3, 3]
+    rot = W2C[:3, :3]
+    serializable_array_2d = [x.tolist() for x in rot]
+    camera_entry = {
+        'id' : id,
+        'img_name' : f"{id:08d}",
+        'width' : camera["width"],
+        'height' : camera["height"],
+        'position': pos.tolist(),
+        'rotation': serializable_array_2d,
+        'fy' : fov2focal(camera["FovY"], camera["height"]),
+        'fx' : fov2focal(camera["FovX"], camera["width"])
+    }
+    return camera_entry

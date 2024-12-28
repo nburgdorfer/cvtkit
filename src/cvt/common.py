@@ -10,12 +10,9 @@ import torch
 import numpy as np
 import cv2
 import random
+from math import exp
 from typing import Tuple
 import torch.nn.functional as F
-
-# custom libraries
-from camera import Z_from_disp, intrinsic_pyramid
-
 
 def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Tensor:
     """Constructs an batched index list of pixel coordinates.
@@ -69,6 +66,10 @@ def crop_image(image, crop_row, crop_col, scale):
 
 def freeze_model_weights(model):
     model.requires_grad_(False)
+
+def gaussian(window_size, sigma):
+    gauss = torch.Tensor([exp(-(x - window_size // 2) ** 2 / float(2 * sigma ** 2)) for x in range(window_size)])
+    return gauss / gauss.sum()
 
 def laplacian_pyramid_th(image: torch.Tensor, tau: float) -> torch.Tensor:
     """Computes the Laplacian pyramid of an image.
@@ -193,6 +194,10 @@ def groupwise_correlation(t1: torch.Tensor, t2: torch.Tensor, num_groups: int) -
         sys.exit()
 
     return correlation
+
+
+def inverse_sigmoid(x, scale=1):
+    return torch.log(x/(1-x)) / scale
 
 
 def non_zero_std(maps: torch.Tensor, device: str, dim: int = 1, keepdim: bool = False) -> torch.Tensor:
