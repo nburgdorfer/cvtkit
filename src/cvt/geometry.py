@@ -25,7 +25,7 @@ from io import *
 
 def depths_to_points(view, depthmap):
     c2w = (view.world_view_transform.T).inverse()
-    W, H = view.image_width, view.image_height
+    W, H = view.width, view.height
     ndc2pix = torch.tensor([
         [W / 2, 0, 0, (W) / 2],
         [0, H / 2, 0, (H) / 2],
