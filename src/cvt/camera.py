@@ -46,10 +46,10 @@ def camera_center_(pose: np.ndarray) -> np.ndarray:
     Returns:
         The camera center vector (3x1) in world coordinates.
     """
-    C = null_space(cam[:3,:4])
+    C = null_space(pose[:3,:4])
     C /= C[3,:]
 
-    return C
+    return C[:3,0]
 
 def compute_baselines_(poses: np.ndarray) -> Tuple[float, float]:
     """Computes the minimum and maximum baseline between a reference camera pose (poses[0]) and a cluster of supporting camera poses (poses[1:]).
