@@ -24,7 +24,7 @@ from io import *
 
 
 def depths_to_points(view, depthmap):
-    c2w = (view.world_view_transform.T).inverse()
+    c2w = (view.P).inverse()
     W, H = view.width, view.height
     ndc2pix = torch.tensor([
         [W / 2, 0, 0, (W) / 2],
@@ -45,7 +45,8 @@ def depth_to_normal(view, depth):
         view: view camera
         depth: depthmap 
     """
-    points = depths_to_points(view, depth).reshape(*depth.shape[1:], 3)
+    height, width = depth.shape
+    points = project_depth_map(depth, view.KP_inv).reshape(height, width, 3)
     output = torch.zeros_like(points)
     dx = torch.cat([points[2:, 1:-1] - points[:-2, 1:-1]], dim=0)
     dy = torch.cat([points[1:-1, 2:] - points[1:-1, :-2]], dim=1)
@@ -941,7 +942,40 @@ def _points_from_depth(depth: np.ndarray, intrinsics: np.ndarray, extrinsics: np
     points = xyz_world.transpose((1, 0))
     return points, valid_inds
 
-def project_depth_map(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+def project_depth_map(depth: torch.Tensor, KP_inv: torch.Tensor) -> torch.Tensor:
+    """Projects a depth map into a list of 3D points
+
+    Parameters:
+        depth: Input depth map to project.
+        cam: Camera parameters for input depth map.
+
+    Returns:
+        A float Tensor of 3D points corresponding to the projected depth values.
+    """
+    height, width = depth.shape
+
+    # separate into rotation and translation components
+    bwd_rotation = KP_inv[:3,:3]
+    bwd_translation = KP_inv[:3,3:4]
+
+    # build 2D homogeneous coordinates tensor: [3, H*W]
+    with torch.no_grad():
+        row_span = torch.arange(0, height, dtype=torch.float32).cuda()
+        col_span = torch.arange(0, width, dtype=torch.float32).cuda()
+        r,c = torch.meshgrid(row_span, col_span, indexing="ij")
+        r,c = r.contiguous(), c.contiguous()
+        r,c = r.reshape(height*width), c.reshape(height*width)
+        coords = torch.stack((c,r,torch.ones_like(c)))
+
+    # compute 3D coordinates using the depth map: [H*W, 3]
+    world_coords = torch.matmul(bwd_rotation, coords)
+    depth = depth.reshape(1, -1)
+    world_coords = world_coords * depth
+    world_coords = world_coords + bwd_translation
+
+    return world_coords.reshape(height, width, 3)
+
+def project_depth_map_batched(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Projects a depth map into a list of 3D points
 
     Parameters:
