@@ -965,7 +965,7 @@ def project_depth_map(depth: torch.Tensor, KP_inv: torch.Tensor) -> torch.Tensor
         r,c = torch.meshgrid(row_span, col_span, indexing="ij")
         r,c = r.contiguous(), c.contiguous()
         r,c = r.reshape(height*width), c.reshape(height*width)
-        coords = torch.stack((c,r,torch.ones_like(c)))
+        coords = torch.stack((c,r,torch.ones_like(c)), dim=0)
 
     # compute 3D coordinates using the depth map: [H*W, 3]
     world_coords = torch.matmul(bwd_rotation, coords)
@@ -973,7 +973,7 @@ def project_depth_map(depth: torch.Tensor, KP_inv: torch.Tensor) -> torch.Tensor
     world_coords = world_coords * depth
     world_coords = world_coords + bwd_translation
 
-    return world_coords.reshape(height, width, 3)
+    return world_coords.permute(1,0).reshape(height, width, 3)
 
 def project_depth_map_batched(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Projects a depth map into a list of 3D points
