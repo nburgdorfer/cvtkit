@@ -18,8 +18,8 @@ from typing import List, Tuple
 
 from scipy.spatial.transform import Rotation as rot
 
-from camera import y_axis_rotation
-from camera import fov2focal
+from cvtkit.camera import y_axis_rotation
+from cvtkit.camera import fov2focal
 
 
 def read_cams_sfm(camera_path: str, extension: str = "cam.txt") -> np.ndarray:

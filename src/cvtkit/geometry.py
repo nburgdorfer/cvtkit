@@ -18,10 +18,9 @@ from torch.cuda.amp import autocast
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-from camera import intrinsic_pyramid, z_planes_from_disp
-from common import groupwise_correlation
-from io import *
-
+from cvtkit.camera import intrinsic_pyramid, z_planes_from_disp
+from cvtkit.common import groupwise_correlation
+from cvtkit.io import *
 
 def depths_to_points(view, depthmap):
     c2w = (view.P).inverse()

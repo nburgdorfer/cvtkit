@@ -13,7 +13,7 @@ import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-from common import gaussian
+from cvtkit.common import gaussian
 
 def MAE(estimate, target, reduction_dims, mask=None, relative=False):
     """Mean Absolute Error.

@@ -14,8 +14,8 @@ import cv2
 from PIL import Image
 from plyfile import PlyData, PlyElement
 
-from cvt.geometry import reproject, _points_from_depth
-from cvt.io import read_cluster_list, write_pfm, read_pfm
+from cvtkit.geometry import reproject, _points_from_depth
+from cvtkit.io import read_cluster_list, write_pfm, read_pfm
 
 def conf_filter(depth_map: torch.Tensor, conf_map: torch.Tensor, device: str = 'cuda:0', min_conf: float = 0.8) -> Tuple[torch.Tensor, torch.Tensor]:
     """Filters a map by confidence values above a minimum threshold.
