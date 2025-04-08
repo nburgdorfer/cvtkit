@@ -63,7 +63,7 @@ def compute_baselines_(poses: np.ndarray) -> Tuple[float, float]:
     ref_pose = poses[0]
     ref_camera_center = null_space(ref_pose[:3,:])
     ref_camera_center = ref_camera_center[:3,0] / ref_camera_center[3,0]
-    min_baseline = np.Inf
+    min_baseline = np.inf
     max_baseline = 0.0
 
     num_views = len(poses)
