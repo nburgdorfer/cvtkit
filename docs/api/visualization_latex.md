@@ -1,4 +1,4 @@
-::: cvt.visualization.latex
+::: cvtkit.visualization.latex
     handler: python
     options:
         show_root_heading: true

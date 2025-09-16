@@ -1,4 +1,4 @@
-::: cvt.metrics
+::: cvtkit.metrics
     handler: python
     options:
         show_root_heading: false

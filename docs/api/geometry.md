@@ -1,4 +1,4 @@
-::: cvt.geometry
+::: cvtkit.geometry
     handler: python
     options:
         show_root_heading: false

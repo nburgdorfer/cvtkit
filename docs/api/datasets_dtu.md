@@ -1,4 +1,4 @@
-::: cvt.datasets.dtu
+::: cvtkit.datasets.dtu
     handler: python
     options:
         show_root_heading: false

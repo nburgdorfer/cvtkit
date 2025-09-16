@@ -1,4 +1,4 @@
-# cvt/camera.py
+# cvtkit/camera.py
 
 """A suite of common camera utilities.
 
