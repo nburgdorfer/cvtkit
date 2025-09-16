@@ -1,6 +1,6 @@
 [project]
 name = "cvtkit"
-version = "0.0.33"
+version = "0.0.38"
 description = "A Python library including general functions and operations on various computer vision related structures."
 authors = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
 license = {file = "LICENSE"}
@@ -43,6 +43,8 @@ dependencies = [
 Homepage = "https://nburgdorfer.github.io/cvtkit/"
 Repository = "https://github.com/nburgdorfer/cvtkit"
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.19",
+]

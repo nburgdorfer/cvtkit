@@ -6,13 +6,18 @@ This module includes general utility functions used
 by the sub-packages of the CVTkit library.
 """
 
-import torch
 import numpy as np
 import cv2
 import random
 from math import exp
-from typing import Tuple
+
+import torch
 import torch.nn.functional as F
+
+from typing import Tuple, Any
+from numpy.typing import NDArray
+from torch import Tensor
+from torch.nn import Module
 
 def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Tensor:
     """Constructs an batched index list of pixel coordinates.
@@ -33,19 +38,29 @@ def build_coords_list(H: int, W: int, batch_size: int, device: str) -> torch.Ten
     indices = indices.reshape(1,-1,2).repeat(batch_size,1,1)
     return indices
 
-def _build_depth_pyramid(depth, levels):
+def build_depth_pyramid(
+        depth: NDArray[np.float32],
+        levels: int
+    ) -> dict[int,NDArray[Any]]:
+    """
+    """
     h,w = depth.shape
     
-    depths = {(levels-1): depth.reshape(1,h,w)}
+    depths: dict[int,NDArray[Any]] = {(levels-1): depth.reshape(1,h,w)}
     for i in range(1,levels):
         size = (int(w//(2**i)), int(h//(2**i)))
-        d = cv2.resize(depth, size, cv2.INTER_LINEAR)
+        d = np.asarray(cv2.resize(src=depth, dsize=size, interpolation=cv2.INTER_LINEAR))
 
         depths[levels-1-i] = d.reshape(1, size[1], size[0])
 
     return depths
 
-def build_labels(depth, hypotheses):
+def build_labels(
+        depth: Tensor,
+        hypotheses: Tensor
+    ) -> tuple[Tensor, Tensor]:
+    """
+    """
     bin_radius = (hypotheses[:,1] - hypotheses[:,0])/2.0
     target_bin_dist = torch.abs(depth - hypotheses)
     target_labels = torch.where(target_bin_dist <= bin_radius.unsqueeze(1), 1.0, 0.0)
@@ -54,7 +69,14 @@ def build_labels(depth, hypotheses):
 
     return target_labels.to(torch.int64), mask.to(torch.float32)
 
-def crop_image(image, crop_row, crop_col, scale):
+def crop_image(
+        image: NDArray[Any] | Tensor,
+        crop_row: int,
+        crop_col: int,
+        scale: float
+    ) -> NDArray[Any] | Tensor:
+    """
+    """
     _, height, width = image.shape
 
     start_row = crop_row
@@ -64,14 +86,18 @@ def crop_image(image, crop_row, crop_col, scale):
 
     return image[:, start_row:end_row, start_col:end_col]
 
-def freeze_model_weights(model):
+def freeze_model_weights(model: Module) -> None:
+    """
+    """
     model.requires_grad_(False)
 
-def gaussian(window_size, sigma):
+def gaussian(window_size: int, sigma: float):
+    """
+    """
     gauss = torch.Tensor([exp(-(x - window_size // 2) ** 2 / float(2 * sigma ** 2)) for x in range(window_size)])
     return gauss / gauss.sum()
 
-def laplacian_pyramid_th(image: torch.Tensor, tau: float) -> torch.Tensor:
+def laplacian_pyramid_th(image: Tensor, tau: float) -> Tensor:
     """Computes the Laplacian pyramid of an image.
 
     Parameters:
@@ -81,21 +107,21 @@ def laplacian_pyramid_th(image: torch.Tensor, tau: float) -> torch.Tensor:
     Returns:
         The map of the Laplacian regions.
     """
-    batch_size, c, h, w = image.shape
+    batch_size, _, h, w = image.shape
     levels = 4
 
     # build gaussian pyramid
     pyr = [image]
     for l in range(levels):
-        pyr.append(F.interpolate(pyr[-1], scale_factor=0.5, mode="bilinear"))
+        pyr.append(F.interpolate(input=pyr[-1], scale_factor=0.5, mode="bilinear"))
 
     # compute laplacian pyramid (differance between gaussian pyramid levels)
     for l in range(levels, 0, -1):
         region_id = (levels-l+1)
 
-        diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True)
-        diff = F.interpolate(diff, size=(h, w), mode="bilinear")
-        diff_mask = torch.where(diff > tau, 1, 0)
+        diff = (torch.abs(F.interpolate(pyr[l], scale_factor=2, mode="bilinear") - pyr[l-1])).mean(dim=1, keepdim=True) # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        diff = F.interpolate(input=diff, size=(h, w), mode="bilinear") # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+        diff_mask = torch.where(diff > tau, 1, 0) # pyright: ignore[reportUnknownArgumentType]
 
         diff_mask = diff_mask.reshape(batch_size,h,w,1)
 
@@ -225,22 +251,26 @@ def non_zero_std(maps: torch.Tensor, device: str, dim: int = 1, keepdim: bool = 
 
     return std
 
+def normalize(
+        data: NDArray[Any] | Tensor,
+        mean: float|None=None,
+        std: float|None=None,
+        min_val: float|None=None,
+        max_val: float|None=None
+    ):
+    """
+    """
+    if min_val is None:
+        min_val = float(data.min())
+    if max_val is None:
+        max_val = float(data.max())
 
-def _normalize_image(image, mean=None, std=None):
-    image = image / 255.0
+    data = (data-min_val) / (max_val-min_val+1e-10)
 
     if mean != None and std != None:
-        image = (image - mean) / std
+        data = (data - mean) / std
 
-    return image
-
-def normalize(image, mean=None, std=None):
-    image = (image-image.min()) / (image.max()-image.min()+1e-10)
-
-    if mean != None and std != None:
-        image = (image - mean) / std
-
-    return image
+    return data
 
 def parameters_count(net, name, do_print=True):
     """

@@ -207,7 +207,7 @@ def read_pfm(pfm_file: str) -> np.ndarray:
         else:
             data_type = '>f' # big-endian
         data_string = pfm_file.read()
-        data = np.fromstring(data_string, data_type)
+        data = np.frombuffer(data_string, data_type)
         shape = (height, width, 3) if color else (height, width)
         data = np.reshape(data, shape)
         data = cv2.flip(data, 0)
@@ -223,6 +223,18 @@ def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
         The point cloud stored in the given file.
     """
     return o3d.io.read_point_cloud(point_cloud_file)
+
+def read_point_cloud_np(point_cloud_file: str) -> NDArray[np.float32]:
+    """Reads a point cloud from a file.
+
+    Parameters:
+        point_cloud_file: Input point cloud file.
+
+    Returns:
+        The point cloud as an NDArray stored in the given file.
+    """
+    cloud = o3d.io.read_point_cloud(point_cloud_file)
+    return np.array(cloud.points, dtype=np.float32)
 
 def read_single_cam_sfm(cam_file: str, depth_planes: int = 256) -> np.ndarray:
     """Reads a single camera file in SFM format.
@@ -363,7 +375,7 @@ def write_mesh(mesh_file: str, mesh: o3d.geometry.TriangleMesh) -> None:
     """
     return o3d.io.write_triangle_mesh(mesh_file, mesh)
 
-def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
+def write_pfm(filename: str, data_map: np.ndarray, scale: float = 1.0) -> None:
     """Writes a data map to a file in *.pfm format.
 
     Parameters:
@@ -371,7 +383,7 @@ def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
         data_map: Data map to be stored.
         scale: Value used to scale the data map.
     """
-    with open(pfm_file, 'wb') as pfm_file:
+    with open(filename, 'wb') as pfm_file:
         color = None
 
         if data_map.dtype.name != 'float32':
@@ -400,11 +412,17 @@ def write_pfm(pfm_file: str, data_map: np.ndarray, scale: float = 1.0) -> None:
         c = '%f\n' % scale
         pfm_file.write(c.encode('iso8859-15'))
 
-        data_map_string = data_map.tostring()
+        data_map_string = data_map.tobytes()
         pfm_file.write(data_map_string)
 
 def write_point_cloud(fn, cloud):
     o3d.io.write_point_cloud(fn, cloud)
+
+def write_point_cloud_np(filename, points, colors):
+    cloud = o3d.geometry.PointCloud()
+    cloud.points = o3d.utility.Vector3dVector(points)
+    cloud.colors = o3d.utility.Vector3dVector(colors)
+    o3d.io.write_point_cloud(filename, cloud)
 
 def save_state_dict(model, save_path):
     torch.save(model.state_dict(), save_path)

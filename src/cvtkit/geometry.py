@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import torchvision.transforms.functional as tvf
 import torchvision.transforms as tvt
 from torch.cuda.amp import autocast
+from numpy.typing import NDArray
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
@@ -633,7 +634,7 @@ def homography_warp_var(cfg, features, ref_in, src_in, ref_ex, src_ex, depth_hyp
     return cost_volume
 
 
-def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_channels, vwa_net=None, vis_weights=None, virtual=False):
+def homography_warp(features, intrinsics, extrinsics, hypotheses, group_channels, vwa_net=None, view_weights=None, virtual=False):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
         cfg: Configuration dictionary containing configuration parameters.
@@ -644,6 +645,7 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
         group_channels: Feature channel sizes used in group-wise correlation (GWC).
         vwa_net: Network used for visibility weighting.
         vis_weights: Pre-computed visibility weights.
+        virtual: If True, reference camera is not used in computing feature correlation (virtual reference camera)
 
     Returns:
         The Plane Sweeping Volume computed via feature matching cost.
@@ -719,8 +721,9 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
             vis_weight_list.append(reweight)
             reweight = reweight.unsqueeze(1)
             ppsv = reweight*ppsv
-        elif vis_weights is not None:
-            reweight = vis_weights[v-1]
+        else: 
+            assert view_weights is not None
+            reweight = view_weights[v-1]
             if reweight.shape[2] < ppsv.shape[3]:
                 reweight = F.interpolate(reweight,scale_factor=2,mode='bilinear',align_corners=False)
             vis_weight_list.append(reweight)
@@ -730,12 +733,12 @@ def homography_warp(cfg, features, intrinsics, extrinsics, hypotheses, group_cha
         cost_volume = cost_volume + ppsv
         reweight_sum = reweight_sum + reweight
 
-        if cfg["mode"]=="inference":
-            del src_feature
-            del ppsv
-            del warped_features
-            del reweight
-            torch.cuda.empty_cache()
+        # if mode == "inference":
+        #     del src_feature
+        #     del ppsv
+        #     del warped_features
+        #     del reweight
+        #     torch.cuda.empty_cache()
 
     cost_volume = cost_volume/(reweight_sum+1e-10)
 
@@ -973,6 +976,23 @@ def project_depth_map(depth: torch.Tensor, KP_inv: torch.Tensor) -> torch.Tensor
     world_coords = world_coords + bwd_translation
 
     return world_coords.permute(1,0).reshape(height, width, 3)
+
+def rigid_transform(points: NDArray[Any], transform: NDArray[Any]) -> NDArray[Any]:
+    """ Apply's a rigid transform to a collection of 3D points.
+
+    Parameters:
+        points: Array of 3D points of size [N x 3]
+        transform: rigid transform to be pre-multiplied of size [4x4]
+
+    Returns:
+        The transformed 3D points.
+    """
+    N = points.shape[0]
+    homog_coords = np.concatenate(points, np.ones_like(points[:,0:1])).reshape(N,4,1)
+    transform = np.tile(transform.reshape(1,4,4), (N,1,1))
+
+    return np.matmul(transform, homog_coords)[:,:3,0]
+
 
 def project_depth_map_batched(depth: torch.Tensor, cam: torch.Tensor, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Projects a depth map into a list of 3D points
