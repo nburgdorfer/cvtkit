@@ -1,5 +1,5 @@
 ::: cvtkit.visualization.util
     handler: python
     options:
-        show_root_heading: true
-        show_source: true
+        show_root_heading: false
+        show_source: false

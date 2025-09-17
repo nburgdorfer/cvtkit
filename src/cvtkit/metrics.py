@@ -15,6 +15,7 @@ from torch.autograd import Variable
 
 from cvtkit.common import gaussian
 
+
 def MAE(estimate, target, reduction_dims, mask=None, relative=False):
     """Mean Absolute Error.
 
@@ -27,19 +28,22 @@ def MAE(estimate, target, reduction_dims, mask=None, relative=False):
 
     Returns: .
     """
-    assert(estimate.shape==target.shape)
+    assert estimate.shape == target.shape
     error = estimate - target
     if relative:
         error /= target
     error = torch.abs(error)
 
     if mask != None:
-        assert(error.shape==mask.shape)
+        assert error.shape == mask.shape
         error *= mask
-        error = (error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims)+1e-10)).sum()
+        error = (
+            error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims) + 1e-10)
+        ).sum()
     else:
-        error =  error.mean()
+        error = error.mean()
     return error
+
 
 def RMSE(estimate, target, mask=None, relative=False):
     """Root Mean Squared Error.
@@ -52,18 +56,21 @@ def RMSE(estimate, target, mask=None, relative=False):
 
     Returns: .
     """
-    assert(estimate.shape==target.shape)
+    assert estimate.shape == target.shape
     error = estimate - target
     if relative:
         error /= target
     error = torch.square(error)
 
-    assert(error.shape==mask.shape)
+    assert error.shape == mask.shape
     error *= mask
 
-    reduction_dims = tuple(range(1,len(target.shape)))
-    error = (error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims)+1e-10)).sum()
+    reduction_dims = tuple(range(1, len(target.shape)))
+    error = (
+        error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims) + 1e-10)
+    ).sum()
     return torch.sqrt(error)
+
 
 def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
     """Computes the absolute error between an estimated and groun-truth depth map.
@@ -73,7 +80,7 @@ def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
         gt_depth: Ground-truth depth map.
 
     Returns:
-       The absolute error map for the estimated depth map. 
+       The absolute error map for the estimated depth map.
     """
     signed_error = est_depth - gt_depth
 
@@ -83,27 +90,29 @@ def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
 
     return error
 
+
 def accuracy_eval(
-        est_ply: np.ndarray,
-        gt_ply: np.ndarray,
-        mask_th: float,
-        est_filt: Optional[np.ndarray] = None,
-        gt_filt: Optional[np.ndarray] = None) -> Tuple[o3d.geometry.PointCloud, np.ndarray, np.ndarray]:
+    est_ply: np.ndarray,
+    gt_ply: np.ndarray,
+    mask_th: float,
+    est_filt: Optional[np.ndarray] = None,
+    gt_filt: Optional[np.ndarray] = None,
+) -> Tuple[o3d.geometry.PointCloud, np.ndarray, np.ndarray]:
     """Computes the accuracy of an estimated point cloud against the provided ground-truth.
 
     Parameters:
         est_ply: Estimated point cloud to be evaluated.
         gt_ply: Ground-truth point cloud.
-        mask_th: Masking threshold used to remove points from the evaluation farther 
+        mask_th: Masking threshold used to remove points from the evaluation farther
                     than a specified distance value.
-        est_filt: Optional filter to remove unwanted point from the estimated 
+        est_filt: Optional filter to remove unwanted point from the estimated
                     point cloud in the evaluation
         gt_filt: Optional filter to remove unwanted point from the ground-truth
                     point cloud in the evaluation
 
     Returns:
         valid_est_ply: Point cloud containing all the valid evaluation points after filtering.
-        dists_est: Estimated distances of all valid points in the estimated point cloud 
+        dists_est: Estimated distances of all valid points in the estimated point cloud
                     to the closest point in the ground-truth point cloud.
         colors_est: Estimated colors for the points in the valid point cloud.
     """
@@ -125,26 +134,27 @@ def accuracy_eval(
 
 
 def completeness_eval(
-        est_ply: o3d.geometry.PointCloud,
-        gt_ply: o3d.geometry.PointCloud,
-        mask_th: float = 20.0,
-        est_filt: Optional[np.ndarray] = None,
-        gt_filt: Optional[np.ndarray] = None) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    est_ply: o3d.geometry.PointCloud,
+    gt_ply: o3d.geometry.PointCloud,
+    mask_th: float = 20.0,
+    est_filt: Optional[np.ndarray] = None,
+    gt_filt: Optional[np.ndarray] = None,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Computes the completeness of an estimated point cloud against the provided ground-truth.
 
     Parameters:
         est_ply: Estimated point cloud to be evaluated.
         gt_ply: Ground-truth point cloud.
-        mask_th: Masking threshold used to remove points from the evaluation farther 
+        mask_th: Masking threshold used to remove points from the evaluation farther
                     than a specified distance value.
-        est_filt: Optional filter to remove unwanted point from the estimated 
+        est_filt: Optional filter to remove unwanted point from the estimated
                     point cloud in the evaluation
         gt_filt: Optional filter to remove unwanted point from the ground-truth
                     point cloud in the evaluation
 
     Returns:
         ply_points: Point cloud vertices containing all the valid evaluation points after filtering.
-        dists: Distances of all valid points in the ground-truth point cloud 
+        dists: Distances of all valid points in the ground-truth point cloud
                     to the closest point in the estimated point cloud.
         colors: Colors for the points in the valid point cloud.
     """
@@ -165,7 +175,9 @@ def completeness_eval(
     return ply_points, dists, colors
 
 
-def filter_outlier_points(est_ply: o3d.geometry.PointCloud, gt_ply: o3d.geometry.PointCloud, outlier_th: float) -> o3d.geometry.PointCloud:
+def filter_outlier_points(
+    est_ply: o3d.geometry.PointCloud, gt_ply: o3d.geometry.PointCloud, outlier_th: float
+) -> o3d.geometry.PointCloud:
     """Filters out points from an estimated point cloud that are farther than some threshold to the ground-truth point cloud.
 
     Parameters:
@@ -185,13 +197,16 @@ def ssim(img1, img2, window_size=11, size_average=True):
     channel = img1.size(-3)
     _1D_window = gaussian(window_size, 1.5).unsqueeze(1)
     _2D_window = _1D_window.mm(_1D_window.t()).float().unsqueeze(0).unsqueeze(0)
-    window = Variable(_2D_window.expand(channel, 1, window_size, window_size).contiguous())
+    window = Variable(
+        _2D_window.expand(channel, 1, window_size, window_size).contiguous()
+    )
 
     if img1.is_cuda:
         window = window.cuda(img1.get_device())
     window = window.type_as(img1)
 
     return _ssim(img1, img2, window, window_size, channel, size_average)
+
 
 def _ssim(img1, img2, window, window_size, channel, size_average=True):
     mu1 = F.conv2d(img1, window, padding=window_size // 2, groups=channel)
@@ -201,19 +216,29 @@ def _ssim(img1, img2, window, window_size, channel, size_average=True):
     mu2_sq = mu2.pow(2)
     mu1_mu2 = mu1 * mu2
 
-    sigma1_sq = F.conv2d(img1 * img1, window, padding=window_size // 2, groups=channel) - mu1_sq
-    sigma2_sq = F.conv2d(img2 * img2, window, padding=window_size // 2, groups=channel) - mu2_sq
-    sigma12 = F.conv2d(img1 * img2, window, padding=window_size // 2, groups=channel) - mu1_mu2
+    sigma1_sq = (
+        F.conv2d(img1 * img1, window, padding=window_size // 2, groups=channel) - mu1_sq
+    )
+    sigma2_sq = (
+        F.conv2d(img2 * img2, window, padding=window_size // 2, groups=channel) - mu2_sq
+    )
+    sigma12 = (
+        F.conv2d(img1 * img2, window, padding=window_size // 2, groups=channel)
+        - mu1_mu2
+    )
 
-    C1 = 0.01 ** 2
-    C2 = 0.03 ** 2
+    C1 = 0.01**2
+    C2 = 0.03**2
 
-    ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / ((mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2))
+    ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / (
+        (mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2)
+    )
 
     if size_average:
         return ssim_map.mean()
     else:
         return ssim_map.mean(1).mean(1).mean(1)
+
 
 def psnr(img1, img2):
     mse = (((img1 - img2)) ** 2).view(img1.shape[0], -1).mean(1, keepdim=True)
