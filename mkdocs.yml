@@ -10,20 +10,20 @@ nav:
         - Point Cloud To GIF: tutorials/cloud_to_gif.md
         - Point Cloud To Video: tutorials/cloud_to_vid.md
     - API Reference: 
-        - cvt.camera: api/camera.md
-        - cvt.common: api/common.md
-        - cvt.io: api/io.md
-        - cvt.datasets:
+        - cvtkit.camera: api/camera.md
+        - cvtkit.common: api/common.md
+        - cvtkit.io: api/io.md
+        - cvtkit.datasets:
             #- BlendedMVS: api/datasets_blended.md
-            - cvt.datasets.dtu: api/datasets_dtu.md
+            - cvtkit.datasets.dtu: api/datasets_dtu.md
             #- Tanks \& Temples: api/datasets_tanks.md
-        - cvt.geometry: api/geometry.md
-        - cvt.filtering: api/filtering.md
-        - cvt.metrics: api/metrics.md
-        - cvt.visualization:
-            - cvt.visualization.latex: api/visualization_latex.md
-            - cvt.visualization.util: api/visualization_util.md
-            - cvt.visualization.video: api/visualization_video.md
+        - cvtkit.geometry: api/geometry.md
+        - cvtkit.filtering: api/filtering.md
+        - cvtkit.metrics: api/metrics.md
+        - cvtkit.visualization:
+            - cvtkit.visualization.latex: api/visualization_latex.md
+            - cvtkit.visualization.util: api/visualization_util.md
+            - cvtkit.visualization.video: api/visualization_video.md
     - Resources:
         - Pose File Formats: resources/pose_file_formats.md
     - Development:
