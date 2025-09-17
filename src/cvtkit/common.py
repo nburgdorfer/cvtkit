@@ -9,7 +9,7 @@ by the sub-packages of the CVTkit library.
 import numpy as np
 import cv2
 import random
-from math import exp
+from math import exp, cos, sin
 
 import torch
 import torch.nn.functional as F
@@ -288,8 +288,6 @@ def non_zero_std(
 
 def normalize(
     data: NDArray[Any] | Tensor,
-    mean: float | None = None,
-    std: float | None = None,
     min_val: float | None = None,
     max_val: float | None = None,
 ):
@@ -300,9 +298,6 @@ def normalize(
         max_val = float(data.max())
 
     data = (data - min_val) / (max_val - min_val + 1e-10)
-
-    if mean != None and std != None:
-        data = (data - mean) / std
 
     return data
 
@@ -499,3 +494,24 @@ def top_k_hypothesis_selection(grid, k, prev_hypos, prev_hypo_coords, prev_inter
     new_intervals = torch.repeat_interleave(selected_intervals, 2, dim=4)  # Wx2
 
     return new_hypos, new_coords, new_intervals
+
+
+def y_axis_rotation(P: np.ndarray, theta: float) -> np.ndarray:
+    """Applies a rotation to the given camera extrinsics matrix along the y-axis.
+
+    Parameters:
+        P: Initial extrinsics camera matrix.
+        theta: Angle (in radians) to rotate the camera.
+
+    Returns:
+        The rotated extrinsics matrix for the camera.
+    """
+    R = np.eye(4)
+    R[0, 0] = cos(theta)
+    R[0, 2] = sin(theta)
+    R[2, 0] = -(sin(theta))
+    R[2, 2] = cos(theta)
+
+    P_rot = R @ P
+
+    return P_rot

@@ -17,7 +17,7 @@ from numpy.typing import NDArray
 
 from cvtkit.camera import intrinsic_pyramid
 from cvtkit.common import groupwise_correlation
-from cvtkit.io import *
+from cvtkit.io import read_pfm, read_single_cam_sfm
 
 
 def depths_to_points(view, depthmap):
@@ -1872,7 +1872,6 @@ def visibility_mask(
     Returns:
         The visibility mask for the source view.
     """
-    height, width = src_depth.shape
     vis_map = np.not_equal(src_depth, 0.0).astype(np.double)
 
     for i in range(len(depth_files)):
@@ -1964,27 +1963,6 @@ def uniform_hypothesis(
         depth_hypo_coords.unsqueeze(1),
         hypo_intervals.unsqueeze(1),
     )
-
-
-def y_axis_rotation(P: np.ndarray, theta: float) -> np.ndarray:
-    """Applies a rotation to the given camera extrinsics matrix along the y-axis.
-
-    Parameters:
-        P: Initial extrinsics camera matrix.
-        theta: Angle (in radians) to rotate the camera.
-
-    Returns:
-        The rotated extrinsics matrix for the camera.
-    """
-    R = np.eye(4)
-    R[0, 0] = math.cos(theta)
-    R[0, 2] = math.sin(theta)
-    R[2, 0] = -(math.sin(theta))
-    R[2, 2] = math.cos(theta)
-
-    P_rot = R @ P
-
-    return P_rot
 
 
 def z_planes_from_disp(

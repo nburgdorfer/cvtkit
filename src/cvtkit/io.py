@@ -20,7 +20,7 @@ from torch import Tensor
 
 from scipy.spatial.transform import Rotation as rot
 
-from cvtkit.camera import y_axis_rotation
+from cvtkit.common import y_axis_rotation
 from cvtkit.camera import fov2focal
 
 
