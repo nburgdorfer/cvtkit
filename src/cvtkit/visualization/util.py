@@ -1,29 +1,17 @@
-# cvt/visualization/util.py
-"""Module including general utilities for visualization.
+"""Module including general utilities for visualization."""
 
-This module includes the following functions:
-
-
-"""
 import open3d as o3d
 import numpy as np
 import cv2
-import scipy.ndimage as ndimage
 import skimage.transform as transform
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.collections as mc
 import torch
-import torch.nn.functional as F
-import os, sys
+import os
 import torchvision.transforms.functional as tvf
 import torchvision.transforms as tvt
-
-from common import non_zero_std
-from io import *
-
 
 def display_inlier_outlier(cloud: o3d.geometry.PointCloud, indices: np.ndarray) -> None:
     """Displays a point cloud with outlier points colored red.
@@ -32,8 +20,8 @@ def display_inlier_outlier(cloud: o3d.geometry.PointCloud, indices: np.ndarray) 
         cloud: Point cloud to be displayed.
         indices: Indices indicating the inlier points.
     """
-    inlier_cloud = cloud.select_by_index(ind)
-    outlier_cloud = cloud.select_by_index(ind, invert=True)
+    inlier_cloud = cloud.select_by_index(indices)
+    outlier_cloud = cloud.select_by_index(indices, invert=True)
 
     outlier_cloud.paint_uniform_color([1, 0, 0])
     inlier_cloud.paint_uniform_color([0.8, 0.8, 0.8])
@@ -308,10 +296,10 @@ def plot_coverage(data, output, batch_ind, vis_path):
     _, H, W = data["target_depth"].shape
     levels = len(hypos)
 
-    uncovered_mask
+    # uncovered_mask
     for l in range(levels):
         hypo = hypos[l].squeeze(1)
-        batch_size, planes, h, w = hypo.shape
+        _, _, h, w = hypo.shape
         interval = intervals[l].squeeze(1)
         target_depth = tvf.resize(data["target_depth"], [h, w]).unsqueeze(1)
 
@@ -582,49 +570,49 @@ def visualize_camera_frustum(planes, ind, edge_color="255 0 0"):
             of.write(f"{ind+3} {ind+7} {edge_color}\n")
 
 
-def visualize_bounding_box(min_bounds, max_bounds, output_file, edge_color="255 0 0"):
+# def visualize_bounding_box(min_bounds, max_bounds, output_file, edge_color="255 0 0"):
 
-    num_verts = 8
-    num_edges = 12
-    with open(out_file, "w") as of:
-        of.write("ply\n")
-        of.write("format ascii 1.0\n")
-        of.write("comment VCGLIB generated\n")
-        of.write(f"element vertex {num_verts}\n")
-        of.write("property float x\n")
-        of.write("property float y\n")
-        of.write("property float z\n")
-        of.write("property uchar red\n")
-        of.write("property uchar green\n")
-        of.write("property uchar blue\n")
-        of.write(f"element edge {num_edges}\n")
-        of.write("property int vertex1\n")
-        of.write("property int vertex2\n")
-        of.write("property uchar red\n")
-        of.write("property uchar green\n")
-        of.write("property uchar blue\n")
-        of.write("end_header\n")
-        for p in range(num_planes):
-            for i in range(4):
-                of.write(
-                    f"{planes[p,0,i]:0.3f} {planes[p,1,i]:0.3f} {planes[p,2,i]:0.3f} 0 0 0\n"
-                )
+#     num_verts = 8
+#     num_edges = 12
+#     with open(output_file, "w") as of:
+#         of.write("ply\n")
+#         of.write("format ascii 1.0\n")
+#         of.write("comment VCGLIB generated\n")
+#         of.write(f"element vertex {num_verts}\n")
+#         of.write("property float x\n")
+#         of.write("property float y\n")
+#         of.write("property float z\n")
+#         of.write("property uchar red\n")
+#         of.write("property uchar green\n")
+#         of.write("property uchar blue\n")
+#         of.write(f"element edge {num_edges}\n")
+#         of.write("property int vertex1\n")
+#         of.write("property int vertex2\n")
+#         of.write("property uchar red\n")
+#         of.write("property uchar green\n")
+#         of.write("property uchar blue\n")
+#         of.write("end_header\n")
+#         for p in range(num_planes):
+#             for i in range(4):
+#                 of.write(
+#                     f"{planes[p,0,i]:0.3f} {planes[p,1,i]:0.3f} {planes[p,2,i]:0.3f} 0 0 0\n"
+#                 )
 
-        # draw plane border
-        for p in range(num_planes):
-            ind = p * 4
-            of.write(f"{ind} {ind+1} {edge_color}\n")
-            of.write(f"{ind} {ind+2} {edge_color}\n")
-            of.write(f"{ind+1} {ind+3} {edge_color}\n")
-            of.write(f"{ind+2} {ind+3} {edge_color}\n")
+#         # draw plane border
+#         for p in range(num_planes):
+#             ind = p * 4
+#             of.write(f"{ind} {ind+1} {edge_color}\n")
+#             of.write(f"{ind} {ind+2} {edge_color}\n")
+#             of.write(f"{ind+1} {ind+3} {edge_color}\n")
+#             of.write(f"{ind+2} {ind+3} {edge_color}\n")
 
-        # draw plane connections
-        for p in range(num_planes - 1):
-            ind = p * 4
-            of.write(f"{ind} {ind+4} {edge_color}\n")
-            of.write(f"{ind+1} {ind+5} {edge_color}\n")
-            of.write(f"{ind+2} {ind+6} {edge_color}\n")
-            of.write(f"{ind+3} {ind+7} {edge_color}\n")
+#         # draw plane connections
+#         for p in range(num_planes - 1):
+#             ind = p * 4
+#             of.write(f"{ind} {ind+4} {edge_color}\n")
+#             of.write(f"{ind+1} {ind+5} {edge_color}\n")
+#             of.write(f"{ind+2} {ind+6} {edge_color}\n")
+#             of.write(f"{ind+3} {ind+7} {edge_color}\n")
 
 
 def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoch=-1):
@@ -757,8 +745,8 @@ def auc_score(data, output):
             est_roc[i] = np.mean(ee)
 
     # comput AUC
-    oracle_auc = np.trapz(oracle_roc, dx=1)
-    est_auc = np.trapz(est_roc, dx=1)
+    oracle_auc = np.trapezoid(oracle_roc, dx=1)
+    est_auc = np.trapezoid(est_roc, dx=1)
 
     return perc, oracle_roc, est_roc, (est_auc / oracle_auc)
 
@@ -800,39 +788,39 @@ def laplacian_count(data, output, plot_file=None, use_est_depth=False):
     return M
 
 
-def laplacian_uncovered_count(data, output, plot_file=None):
-    image_laplacian = output["image_laplacian"][0].detach().cpu().numpy()
-    depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
-    uncovered_masks = output["uncovered_masks"]
+# def laplacian_uncovered_count(data, output, plot_file=None):
+#     image_laplacian = output["image_laplacian"][0].detach().cpu().numpy()
+#     depth_laplacian = data["depth_laplacian"][0].detach().cpu().numpy()
+#     uncovered_masks = output["uncovered_masks"]
 
-    # Image Laplacian vs. Depth Laplacian vs. Uncovered Count
-    for mask in uncovered_masks:
-        inds = np.argwhere(mask.flatten() > 0.0)
-        num_pix = int(inds.shape[0])
-        il = (image_laplacian.flatten())[inds][:, 0]
-        dl = (depth_laplacian.flatten())[inds][:, 0]
-        M = np.zeros((5, 5))
-        for i in range(5):
-            for d in range(5):
-                M[i, d] += int(((il == i) & (dl == d)).sum()) / num_pix
+#     # Image Laplacian vs. Depth Laplacian vs. Uncovered Count
+#     for mask in uncovered_masks:
+#         inds = np.argwhere(mask.flatten() > 0.0)
+#         num_pix = int(inds.shape[0])
+#         il = (image_laplacian.flatten())[inds][:, 0]
+#         dl = (depth_laplacian.flatten())[inds][:, 0]
+#         M = np.zeros((5, 5))
+#         for i in range(5):
+#             for d in range(5):
+#                 M[i, d] += int(((il == i) & (dl == d)).sum()) / num_pix
 
-    if plot_file != None:
-        fig, ax = plt.subplots()
-        img = ax.imshow(M, interpolation="none", cmap="copper")
-        ax.set_xlabel("Depth Laplacian")
-        ax.set_ylabel("Image Laplacian")
-        ax.set_xticks(np.arange(5))
-        ax.set_yticks(np.arange(5))
-        for i in range(5):
-            for j in range(5):
-                text = ax.text(
-                    i, j, f"{M[j, i]:0.2f}", ha="center", va="center", color="w"
-                )
-        plt.savefig(plot_file, bbox_inches="tight", pad_inches=0.4, dpi=200)
-        plt.clf()
-        plt.close()
+#     if plot_file != None:
+#         fig, ax = plt.subplots()
+#         img = ax.imshow(M, interpolation="none", cmap="copper")
+#         ax.set_xlabel("Depth Laplacian")
+#         ax.set_ylabel("Image Laplacian")
+#         ax.set_xticks(np.arange(5))
+#         ax.set_yticks(np.arange(5))
+#         for i in range(5):
+#             for j in range(5):
+#                 text = ax.text(
+#                     i, j, f"{M[j, i]:0.2f}", ha="center", va="center", color="w"
+#                 )
+#         plt.savefig(plot_file, bbox_inches="tight", pad_inches=0.4, dpi=200)
+#         plt.clf()
+#         plt.close()
 
-    return M
+#     return M
 
 
 def laplacian_depth_error(data, output, plot_file=None, use_est_depth=False):

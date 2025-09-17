@@ -1,14 +1,7 @@
-# cvt/visualization/video.py
-"""Module including routines for creating videos.
+"""Module including routines for creating videos."""
 
-This module includes the following functions:
-
-- `video_from_images(image_files, video_file, frame_rate)` - Creates a video from a set of images.
-- `video_from_images2(image1_files, image2_files, video_file, frame_rate, orientation)` - Creates a video from two sets of images, stitching the images together each frame.
-"""
 import cv2
-import os
-import sys
+import numpy as np
 from typing import List
 
 
@@ -65,7 +58,7 @@ def video_from_images2(
 
     if orientation == "horizontal":
         video = cv2.VideoWriter(
-            video_file, 0, fps=frame_rate, frameSize=((width * 2, height))
+            video_file, 0, fps=frame_rate, frameSize=((width1 * 2, height1))
         )
         for img1_file, img2_file in zip(image1_files, image2_files):
             img1 = cv2.imread(img1_file)

@@ -1,12 +1,5 @@
-# cvt/visualization/latex.py
-"""Module including routines for creating latex visuals.
+"""Module including routines for creating latex visuals."""
 
-This module includes the following functions:
-
-- `create_subfigures(images, captions, labels)` - Creates a multi-image figure in latex.
-"""
-import sys
-import os
 import numpy as np
 
 from typing import List
