@@ -1401,7 +1401,17 @@
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_subfigures</span><span class="p">(</span><span class="n">images</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">captions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_subfigures</span><span class="p">(</span>
+    <span class="n">images</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">captions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a multi-image figure in latex.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1413,21 +1423,27 @@
 <span class="sd">        The latex string for the figure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_sub_figs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
-    <span class="n">width_scale</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">num_sub_figs</span>
+    <span class="n">width_scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">num_sub_figs</span>
 
     <span class="n">figure</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{figure}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_sub_figs</span><span class="p">):</span>
-        <span class="n">figure</span> <span class="o">+=</span>   <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">centering</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
-                    <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">begin{{subfigure}}{{</span><span class="si">{w:.1f}</span><span class="se">\\</span><span class="s2">textwidth}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="n">width_scale</span><span class="p">)</span> <span class="o">+</span> \
-                        <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">centering</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
-                        <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">includegraphics[width=</span><span class="se">\\</span><span class="s2">textwidth]{{</span><span class="si">{img}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">images</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">+</span> \
-                        <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">caption{{</span><span class="si">{caption}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">captions</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">+</span> \
-                        <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">label{{fig:</span><span class="si">{label}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">+</span> \
-                        <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">end</span><span class="si">{subfigure}</span><span class="se">\n\t\\</span><span class="s2">hfill</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="n">figure</span> <span class="o">+=</span>   <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">caption{{</span><span class="si">{caption}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">captions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> \
-                <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">label{{fig:</span><span class="si">{label}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> \
-                <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">end</span><span class="si">{figure}</span><span class="s2">&quot;</span>
+        <span class="n">figure</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">centering</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">begin{{subfigure}}{{</span><span class="si">{w:.1f}</span><span class="se">\\</span><span class="s2">textwidth}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="n">width_scale</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">centering</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">includegraphics[width=</span><span class="se">\\</span><span class="s2">textwidth]{{</span><span class="si">{img}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">img</span><span class="o">=</span><span class="n">images</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">caption{{</span><span class="si">{caption}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">captions</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">label{{fig:</span><span class="si">{label}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">end</span><span class="si">{subfigure}</span><span class="se">\n\t\\</span><span class="s2">hfill</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">figure</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">caption{{</span><span class="si">{caption}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">captions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">label{{fig:</span><span class="si">{label}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">end</span><span class="si">{figure}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">figure</span>
 </code></pre></div></td></tr></table></div>

@@ -1369,8 +1369,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cvtkit/visualization/video.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
-<span class="normal">15</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
@@ -1388,7 +1387,12 @@
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">video_from_images</span><span class="p">(</span><span class="n">image_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">video_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">video_from_images</span><span class="p">(</span>
+    <span class="n">image_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">video_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a video from a set of images.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1399,7 +1403,7 @@
     <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">layers</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span>
 
-    <span class="n">video</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="n">video_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">frame_rate</span><span class="p">,</span> <span class="n">frameSize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">))</span>
+    <span class="n">video</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="n">video_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">frame_rate</span><span class="p">,</span> <span class="n">frameSize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">image_file</span> <span class="ow">in</span> <span class="n">image_files</span><span class="p">:</span>
         <span class="n">video</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image_file</span><span class="p">))</span>
@@ -1525,11 +1529,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cvtkit/visualization/video.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
@@ -1560,7 +1560,25 @@
 <span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
-<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">video_from_images2</span><span class="p">(</span><span class="n">image1_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">image2_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">video_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">video_from_images2</span><span class="p">(</span>
+    <span class="n">image1_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">image2_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">video_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="n">orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a video from two sets of images, stitching the images together each frame.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1576,18 +1594,20 @@
     <span class="n">frame2</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image2_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">height2</span><span class="p">,</span> <span class="n">width2</span><span class="p">,</span> <span class="n">layers2</span> <span class="o">=</span> <span class="n">frame2</span><span class="o">.</span><span class="n">shape</span>
 
-    <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image1_files</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image2_files</span><span class="p">))</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">height1</span><span class="o">==</span><span class="n">height2</span><span class="p">)</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">width1</span><span class="o">==</span><span class="n">width2</span><span class="p">)</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">layers1</span><span class="o">==</span><span class="n">layers2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">image1_files</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image2_files</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">height1</span> <span class="o">==</span> <span class="n">height2</span>
+    <span class="k">assert</span> <span class="n">width1</span> <span class="o">==</span> <span class="n">width2</span>
+    <span class="k">assert</span> <span class="n">layers1</span> <span class="o">==</span> <span class="n">layers2</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">orientation</span><span class="o">==</span><span class="s2">&quot;horizontal&quot;</span><span class="p">):</span>
-        <span class="n">video</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="n">video_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">frame_rate</span><span class="p">,</span> <span class="n">frameSize</span><span class="o">=</span><span class="p">((</span><span class="n">width</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">height</span><span class="p">)))</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">img1_file</span><span class="p">,</span> <span class="n">img2_file</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">image1_files</span><span class="p">,</span> <span class="n">image2_files</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
+        <span class="n">video</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span>
+            <span class="n">video_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">frame_rate</span><span class="p">,</span> <span class="n">frameSize</span><span class="o">=</span><span class="p">((</span><span class="n">width</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">img1_file</span><span class="p">,</span> <span class="n">img2_file</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">image1_files</span><span class="p">,</span> <span class="n">image2_files</span><span class="p">):</span>
             <span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img1_file</span><span class="p">)</span>
             <span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img2_file</span><span class="p">)</span>
 
-            <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">img1</span><span class="p">,</span><span class="n">img2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">img1</span><span class="p">,</span> <span class="n">img2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">video</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
         <span class="n">video</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
