@@ -184,7 +184,7 @@ def read_cluster_list(filename: str) -> List[Tuple[int, List[int]]]:
     return data
 
 
-def read_pfm(pfm_file: str) -> np.ndarray:
+def read_pfm(pfm_file: str) -> NDArray[np.float32]:
     """Reads a file in *.pfm format.
 
     Parameters:
@@ -223,7 +223,7 @@ def read_pfm(pfm_file: str) -> np.ndarray:
         shape = (height, width, 3) if color else (height, width)
         data = np.reshape(data, shape)
         data = cv2.flip(data, 0)
-    return data
+    return data.astype(np.float32)
 
 
 def read_point_cloud(point_cloud_file: str) -> o3d.geometry.PointCloud:
