@@ -912,20 +912,14 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="latex">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cvtkit.visualization.latex.create_subfigures" class="md-nav__link">
     <span class="md-ellipsis">
       create_subfigures
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1195,20 +1189,14 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="latex">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cvtkit.visualization.latex.create_subfigures" class="md-nav__link">
     <span class="md-ellipsis">
       create_subfigures
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1237,12 +1225,7 @@
 
 
 
-<h2 id="cvtkit.visualization.latex" class="doc doc-heading">
-            <code>cvtkit.visualization.latex</code>
-
-
-</h2>
-
+<a id="cvtkit.visualization.latex"></a>
     <div class="doc doc-contents first">
 
         <p>Module including routines for creating latex visuals.</p>
@@ -1274,10 +1257,10 @@
 <div class="doc doc-object doc-function">
 
 
-<h3 id="cvtkit.visualization.latex.create_subfigures" class="doc doc-heading">
+<h2 id="cvtkit.visualization.latex.create_subfigures" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">create_subfigures</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">captions</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></code>
 
-</h3>
+</h2>
 
 
     <div class="doc doc-contents ">
@@ -1371,83 +1354,6 @@
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/visualization/latex.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_subfigures</span><span class="p">(</span>
-    <span class="n">images</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">captions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a multi-image figure in latex.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        images: List of images to include in the figure.</span>
-<span class="sd">        captions: Corresponding captions for each subfigure.</span>
-<span class="sd">        labels: Corresponding labels for each subfigure.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The latex string for the figure.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">num_sub_figs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
-    <span class="n">width_scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">num_sub_figs</span>
-
-    <span class="n">figure</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{figure}</span><span class="se">\n</span><span class="s2">&quot;</span>
-
-    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_sub_figs</span><span class="p">):</span>
-        <span class="n">figure</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">centering</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">begin{{subfigure}}{{</span><span class="si">{w:.1f}</span><span class="se">\\</span><span class="s2">textwidth}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="n">width_scale</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">centering</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">includegraphics[width=</span><span class="se">\\</span><span class="s2">textwidth]{{</span><span class="si">{img}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">img</span><span class="o">=</span><span class="n">images</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">caption{{</span><span class="si">{caption}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">captions</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\t\\</span><span class="s2">label{{fig:</span><span class="si">{label}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">end</span><span class="si">{subfigure}</span><span class="se">\n\t\\</span><span class="s2">hfill</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="n">figure</span> <span class="o">+=</span> <span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">caption{{</span><span class="si">{caption}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">captions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t\\</span><span class="s2">label{{fig:</span><span class="si">{label}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">end</span><span class="si">{figure}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">figure</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>

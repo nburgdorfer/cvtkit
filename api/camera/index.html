@@ -1499,55 +1499,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_o3d_traj</span><span class="p">(</span>
-    <span class="n">poses</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraTrajectory</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts an array of camera poses and an intrinsics matrix into Open3D trajectory format.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        poses: Nx4x4 array of camera pose in world-to-camera format.</span>
-<span class="sd">        K: 3x3 camera intrinsics matrix.</span>
-<span class="sd">        width: Expected image width.</span>
-<span class="sd">        height: Expected image height.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Open3D camera trajectory model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraTrajectory</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">pose</span> <span class="ow">in</span> <span class="n">poses</span><span class="p">:</span>
-        <span class="n">camera_params</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraParameters</span><span class="p">()</span>
-        <span class="n">camera_params</span><span class="o">.</span><span class="n">intrinsic</span> <span class="o">=</span> <span class="n">o3d</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">PinholeCameraIntrinsic</span><span class="p">(</span>
-            <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">camera_params</span><span class="o">.</span><span class="n">extrinsic</span> <span class="o">=</span> <span class="n">pose</span>
-        <span class="n">trajectory</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+=</span> <span class="p">[</span><span class="n">camera_params</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">trajectory</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -1620,39 +1571,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">camera_center</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the center of a camera in world coordinates.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        P: The extrinsics matrix (4x4) of a given camera in world-to-camera format.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The camera center vector (3x1) in world coordinates.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_camera_center_torch</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_camera_center_numpy</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">P</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -1725,47 +1643,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_baselines</span><span class="p">(</span><span class="n">poses</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the minimum and maximum baseline between a reference camera pose (poses[0]) and a cluster of supporting camera poses (poses[1:]).</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        poses: Array of camera poses (Nx4x4)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A tuple of baselines where the first element is the minimum baseline and the second element is the maximum baseline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poses</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="n">poses</span><span class="p">,</span> <span class="n">List</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poses</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">)</span>
-    <span class="p">):</span>
-        <span class="k">return</span> <span class="n">_compute_baselines_torch</span><span class="p">(</span><span class="n">poses</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poses</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="n">poses</span><span class="p">,</span> <span class="n">List</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poses</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-    <span class="p">):</span>
-        <span class="k">return</span> <span class="n">_compute_baselines_numpy</span><span class="p">(</span><span class="n">poses</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">poses</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -1870,43 +1747,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">crop_intrinsics</span><span class="p">(</span>
-    <span class="n">K</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">crop_row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">crop_col</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjusts intrinsics matrix principle point coordinates corresponding to image cropping.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        K: 3x3 camera intrinsics matrix.</span>
-<span class="sd">        crop_row: Offset for cy (corresponding to cropping the left and right side of an image by &#39;crop_row&#39;).</span>
-<span class="sd">        crop_col: Offset for cx (corresponding to cropping the top and bottom side of an image by &#39;crop_col&#39;).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The updated 3x3 intrinsics matrix</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">crop_col</span>
-    <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">crop_row</span>
-    <span class="k">return</span> <span class="n">K</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -2005,43 +1845,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">intrinsic_pyramid</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes camera intrinsics pyramid corresonding to several levels of image downsampling.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        K: [Batch x 3 x 3] camera intrinsics matrix.</span>
-<span class="sd">        levels: The number of pyramid levels to compute.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The intrinsics pyramid of shape [Batch x L x 3 x 3] in descending order.</span>
-<span class="sd">        (L=0 corresponds to the largest image resolution).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_intrinsic_pyramid_torch</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_intrinsic_pyramid_numpy</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -2130,41 +1933,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scale_intrinsics</span><span class="p">(</span><span class="n">K</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjust intrinsics matrix focal length and principle point corresponding to image scaling.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        K: Batchx3x3 camera intrinsics matrices.</span>
-<span class="sd">        scale: Scale amount (i.e. scale=0.5 corresponds to scaling an image by a factor of 1/2).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The updated 3x3 intrinsics matrix.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_scale_intrinsics_torch</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_scale_intrinsics_numpy</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -2237,37 +2005,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tensor_null_space</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the null space of a PyTorch tensor.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        A: PyTorch tensor of shape m x n.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The null space of tensor A.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">tol</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">S</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">rank</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">S</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">V</span><span class="p">[</span><span class="n">rank</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
@@ -2340,39 +2077,6 @@ formats.</p>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>src/cvtkit/camera.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
-<span class="normal">273</span>
-<span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_opengl_pose</span><span class="p">(</span><span class="n">pose</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;OpenGL pose: (right-up-back) (cam-to-world)</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        pose: The pose in non-OpenGL format</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Camera pose in OpenGL format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_to_opengl_pose_torch</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_to_opengl_pose_numpy</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
