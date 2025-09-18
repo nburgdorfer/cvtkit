@@ -182,16 +182,16 @@ def intrinsic_pyramid(K: NDArray[Any] | Tensor, levels: int) -> NDArray[Any] | T
 
 
 def _intrinsic_pyramid_numpy(K: NDArray[Any], levels: int) -> NDArray[Any]:
-    batch_size, _, _ = K.shape
-    K_pyr = np.zeros((batch_size, levels, 3, 3)).astype(K.dtype)
+    _, _ = K.shape
+    K_pyr = np.zeros((levels, 3, 3)).astype(K.dtype)
 
     for l in range(levels):
         if l == 0:
             k = K
         else:
             k = np.copy(K) / (2**l)
-            k[:, 2, 2] = 1.0
-        K_pyr[:, l] = k
+            k[2, 2] = 1.0
+        K_pyr[l] = k
 
     return K_pyr
 

@@ -286,7 +286,7 @@ wheels = [
 
 [[package]]
 name = "cvtkit"
-version = "0.0.48"
+version = "0.0.51"
 source = { virtual = "." }
 dependencies = [
     { name = "matplotlib" },

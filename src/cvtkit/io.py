@@ -20,7 +20,7 @@ from torch import Tensor
 
 from scipy.spatial.transform import Rotation as rot
 
-from cvtkit.common import y_axis_rotation
+from cvtkit.common import y_axis_rotation, normalize
 from cvtkit.camera import fov2focal
 
 
@@ -454,6 +454,11 @@ def write_point_cloud_np(filename, points, colors):
     cloud.colors = o3d.utility.Vector3dVector(colors)
     o3d.io.write_point_cloud(filename, cloud)
 
+def write_image(filename: str, image: NDArray[Any] | Tensor) -> None:
+    if isinstance(image, Tensor):
+        image = image.detach().cpu().numpy()
+
+    cv2.imwrite(filename, image)
 
 def save_state_dict(model, save_path):
     torch.save(model.state_dict(), save_path)

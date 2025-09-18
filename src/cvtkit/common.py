@@ -250,7 +250,7 @@ def groupwise_correlation(
     return correlation
 
 
-def inverse_sigmoid(x, scale=1):
+def inverse_sigmoid(x, scale=1.0):
     return torch.log(x / (1 - x)) / scale
 
 
@@ -290,7 +290,7 @@ def normalize(
     data: NDArray[Any] | Tensor,
     min_val: float | None = None,
     max_val: float | None = None,
-):
+) -> NDArray[Any] | Tensor :
     """ """
     if min_val is None:
         min_val = float(data.min())
@@ -325,7 +325,7 @@ def print_gpu_mem() -> None:
     print("Free: {:0.4f} GB".format(f / (1024 * 1024 * 1024)))
 
 
-def round_nearest(num: float, decimal: int = 0) -> int:
+def round_nearest(num: NDArray[np.float32] | NDArray[np.float64] | float, decimal: int = 0) -> NDArray[np.int32]:
     """Rounds a floating point number to the nearest decimal place.
 
     Args:
@@ -351,8 +351,7 @@ def round_nearest(num: float, decimal: int = 0) -> int:
         >>> round_nearest(15.156, 2)
         15.16
     """
-
-    return np.round(num + 10 ** (-len(str(num)) - 1), decimal)
+    return (np.round(num + 10 ** (-len(str(num)) - 1), decimal)).astype(np.int32)
 
 
 def scale_camera(cam: np.ndarray, scale: float = 1.0) -> np.ndarray:
