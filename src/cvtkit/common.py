@@ -60,12 +60,19 @@ def build_depth_pyramid(
 
 def build_labels(depth: Tensor, hypotheses: Tensor) -> tuple[Tensor, Tensor]:
     """ """
+    # get the width of each bin (they must all be equal width)
     bin_radius = (hypotheses[:, 1] - hypotheses[:, 0]) / 2.0
+
+    # get binary label for each bin
     target_bin_dist = torch.abs(depth - hypotheses)
     target_labels = torch.where(target_bin_dist <= bin_radius.unsqueeze(1), 1.0, 0.0)
+
+    # make a mask if the GT depth is outside of all bins
     mask = torch.where(target_labels.sum(dim=1) > 0, 1.0, 0.0) * torch.where(
         depth.squeeze(1) > 0, 1.0, 0.0
     )
+
+    # get target label for index of bin
     target_labels = torch.argmax(target_labels, dim=1)
 
     return target_labels.to(torch.int64), mask.to(torch.float32)
