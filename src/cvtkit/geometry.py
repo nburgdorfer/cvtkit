@@ -883,8 +883,7 @@ def homography_warp(
     extrinsics,
     hypotheses,
     group_channels,
-    vwa_net=None,
-    view_weights=None,
+    vwa_net
 ):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
@@ -909,13 +908,12 @@ def homography_warp(
 
     ref_volume = features[0].unsqueeze(2).repeat(1, 1, planes, 1, 1)
 
-    vis_weight_list = []
-    cost_volume = torch.zeros(
+    cost_volume_sum = torch.zeros(
         (batch_size, group_channels, planes, height, width),
         dtype=torch.float32,
         device=device,
     )
-    reweight_sum = torch.zeros(
+    view_weights_sum = torch.zeros(
         (batch_size, 1, planes, height, width), dtype=torch.float32, device=device
     )
 
@@ -972,29 +970,15 @@ def homography_warp(
         warped_features = warped_features.view(batch_size, C, planes, height, width)
 
         # compute Pairwise Plane-Sweeping Volume using GWC
-        ppsv = groupwise_correlation(warped_features, ref_volume, group_channels)
-        if vwa_net is not None:
-            reweight = vwa_net(ppsv)
-            vis_weight_list.append(reweight)
-            reweight = reweight.unsqueeze(1)
-            ppsv = reweight * ppsv
-        else:
-            assert view_weights is not None
-            reweight = view_weights[v - 1]
-            if reweight.shape[2] < ppsv.shape[3]:
-                reweight = F.interpolate(
-                    reweight, scale_factor=2, mode="bilinear", align_corners=False
-                )
-            vis_weight_list.append(reweight)
-            reweight = reweight.unsqueeze(1)
-            ppsv = reweight * ppsv
+        pairwise_plane_sweep_volume = groupwise_correlation(warped_features, ref_volume, group_channels)
 
-        cost_volume = cost_volume + ppsv
-        reweight_sum = reweight_sum + reweight
+        view_weights = vwa_net(pairwise_plane_sweep_volume)
+        cost_volume_sum = torch.add(cost_volume_sum, (pairwise_plane_sweep_volume * view_weights.unsqueeze(1)))
+        view_weights_sum = torch.add(view_weights_sum, view_weights.unsqueeze(1))
 
-    cost_volume = cost_volume / (reweight_sum + 1e-10)
+    cost_volume = cost_volume_sum.div_(view_weights_sum)
 
-    return cost_volume, vis_weight_list
+    return cost_volume
 
 
 #   def homography_warp_coords(cfg, features, level, ref_in, src_in, ref_pose, src_pose, depth_hypos, coords, H, W, gwc_groups, vwa_net=None, vis_weights=None):
