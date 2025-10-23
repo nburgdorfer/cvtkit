@@ -4,7 +4,7 @@ import scipy.ndimage as ndimage
 import skimage.transform as transform
 import sys
 
-from cvt.visualization.util import *
+from cvtkit.visualization.util import *
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:

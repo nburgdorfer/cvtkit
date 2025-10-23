@@ -7,7 +7,8 @@ This module includes the following functions:
 
 import numpy as np
 import open3d as o3d
-from sklearn.neighbors import KDTree
+# from sklearn.neighbors import KDTree
+from scipy.spatial import cKDTree
 from typing import Tuple, Optional
 import torch
 import torch.nn.functional as F
@@ -89,6 +90,99 @@ def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
     error = np.abs(signed_error) * gt_mask
 
     return error
+
+
+def chamfer_accuracy(
+    est_points: torch.Tensor,
+    target_points: torch.Tensor,
+):
+    """Computes the accuracy of an estimated point cloud against the provided ground-truth.
+
+    Parameters:
+        est_ply: Estimated point cloud to be evaluated.
+        gt_ply: Ground-truth point cloud.
+    """
+    batch_size = est_points.shape[0]
+    dists = []
+    for b in range(batch_size):
+        with torch.no_grad():
+            est_points_np = (est_points[b].detach().cpu().numpy()).reshape(-1,3)
+            target_points_np = (target_points[b].detach().cpu().numpy()).reshape(-1,3)
+            tree = cKDTree(target_points_np)
+            _, index = tree.query(est_points_np, workers=4)
+    
+        # dists.append(torch.log(1 + torch.abs(est_points[b] - target_points[b,index])))
+        dists.append(torch.abs(est_points[b] - target_points[b,index]))
+        ret_target_points = target_points[b,index]
+
+    return torch.stack(dists, dim=0), ret_target_points
+
+def chamfer_completeness(
+    est_points: torch.Tensor,
+    target_points: torch.Tensor,
+):
+    """Computes the accuracy of an estimated point cloud against the provided ground-truth.
+
+    Parameters:
+        est_ply: Estimated point cloud to be evaluated.
+        gt_ply: Ground-truth point cloud.
+    """
+    batch_size = est_points.shape[0]
+    dists = []
+    for b in range(batch_size):
+        with torch.no_grad():
+            est_points_np = (est_points[b].detach().cpu().numpy()).reshape(-1,3)
+            target_points_np = (target_points[b].detach().cpu().numpy()).reshape(-1,3)
+            tree = cKDTree(est_points_np)
+            _, index = tree.query(target_points_np, workers=4)
+    
+        # dists.append(torch.log(1 + torch.abs(est_points[b, index] - target_points[b])))
+        dists.append(torch.abs(est_points[b, index] - target_points[b]))
+        ret_est_points = est_points[b, index]
+
+    return torch.stack(dists, dim=0), ret_est_points
+
+
+def completeness_eval(
+    est_ply: o3d.geometry.PointCloud,
+    gt_ply: o3d.geometry.PointCloud,
+    mask_th: float = 20.0,
+    est_filt: Optional[np.ndarray] = None,
+    gt_filt: Optional[np.ndarray] = None,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Computes the completeness of an estimated point cloud against the provided ground-truth.
+
+    Parameters:
+        est_ply: Estimated point cloud to be evaluated.
+        gt_ply: Ground-truth point cloud.
+        mask_th: Masking threshold used to remove points from the evaluation farther
+                    than a specified distance value.
+        est_filt: Optional filter to remove unwanted point from the estimated
+                    point cloud in the evaluation
+        gt_filt: Optional filter to remove unwanted point from the ground-truth
+                    point cloud in the evaluation
+
+    Returns:
+        ply_points: Point cloud vertices containing all the valid evaluation points after filtering.
+        dists: Distances of all valid points in the ground-truth point cloud
+                    to the closest point in the estimated point cloud.
+        colors: Colors for the points in the valid point cloud.
+    """
+    # build KD-Tree of estimated point cloud for querying
+    tree = cKDTree(np.asarray(est_ply.points), leaf_size=40)
+    (dists, inds) = tree.query(np.asarray(gt_ply.points), k=1)
+
+    # extract valid indices
+    valid_inds = set(np.where(gt_filt == 1)[0])
+    valid_inds.intersection_update(set(np.where(dists <= mask_th)[0]))
+    valid_inds = np.asarray(list(valid_inds))
+
+    dists = dists[valid_inds]
+    inds = inds[valid_inds]
+    ply_points = np.asarray(est_ply.points)[inds]
+    colors = np.asarray(est_ply.colors)[inds]
+
+    return ply_points, dists, colors
 
 
 def accuracy_eval(

@@ -14,6 +14,7 @@ import cv2
 from PIL import Image
 from plyfile import PlyData, PlyElement
 from numpy.typing import NDArray
+import torch.nn.functional as F
 
 from cvtkit.geometry import reproject, _points_from_depth
 from cvtkit.io import read_cluster_list, write_pfm, read_pfm
@@ -292,10 +293,18 @@ def check_geometric_consistency(
 
 
 def consensus_filter(
-    cfg, est_depth_path, est_conf_path, rgb_path, output_path, dataset, scene
+    cfg, est_depth_path, est_conf_path, rgb_path, camera_path, output_path, dataset, scene
 ):
-    K = dataset.K[scene]
-    poses = dataset.get_all_poses()
+    intrinsics = []
+    extrinsics = []
+
+    camera_files = os.listdir(camera_path)
+    camera_files.sort()
+    for camera_file in camera_files:
+        P, K = dataset.get_camera_parameters(os.path.join(camera_path, camera_file))
+        extrinsics.append(P)
+        intrinsics.append(K)
+    K = intrinsics[0]
     pix_th = cfg["point_cloud"]["pix_th"]
     prob_th = cfg["point_cloud"]["prob_th"]
     num_consistent = cfg["point_cloud"]["num_consistent"]
@@ -303,7 +312,7 @@ def consensus_filter(
     vertexs = []
     vertex_colors = []
 
-    clusters = read_cluster_list(dataset.get_cluster_file(scene))
+    clusters = read_cluster_list(dataset.get_cluster_file())
     nviews = len(clusters)
 
     out_mask_path = os.path.join(output_path, "masks")
@@ -320,7 +329,7 @@ def consensus_filter(
         ref_image = cv2.imread(os.path.join(rgb_path, f"{ref_frame:08d}.png"))
         ref_image = cv2.cvtColor(ref_image, cv2.COLOR_BGR2RGB)
         ref_depth_est = read_pfm(os.path.join(est_depth_path, f"{ref_frame:08d}.pfm"))
-        ref_pose = poses[ref_frame]
+        ref_pose = extrinsics[ref_frame]
         if prob_th == 0.0:
             conf_mask = np.ones(ref_depth_est.shape, dtype=np.int64) == 1
         else:
@@ -350,7 +359,7 @@ def consensus_filter(
         ### Geometric Mask ###
         geo_mask_sum = 0
         for src_frame in src_frames:
-            src_pose = poses[src_frame]
+            src_pose = extrinsics[src_frame]
             src_depth_est = read_pfm(
                 os.path.join(est_depth_path, f"{src_frame:08d}.pfm")
             )

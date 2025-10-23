@@ -883,7 +883,8 @@ def homography_warp(
     extrinsics,
     hypotheses,
     group_channels,
-    vwa_net
+    vwa_net,
+    reference_index,
 ):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
@@ -902,11 +903,11 @@ def homography_warp(
     """
     hypotheses = hypotheses.squeeze(1)
     _, planes, _, _ = hypotheses.shape
-    batch_size, C, height, width = features[0].shape
-    num_views = len(features)
-    device = features[0].device
+    batch_size, C, height, width = features[:,reference_index].shape
+    num_views = features.shape[1]
+    device = features.device
 
-    ref_volume = features[0].unsqueeze(2).repeat(1, 1, planes, 1, 1)
+    ref_volume = features[:,reference_index].unsqueeze(2).repeat(1, 1, planes, 1, 1)
 
     cost_volume_sum = torch.zeros(
         (batch_size, group_channels, planes, height, width),
@@ -918,7 +919,7 @@ def homography_warp(
     )
 
     # build reference projection matrix
-    ref_proj = torch.matmul(intrinsics[:, 0], extrinsics[:, 0, 0:3])
+    ref_proj = torch.matmul(intrinsics[:, reference_index], extrinsics[:, reference_index, 0:3])
     last = torch.tensor([[[0, 0, 0, 1.0]]]).repeat(batch_size, 1, 1).cuda()
     ref_proj = torch.cat((ref_proj, last), 1)
 
@@ -935,7 +936,10 @@ def homography_warp(
     xyz = torch.stack((x, y, torch.ones_like(x)))
     xyz = torch.unsqueeze(xyz, 0).repeat(batch_size, 1, 1)
 
-    for v in range(1, num_views):
+    for v in range(num_views):
+        if v == reference_index:
+            continue
+
         with torch.no_grad():
             # build source projection matrix
             src_proj = torch.matmul(intrinsics[:, v], extrinsics[:, v, 0:3])
@@ -959,7 +963,7 @@ def homography_warp(
             grid = proj_xy
             grid = grid.type(torch.float32)
 
-        src_feature = features[v]
+        src_feature = features[:,v]
         warped_features = F.grid_sample(
             src_feature,
             grid.view(batch_size, planes * height, width, 2),
@@ -1199,40 +1203,6 @@ def _points_from_depth(
     return (points, valid_inds)
 
 
-def project_depth_map(depth: torch.Tensor, KP_inv: torch.Tensor) -> torch.Tensor:
-    """Projects a depth map into a list of 3D points
-
-    Parameters:
-        depth: Input depth map to project.
-        cam: Camera parameters for input depth map.
-
-    Returns:
-        A float Tensor of 3D points corresponding to the projected depth values.
-    """
-    height, width = depth.shape
-
-    # separate into rotation and translation components
-    bwd_rotation = KP_inv[:3, :3]
-    bwd_translation = KP_inv[:3, 3:4]
-
-    # build 2D homogeneous coordinates tensor: [3, H*W]
-    with torch.no_grad():
-        row_span = torch.arange(0, height, dtype=torch.float32).cuda()
-        col_span = torch.arange(0, width, dtype=torch.float32).cuda()
-        r, c = torch.meshgrid(row_span, col_span, indexing="ij")
-        r, c = r.contiguous(), c.contiguous()
-        r, c = r.reshape(height * width), c.reshape(height * width)
-        coords = torch.stack((c, r, torch.ones_like(c)), dim=0)
-
-    # compute 3D coordinates using the depth map: [H*W, 3]
-    world_coords = torch.matmul(bwd_rotation, coords)
-    depth = depth.reshape(1, -1)
-    world_coords = world_coords * depth
-    world_coords = world_coords + bwd_translation
-
-    return world_coords.permute(1, 0).reshape(height, width, 3)
-
-
 def rigid_transform(points: NDArray[Any], transform: NDArray[Any]) -> NDArray[Any]:
     """Apply's a rigid transform to a collection of 3D points.
 
@@ -1250,59 +1220,54 @@ def rigid_transform(points: NDArray[Any], transform: NDArray[Any]) -> NDArray[An
     return np.matmul(transform, homog_coords)[:, :3, 0]
 
 
-# def project_depth_map_batched(depth: torch.Tensor, cam: torch.Tensor, mask: torch.Tensor | None = None) -> torch.Tensor:
-#     """Projects a depth map into a list of 3D points
+def project_depth_map(depth: torch.Tensor, P: torch.Tensor, K: torch.Tensor, mask: torch.Tensor | None = None) -> torch.Tensor:
+    """Projects a depth map into a list of 3D points
 
-#     Parameters:
-#         depth: Input depth map to project.
-#         cam: Camera parameters for input depth map.
+    Parameters:
+        depth: Input depth map to project.
+        cam: Camera parameters for input depth map.
 
-#     Returns:
-#         A float Tensor of 3D points corresponding to the projected depth values.
-#     """
-#     if (depth.shape[1] == 1):
-#         depth = depth.squeeze(1)
+    Returns:
+        A float Tensor of 3D points corresponding to the projected depth values.
+    """
+    batch_size, height, width = depth.shape
+    K_aug = torch.zeros_like(P)
+    K_aug[:,:3,:3] = K[:,:3,:3]
+    K_aug[:,3,:] = torch.tensor([0,0,0,1])
 
-#     batch_size, height, width = depth.shape
-#     cam_shape = cam.shape
+    # construct back-projection from invers matrices
+    # separate into rotation and translation components
+    bwd_projection = torch.matmul(torch.inverse(P), torch.inverse(K_aug)).to(torch.float32)
+    bwd_rotation = bwd_projection[:,:3,:3]
+    bwd_translation = bwd_projection[:,:3,3:4]
 
-#     # get camera extrinsics and intrinsics
-#     P = cam[:,0,:,:]
-#     K = cam[:,1,:,:]
-#     K[:,3,:] = torch.tensor([0,0,0,1])
+    # build 2D homogeneous coordinates tensor: [B, 3, H*W]
+    with torch.no_grad():
+        row_span = torch.arange(0, height, dtype=torch.float32).cuda()
+        col_span = torch.arange(0, width, dtype=torch.float32).cuda()
+        r,c = torch.meshgrid(row_span, col_span, indexing="ij")
+        r,c = r.contiguous(), c.contiguous()
+        r,c = r.reshape(height*width), c.reshape(height*width)
+        coords = torch.stack((c,r,torch.ones_like(c)))
+        coords = torch.unsqueeze(coords, dim=0).repeat(batch_size, 1, 1)
 
-#     # construct back-projection from invers matrices
-#     # separate into rotation and translation components
-#     bwd_projection = torch.matmul(torch.inverse(P), torch.inverse(K)).to(torch.float32)
-#     bwd_rotation = bwd_projection[:,:3,:3]
-#     bwd_translation = bwd_projection[:,:3,3:4]
+    # compute 3D coordinates using the depth map: [B, H*W, 3]
+    world_coords = torch.matmul(bwd_rotation, coords)
+    depth = depth.reshape(batch_size, 1, -1)
+    world_coords = world_coords * depth
+    world_coords = world_coords + bwd_translation
+    world_coords = torch.movedim(world_coords, 1, 2)
 
-#     # build 2D homogeneous coordinates tensor: [B, 3, H*W]
-#     with torch.no_grad():
-#         row_span = torch.arange(0, height, dtype=torch.float32).cuda()
-#         col_span = torch.arange(0, width, dtype=torch.float32).cuda()
-#         r,c = torch.meshgrid(row_span, col_span, indexing="ij")
-#         r,c = r.contiguous(), c.contiguous()
-#         r,c = r.reshape(height*width), c.reshape(height*width)
-#         coords = torch.stack((c,r,torch.ones_like(c)))
-#         coords = torch.unsqueeze(coords, dim=0).repeat(batch_size, 1, 1)
+    # filter world coordinates where depth is <= 0
+    depth = depth.squeeze(1)
+    filter_mask = depth > 0
+    
+    # mask world points optionally
+    if (mask != None):
+        filter_mask *= mask.reshape(batch_size, -1)
 
-#     # compute 3D coordinates using the depth map: [B, H*W, 3]
-#     world_coords = torch.matmul(bwd_rotation, coords)
-#     depth = depth.reshape(batch_size, 1, -1)
-#     world_coords = world_coords * depth
-#     world_coords = world_coords + bwd_translation
-
-#     #TODO: make sure index select is differentiable
-#     #       (there is a backward function but need to find the code..)
-#     if (mask != None):
-#         world_coords = torch.index_select(world_coords, dim=2, index=non_zero_inds)
-#         world_coords = torch.movedim(world_coords, 1, 2)
-
-#     # reshape 3D coordinates back into 2D map: [B, H, W, 3]
-#     #   coords_map = world_coords.reshape(batch_size, height, width, 3)
-
-#     return world_coords
+    return world_coords[filter_mask].unsqueeze(0)
+    # return world_coords
 
 
 def project_renderer(
