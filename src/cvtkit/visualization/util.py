@@ -619,6 +619,7 @@ def visualize_mvs(data, output, batch_ind, vis_path, max_depth_error, mode, epoc
     image = (
         torch.movedim(data["images"][0, 0], (0, 1, 2), (2, 0, 1)).detach().cpu().numpy()
     )
+    image = image[:,:,::-1]
     image = (image - image.min()) / (image.max() - image.min() + 1e-10)
 
     target_depth = data["target_depth"].detach().cpu().numpy()[0, 0]

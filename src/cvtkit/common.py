@@ -50,7 +50,7 @@ def build_depth_pyramid(
     for i in range(1, levels):
         size = (int(w // (2**i)), int(h // (2**i)))
         d = np.asarray(
-            cv2.resize(src=depth, dsize=size, interpolation=cv2.INTER_LINEAR)
+            cv2.resize(src=depth, dsize=size, interpolation=cv2.INTER_NEAREST_EXACT)
         )
 
         depths[i] = d.reshape(1, size[1], size[0])

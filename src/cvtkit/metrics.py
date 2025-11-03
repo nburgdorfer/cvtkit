@@ -63,6 +63,9 @@ def RMSE(estimate, target, mask=None, relative=False):
         error /= target
     error = torch.square(error)
 
+    if mask is None:
+        mask = torch.ones_like(error)
+
     assert error.shape == mask.shape
     error *= mask
 
@@ -71,6 +74,30 @@ def RMSE(estimate, target, mask=None, relative=False):
         error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims) + 1e-10)
     ).sum()
     return torch.sqrt(error)
+
+def SmoothL1(estimate, target, mask=None):
+    """Smooth L1 Error.
+
+    Parameters:
+        estimate: .
+        target: .
+        mask: .
+
+    Returns: .
+    """
+    assert estimate.shape == target.shape
+    error = F.smooth_l1_loss(estimate, target, reduction="none")
+
+    if mask is None:
+        mask = torch.ones_like(error)
+
+    assert error.shape == mask.shape
+    error *= mask
+
+    reduction_dims = tuple(range(1, len(target.shape)))
+    return (
+        error.sum(dim=reduction_dims) / (mask.sum(dim=reduction_dims) + 1e-10)
+    ).sum()
 
 
 def abs_error(est_depth: np.ndarray, gt_depth: np.ndarray) -> np.ndarray:
@@ -112,7 +139,8 @@ def chamfer_accuracy(
             _, index = tree.query(est_points_np, workers=4)
     
         # dists.append(torch.log(1 + torch.abs(est_points[b] - target_points[b,index])))
-        dists.append(torch.abs(est_points[b] - target_points[b,index]))
+        # dists.append(torch.abs(est_points[b] - target_points[b,index]))
+        dists.append(torch.norm(est_points[b] - target_points[b,index], dim=-1))
         ret_target_points = target_points[b,index]
 
     return torch.stack(dists, dim=0), ret_target_points
@@ -137,7 +165,8 @@ def chamfer_completeness(
             _, index = tree.query(target_points_np, workers=4)
     
         # dists.append(torch.log(1 + torch.abs(est_points[b, index] - target_points[b])))
-        dists.append(torch.abs(est_points[b, index] - target_points[b]))
+        # dists.append(torch.abs(est_points[b, index] - target_points[b]))
+        dists.append(torch.norm(est_points[b, index] - target_points[b], dim=-1))
         ret_est_points = est_points[b, index]
 
     return torch.stack(dists, dim=0), ret_est_points
