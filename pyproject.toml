@@ -1,6 +1,6 @@
 [project]
 name = "cvtkit"
-version = "0.0.68"
+version = "0.0.70"
 description = "A Python library including general functions and operations on various computer vision related structures."
 authors = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
 license = {file = "LICENSE"}

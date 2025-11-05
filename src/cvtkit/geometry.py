@@ -811,6 +811,7 @@ def homography_warp_variance(
     extrinsics,
     hypotheses,
     reference_index,
+    memory_mode,
 ):
     """Performs homography warping to create a Plane Sweeping Volume (PSV).
     Parameters:
@@ -837,6 +838,10 @@ def homography_warp_variance(
     cost_sq_sum = torch.zeros_like(ref_volume)
     cost_sum = cost_sum + ref_volume
     cost_sq_sum = cost_sq_sum + torch.pow(ref_volume, 2)
+
+    if memory_mode:
+        del ref_volume
+        torch.cuda.empty_cache()
 
     # build reference projection matrix
     ref_proj = torch.matmul(intrinsics[:, reference_index], extrinsics[:, reference_index, 0:3])
@@ -895,7 +900,19 @@ def homography_warp_variance(
 
         cost_sum = torch.add(cost_sum, warped_features)
         cost_sq_sum = torch.add(cost_sq_sum, torch.pow(warped_features, 2))
+
+        if memory_mode:
+            del src_feature
+            del warped_features
+            torch.cuda.empty_cache()
+
     psv = torch.div(cost_sq_sum, num_views) - torch.pow(torch.div(cost_sum, num_views), 2)
+
+    if memory_mode:
+        del cost_sq_sum
+        del cost_sum
+        torch.cuda.empty_cache()
+
     return psv
 
 
@@ -1271,8 +1288,7 @@ def project_points(points: torch.Tensor, depth_map: torch.Tensor, P: torch.Tenso
 
     projected_depths = F.grid_sample(
         depth_map,
-        grid.view(batch_size, height,        ## Return
- width, 2),
+        grid.view(batch_size, height, width, 2),
         mode="bilinear",
         padding_mode="zeros",
         align_corners=False,
