@@ -7,55 +7,47 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import shutil
 import argparse
+import torch
 
-from cvt.camera import *
-from cvt.io import *
-from cvt.geometry import *
-from cvt.metrics import *
+from cvtkit.camera import *
+from cvtkit.io import read_cams_sfm, write_pfm, read_pfm
+from cvtkit.geometry import visibility_numpy
+from cvtkit.metrics import *
 
 # argument parsing
 parse = argparse.ArgumentParser(description="Ground-Truth Visbility map generator.")
 parse.add_argument("-g", "--gt_depth_dir", default="./gt_depths", type=str, help="Path to ground-truth depth maps directory.")
 parse.add_argument("-c", "--camera_dir", default="./cameras", type=str, help="Path to camera files directory.")
 parse.add_argument("-o", "--output_dir", default="./output", type=str, help="Path to desired output directory.")
-parse.add_argument("-s", "--scan", default=1, type=int, help="The scan number being evaluated.")
 ARGS = parse.parse_args()
 
 def main():
-    # extract arguments
-    scan = "scan{:03d}".format(ARGS.scan)
-    gt_depth_dir = ARGS.gt_depth_dir
-    camera_dir = ARGS.camera_dir
-    output_dir = ARGS.output_dir
-
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    # build sorted lists of files
-    gt_depth_files = os.listdir(gt_depth_dir)
-    gt_depth_files.sort()
-    gt_depth_files = [os.path.join(gt_depth_dir,g) for g in gt_depth_files if g[-9:]=="depth.pfm"]
-
-    cam_files = os.listdir(camera_dir)
-    cam_files.sort()
-    cam_files = [os.path.join(camera_dir,c) for c in cam_files if c[-4:]==".txt"]
-
-    total_views = len(gt_depth_files)
-
-    # build view-colored point clouds
-    view_vecs = np.zeros((total_views, 3))
-    with tqdm(gt_depth_files, unit="views") as data_loader:
-        for view_num,gdf in enumerate(data_loader):
-            # load data
-            cf = cam_files[view_num]
-            gt_depth = read_pfm(gdf)
-            cam = read_cam(open(cf,'r'))
-
-            # compute visibility scores
-            gt_vis_map = visibility(gt_depth, cam, gt_depth_files, cam_files, view_num, pix_th=0.5)
-            write_pfm(os.path.join(output_dir, "{:08d}.pfm".format(view_num)), gt_vis_map)
-            cv2.imwrite(os.path.join(output_dir, "{:08d}.png".format(view_num)), (gt_vis_map/np.max(gt_vis_map)*255))
-
     
+    scans = os.listdir(ARGS.gt_depth_dir)
+    scans.sort()
+
+    for scan in scans:
+        gt_depth_dir = os.path.join(ARGS.gt_depth_dir,scan)
+        camera_dir = ARGS.camera_dir
+        output_dir = os.path.join(ARGS.output_dir, scan)
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        # build sorted lists of files
+        gt_depth_files = os.listdir(gt_depth_dir)
+        gt_depth_files.sort()
+        gt_depths = [read_pfm(os.path.join(gt_depth_dir,g)) for g in gt_depth_files if g[-9:]=="depth.pfm"]
+        gt_depths = np.asarray(gt_depths)
+
+        # load cameras
+        cams = read_cams_sfm(camera_dir)
+
+        total_views = gt_depths.shape[0]
+        with tqdm(range(total_views), unit="views") as loader:
+            for view_num in loader:
+                gt_vis_map = visibility_numpy(gt_depths, reference_index=view_num, K=cams[view_num,1,:3,:3], Ps=cams[:,0], pix_th=0.50)
+                write_pfm(os.path.join(output_dir, "{:08d}.pfm".format(view_num)), gt_vis_map)
+                cv2.imwrite(os.path.join(output_dir, "{:08d}.png".format(view_num)), (gt_vis_map/np.max(gt_vis_map)*255))
+
 if __name__=="__main__":
     main()

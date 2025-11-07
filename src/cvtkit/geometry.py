@@ -1896,18 +1896,20 @@ def visibility(depths, K, Ps, vis_th, levels=4):
     return vis_maps, vis_masks
 
 
-def visibility_numpy(depths, K, Ps, vis_th=None):
+def visibility_numpy(depths, reference_index, K, Ps, pix_th=0.50, vis_th=None):
     """
     Parameters:
 
     Returns:
     """
-    views, height, width = depths.shape
-    vis_map = np.where(depths[0] > 0.0, 1, 0)
+    views = depths.shape[0]
+    vis_map = np.where(depths[reference_index] > 0.0, 1, 0)
 
-    for i in range(1, views):
+    for i in range(views):
+        if i == reference_index:
+            continue
         mask = geometric_consistency_mask(
-            depths[0], K, Ps[0], depths[i], K, Ps[i], pixel_th=0.75
+            depths[reference_index], K, Ps[reference_index], depths[i], K, Ps[i], pixel_th=pix_th
         )
         vis_map += mask
     vis_map = vis_map.astype(np.float32)
@@ -1916,6 +1918,29 @@ def visibility_numpy(depths, K, Ps, vis_th=None):
         vis_map = np.where(vis_map >= vis_th, 1, 0)
 
     return vis_map
+
+# def visibility_torch(depths, reference_index, K, Ps, vis_th=None):
+#     """
+#     Parameters:
+
+#     Returns:
+#     """
+#     views = depths.shape[0]
+#     vis_map = torch.where(depths[reference_index] > 0.0, 1, 0)
+
+#     for i in range(views):
+#         if i == reference_index:
+#             continue
+#         mask = geometric_consistency_mask(
+#             depths[reference_index], K, Ps[reference_index], depths[i], K, Ps[i], pixel_th=0.50
+#         )
+#         vis_map += mask
+#     vis_map = vis_map.to(torch.float32)
+
+#     if vis_th != None:
+#         vis_map = torch.where(vis_map >= vis_th, 1, 0)
+
+#     return vis_map
 
 
 def visibility_mask(
