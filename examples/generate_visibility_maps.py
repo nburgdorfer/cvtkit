@@ -45,9 +45,9 @@ def main():
         total_views = gt_depths.shape[0]
         with tqdm(range(total_views), unit="views") as loader:
             for view_num in loader:
-                gt_vis_map = visibility_numpy(gt_depths, reference_index=view_num, K=cams[view_num,1,:3,:3], Ps=cams[:,0], pix_th=0.50)
+                gt_vis_map = visibility_numpy(gt_depths, reference_index=view_num, K=cams[view_num,1,:3,:3], Ps=cams[:,0], pix_th=1.0)
                 write_pfm(os.path.join(output_dir, "{:08d}.pfm".format(view_num)), gt_vis_map)
-                cv2.imwrite(os.path.join(output_dir, "{:08d}.png".format(view_num)), (gt_vis_map/np.max(gt_vis_map)*255))
+                cv2.imwrite(os.path.join(output_dir, "{:08d}.png".format(view_num)), (gt_vis_map/(total_views)*255))
 
 if __name__=="__main__":
     main()
