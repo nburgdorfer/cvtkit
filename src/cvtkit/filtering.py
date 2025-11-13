@@ -301,7 +301,7 @@ def consensus_filter(
     camera_files = os.listdir(camera_path)
     camera_files.sort()
     for camera_file in camera_files:
-        P, K = dataset.get_camera_parameters(os.path.join(camera_path, camera_file))
+        P, K, _,_ = dataset.get_camera_parameters(os.path.join(camera_path, camera_file))
         extrinsics.append(P)
         intrinsics.append(K)
     K = intrinsics[0]

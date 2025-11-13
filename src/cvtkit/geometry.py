@@ -52,7 +52,7 @@ def depth_to_normal(view, depth):
     depth: depthmap
     """
     height, width = depth.shape
-    points = project_depth_map(depth, view.KP_inv).reshape(height, width, 3)
+    points = project_depth_map(depth, view.P, view.K).reshape(height, width, 3)
     output = torch.zeros_like(points)
     dx = torch.cat([points[2:, 1:-1] - points[:-2, 1:-1]], dim=0)
     dy = torch.cat([points[1:-1, 2:] - points[1:-1, :-2]], dim=1)
