@@ -857,9 +857,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvtkit.geometry.homography_warp_var" class="md-nav__link">
+  <a href="#cvtkit.geometry.homography_warp_variance" class="md-nav__link">
     <span class="md-ellipsis">
-      homography_warp_var
+      homography_warp_variance
     </span>
   </a>
   
@@ -887,6 +887,24 @@
   <a href="#cvtkit.geometry.project_depth_map" class="md-nav__link">
     <span class="md-ellipsis">
       project_depth_map
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.geometry.project_depth_map_np" class="md-nav__link">
+    <span class="md-ellipsis">
+      project_depth_map_np
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.geometry.project_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      project_points
     </span>
   </a>
   
@@ -1424,9 +1442,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cvtkit.geometry.homography_warp_var" class="md-nav__link">
+  <a href="#cvtkit.geometry.homography_warp_variance" class="md-nav__link">
     <span class="md-ellipsis">
-      homography_warp_var
+      homography_warp_variance
     </span>
   </a>
   
@@ -1454,6 +1472,24 @@
   <a href="#cvtkit.geometry.project_depth_map" class="md-nav__link">
     <span class="md-ellipsis">
       project_depth_map
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.geometry.project_depth_map_np" class="md-nav__link">
+    <span class="md-ellipsis">
+      project_depth_map_np
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.geometry.project_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      project_points
     </span>
   </a>
   
@@ -2031,7 +2067,7 @@ depth: depthmap</p>
 
 
 <h2 id="cvtkit.geometry.homography_warp" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">homography_warp</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">,</span> <span class="n">hypotheses</span><span class="p">,</span> <span class="n">group_channels</span><span class="p">,</span> <span class="n">vwa_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">homography_warp</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">,</span> <span class="n">hypotheses</span><span class="p">,</span> <span class="n">group_channels</span><span class="p">,</span> <span class="n">vwa_net</span><span class="p">,</span> <span class="n">reference_index</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2080,8 +2116,8 @@ Parameters:
 <div class="doc doc-object doc-function">
 
 
-<h2 id="cvtkit.geometry.homography_warp_var" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">homography_warp_var</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">ref_in</span><span class="p">,</span> <span class="n">src_in</span><span class="p">,</span> <span class="n">ref_ex</span><span class="p">,</span> <span class="n">src_ex</span><span class="p">,</span> <span class="n">depth_hypos</span><span class="p">)</span></code>
+<h2 id="cvtkit.geometry.homography_warp_variance" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">homography_warp_variance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">,</span> <span class="n">hypotheses</span><span class="p">,</span> <span class="n">reference_index</span><span class="p">,</span> <span class="n">memory_mode</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2090,13 +2126,12 @@ Parameters:
 
         <p>Performs homography warping to create a Plane Sweeping Volume (PSV).
 Parameters:
+    cfg: Configuration dictionary containing configuration parameters.
     features: Feature maps to be warped into a PSV.
-    level: Current feature resolution level.
-    ref_in: Reference view intrinsics matrix.
-    src_in: Source view intrinsics matrices.
-    ref_ex: Reference view extrinsics matrix.
-    src_ex: Source view extrinsics matrices.
-    depth_hypos: Depth hypotheses to use for homography warping.</p>
+    intrinsics: Intrinsics matrices for all views.
+    extrinsics: Extrinsics matrices for all views.
+    hypotheses: Depth hypotheses to use for homography warping.
+    reference_index: The index for the reference view.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -2261,7 +2296,7 @@ Parameters:
 
 
 <h2 id="cvtkit.geometry.project_depth_map" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">project_depth_map</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">KP_inv</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">project_depth_map</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2288,6 +2323,179 @@ Parameters:
             </td>
             <td>
                   <code><span title="torch.Tensor">Tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input depth map to project.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>cam</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera parameters for input depth map.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.Tensor">Tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A float Tensor of 3D points corresponding to the projected depth values.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvtkit.geometry.project_depth_map_np" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">project_depth_map_np</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Projects a depth map into a list of 3D points</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>depth</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float32">float32</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Input depth map to project.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>cam</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Camera parameters for input depth map.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float32">float32</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A float Tensor of 3D points corresponding to the projected depth values.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvtkit.geometry.project_points" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">project_points</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">depth_map</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Projects a depth map into a list of 3D points</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>depth</code>
+            </td>
+            <td>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2865,7 +3073,7 @@ Parameters:
 
 
 <h2 id="cvtkit.geometry.visibility_numpy" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">visibility_numpy</span><span class="p">(</span><span class="n">depths</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">Ps</span><span class="p">,</span> <span class="n">vis_th</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">visibility_numpy</span><span class="p">(</span><span class="n">depths</span><span class="p">,</span> <span class="n">reference_index</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">Ps</span><span class="p">,</span> <span class="n">pix_th</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vis_th</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 

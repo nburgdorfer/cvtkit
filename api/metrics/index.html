@@ -867,6 +867,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cvtkit.metrics.SmoothL1" class="md-nav__link">
+    <span class="md-ellipsis">
+      SmoothL1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cvtkit.metrics.abs_error" class="md-nav__link">
     <span class="md-ellipsis">
       abs_error
@@ -879,6 +888,24 @@
   <a href="#cvtkit.metrics.accuracy_eval" class="md-nav__link">
     <span class="md-ellipsis">
       accuracy_eval
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.metrics.chamfer_accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      chamfer_accuracy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.metrics.chamfer_completeness" class="md-nav__link">
+    <span class="md-ellipsis">
+      chamfer_completeness
     </span>
   </a>
   
@@ -1253,6 +1280,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cvtkit.metrics.SmoothL1" class="md-nav__link">
+    <span class="md-ellipsis">
+      SmoothL1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cvtkit.metrics.abs_error" class="md-nav__link">
     <span class="md-ellipsis">
       abs_error
@@ -1265,6 +1301,24 @@
   <a href="#cvtkit.metrics.accuracy_eval" class="md-nav__link">
     <span class="md-ellipsis">
       accuracy_eval
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.metrics.chamfer_accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      chamfer_accuracy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cvtkit.metrics.chamfer_completeness" class="md-nav__link">
+    <span class="md-ellipsis">
+      chamfer_completeness
     </span>
   </a>
   
@@ -1545,6 +1599,85 @@
 <div class="doc doc-object doc-function">
 
 
+<h2 id="cvtkit.metrics.SmoothL1" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">SmoothL1</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Smooth L1 Error.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>estimate</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>target</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>mask</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+        <p>Returns: .</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="cvtkit.metrics.abs_error" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">abs_error</span><span class="p">(</span><span class="n">est_depth</span><span class="p">,</span> <span class="n">gt_depth</span><span class="p">)</span></code>
 
@@ -1780,6 +1913,132 @@
               <div class="doc-md-description">
                 <p>Estimated colors for the points in the valid point cloud.</p>
               </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvtkit.metrics.chamfer_accuracy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">chamfer_accuracy</span><span class="p">(</span><span class="n">est_points</span><span class="p">,</span> <span class="n">target_points</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the accuracy of an estimated point cloud against the provided ground-truth.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>est_ply</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Estimated point cloud to be evaluated.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>gt_ply</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Ground-truth point cloud.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="cvtkit.metrics.chamfer_completeness" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">chamfer_completeness</span><span class="p">(</span><span class="n">est_points</span><span class="p">,</span> <span class="n">target_points</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the accuracy of an estimated point cloud against the provided ground-truth.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>est_ply</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Estimated point cloud to be evaluated.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>gt_ply</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Ground-truth point cloud.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
             </td>
           </tr>
       </tbody>
