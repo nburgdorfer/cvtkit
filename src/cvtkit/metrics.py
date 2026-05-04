@@ -357,10 +357,11 @@ def _ssim(img1, img2, window, window_size, channel, size_average=True):
         (mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2)
     )
 
-    if size_average:
-        return ssim_map.mean()
-    else:
-        return ssim_map.mean(1).mean(1).mean(1)
+    # if size_average:
+    #     return ssim_map.mean()
+    # else:
+    #     return ssim_map.mean(1).mean(1).mean(1)
+    return ssim_map
 
 
 def psnr(img1, img2):

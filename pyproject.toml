@@ -1,13 +1,13 @@
 [project]
 name = "cvtkit"
-version = "0.0.72"
+version = "0.0.73"
 description = "A Python library including general functions and operations on various computer vision related structures."
 authors = [{name = "Nathaniel Burgdorfer", email = "nburgdorfer@gmail.com"}]
 license = {file = "LICENSE"}
 
 readme = "README.md"
 keywords = ["computer vision", "3d reconstruction", "geometry", "machine learning"]
-requires-python = ">= 3.12"
+requires-python = ">= 3.10"
 classifiers=[
 	"Development Status :: 2 - Pre-Alpha",
 	"Intended Audience :: Developers",
